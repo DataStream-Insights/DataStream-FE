@@ -1,13 +1,13 @@
-import './App.css'
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { CreateCampaign } from "./pages/campaign/createCampaign";
 import CampaignManagementPage from './pages/CampaignManagementPage'
 
-function App() {
+export function App() {
+  const router = createBrowserRouter([
+    { path: "/", element: <CampaignManagementPage /> },
 
-  return (
-    <>
-    <CampaignManagementPage></CampaignManagementPage>
-    </>
-  )
+    { path: "/campaignform", element: <CreateCampaign /> }, //캠페인 생성하기
+  ]);
+
+  return <RouterProvider router={router} />;
 }
-
-export default App
