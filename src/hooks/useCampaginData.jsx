@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { fetchCampaignData } from '../api/CampaignApi.jsx';
+//import { parseCampaignData } from '../utils/parseDBdata.jsx';
 
 const useCampaignData = () => {
     const [data, setData] = useState([]);
