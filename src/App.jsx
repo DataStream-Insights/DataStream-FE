@@ -1,6 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CreateCampaign } from "./pages/campaign/createCampaign";
-import CampaignManagementPage from './pages/CampaignManagementPage'
+import { CampaignManagementPage } from "./pages/main/CampaignManagementPage";
 
 export function App() {
   const router = createBrowserRouter([
