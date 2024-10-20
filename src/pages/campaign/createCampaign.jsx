@@ -1,16 +1,7 @@
 import React, { useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-  FormContainer,
-  FormCard,
-  FormTitle,
-  FormGroup,
-  Label,
-  DateRangeContainer,
-  RadioContainer,
-  ButtonContainer,
-  FileButtonGroup,
-} from "../../styles/campaign/createCampaignStyle";
+import * as S from "../../styles/campaign/createCampaignStyle";
 
 export function CreateCampaign() {
   const [formData, setFormData] = useState({
@@ -18,8 +9,8 @@ export function CreateCampaign() {
     subcategory: "",
     name: "",
     description: "",
-    startDate: "2024-10-15",
-    endDate: "2024-10-29",
+    startDate: new Date("2024-10-15"),
+    endDate: new Date("2024-10-29"),
     targetCount: "0",
     resourceType: "personal",
     visibility: "private",
@@ -34,20 +25,27 @@ export function CreateCampaign() {
     }));
   };
 
+  // const handleDateChange = (date, name) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [name]: date,
+  //   }));
+  // };
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Form submitted:", formData);
   };
 
   return (
-    <FormContainer>
-      <FormCard>
-        <FormTitle>캠페인 기초 정보</FormTitle>
+    <S.FormContainer>
+      <S.FormCard>
+        <S.FormTitle>캠페인 기초 정보</S.FormTitle>
         <form onSubmit={handleSubmit}>
           <div className="row mb-3">
             <div className="col-md-6">
-              <FormGroup>
-                <Label>캠페인 분류</Label>
+              <S.FormGroup>
+                <S.Label>캠페인 분류</S.Label>
                 <select
                   className="form-select"
                   name="category"
@@ -56,11 +54,11 @@ export function CreateCampaign() {
                 >
                   <option value="">[선택]</option>
                 </select>
-              </FormGroup>
+              </S.FormGroup>
             </div>
             <div className="col-md-6">
-              <FormGroup>
-                <Label>하위 분류</Label>
+              <S.FormGroup>
+                <S.Label>하위 분류</S.Label>
                 <select
                   className="form-select"
                   name="subcategory"
@@ -69,12 +67,12 @@ export function CreateCampaign() {
                 >
                   <option value="">[선택]</option>
                 </select>
-              </FormGroup>
+              </S.FormGroup>
             </div>
           </div>
 
-          <FormGroup>
-            <Label>캠페인 명</Label>
+          <S.FormGroup>
+            <S.Label>캠페인 명</S.Label>
             <input
               type="text"
               className="form-control"
@@ -82,10 +80,10 @@ export function CreateCampaign() {
               value={formData.name}
               onChange={handleChange}
             />
-          </FormGroup>
+          </S.FormGroup>
 
-          <FormGroup>
-            <Label>캠페인 설명</Label>
+          <S.FormGroup>
+            <S.Label>캠페인 설명</S.Label>
             <textarea
               className="form-control"
               name="description"
@@ -93,48 +91,40 @@ export function CreateCampaign() {
               onChange={handleChange}
               rows="3"
             />
-          </FormGroup>
+          </S.FormGroup>
 
           <div className="row mb-3">
             <div className="col-md-8">
-              <FormGroup>
-                <Label>수행 일자</Label>
-                <DateRangeContainer>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="startDate"
-                    value={formData.startDate}
-                    onChange={handleChange}
-                  />
+              <S.FormGroup>
+                <S.Label>수행 일자</S.Label>
+                <S.DateRangeContainer>
+                  <S.DateInput defaultValue="2024-10-15" />
                   <span>~</span>
-                  <input
-                    type="date"
-                    className="form-control"
-                    name="endDate"
-                    value={formData.endDate}
-                    onChange={handleChange}
-                  />
-                </DateRangeContainer>
-              </FormGroup>
+                  <S.DateInput defaultValue="2024-10-15" />
+                </S.DateRangeContainer>
+              </S.FormGroup>
             </div>
             <div className="col-md-4">
-              <FormGroup>
-                <Label>종료 후</Label>
-                <input
-                  type="number"
-                  className="form-control"
-                  name="targetCount"
-                  value={formData.targetCount}
-                  onChange={handleChange}
-                  min="0"
-                />
-              </FormGroup>
+              <S.Label>종료 후</S.Label>
+              <S.FormGroup>
+                <div className="d-flex align-items-center">
+                  <input
+                    type="number"
+                    className="form-control"
+                    name="targetCount"
+                    value={formData.targetCount}
+                    onChange={handleChange}
+                    min="0"
+                    style={{ width: "60px", marginRight: "10px" }}
+                  />
+                  <span>일후까지 실적으로 인정</span>
+                </div>
+              </S.FormGroup>
             </div>
           </div>
 
-          <FormGroup>
-            <Label>고객군 유형</Label>
+          <S.FormGroup>
+            <S.Label>고객군 유형</S.Label>
             <select
               className="form-select"
               name="resourceType"
@@ -143,11 +133,11 @@ export function CreateCampaign() {
             >
               <option value="personal">개인</option>
             </select>
-          </FormGroup>
+          </S.FormGroup>
 
-          <FormGroup>
-            <Label>공개 설정</Label>
-            <RadioContainer>
+          <S.FormGroup>
+            <S.Label>공개 설정</S.Label>
+            <S.RadioContainer>
               <div className="form-check">
                 <input
                   type="radio"
@@ -190,11 +180,11 @@ export function CreateCampaign() {
                   부서공개
                 </label>
               </div>
-            </RadioContainer>
-          </FormGroup>
+            </S.RadioContainer>
+          </S.FormGroup>
 
-          <FormGroup>
-            <Label>태그</Label>
+          <S.FormGroup>
+            <S.Label>태그</S.Label>
             <input
               type="text"
               className="form-control"
@@ -203,23 +193,15 @@ export function CreateCampaign() {
               onChange={handleChange}
               placeholder="#태그"
             />
-          </FormGroup>
+          </S.FormGroup>
 
-          <ButtonContainer>
-            <FileButtonGroup>
-              <button type="button" className="btn btn-outline-secondary">
-                파일찾기
-              </button>
-              <button type="button" className="btn btn-outline-secondary">
-                첨부파일 삭제
-              </button>
-            </FileButtonGroup>
+          <S.ButtonContainer>
             <button type="submit" className="btn btn-primary">
               저장하기
             </button>
-          </ButtonContainer>
+          </S.ButtonContainer>
         </form>
-      </FormCard>
-    </FormContainer>
+      </S.FormCard>
+    </S.FormContainer>
   );
 }
