@@ -5,189 +5,169 @@ import * as S from "../../styles/campaign/createCampaignStyle";
 
 export function CreateCampaign() {
   const [formData, setFormData] = useState({
-    category: "",
-    subcategory: "",
-    name: "",
-    description: "",
-    startDate: new Date("2024-10-15"),
-    endDate: new Date("2024-10-29"),
-    targetCount: "0",
-    resourceType: "personal",
+    campaignClassification1: "",
+    campaignClassification2: "",
+    campaignName: "",
+    campaignDescription: "",
+    startDate: "2024-10-15",
+    endDate: "2024-10-29",
+    endAfter: 0,
+    customerType: "individual",
     visibility: "private",
     tags: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
+    setFormData({
+      ...formData,
       [name]: value,
-    }));
+    });
   };
-
-  // const handleDateChange = (date, name) => {
-  //   setFormData((prev) => ({
-  //     ...prev,
-  //     [name]: date,
-  //   }));
-  // };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    console.log("Form Data Submitted:", formData);
   };
 
   return (
     <S.FormContainer>
       <S.FormCard>
-        <S.FormTitle>캠페인 기초 정보</S.FormTitle>
         <form onSubmit={handleSubmit}>
-          <div className="row mb-3">
-            <div className="col-md-6">
-              <S.FormGroup>
-                <S.Label>캠페인 분류</S.Label>
-                <select
-                  className="form-select"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                >
-                  <option value="">[선택]</option>
-                </select>
-              </S.FormGroup>
-            </div>
-            <div className="col-md-6">
-              <S.FormGroup>
-                <S.Label>하위 분류</S.Label>
-                <select
-                  className="form-select"
-                  name="subcategory"
-                  value={formData.subcategory}
-                  onChange={handleChange}
-                >
-                  <option value="">[선택]</option>
-                </select>
-              </S.FormGroup>
-            </div>
-          </div>
+          <S.SectionTitle>캠페인 기초 정보</S.SectionTitle>
 
+          {/* Campaign Classification */}
           <S.FormGroup>
-            <S.Label>캠페인 명</S.Label>
-            <input
+            <S.Label>캠페인 분류</S.Label>
+            <S.SelectContainer>
+              <select
+                name="campaignClassification1"
+                value={formData.campaignClassification1}
+                onChange={handleChange}
+              >
+                <option value="">[선택]</option>
+                <option value="categoryA">Category A</option>
+              </select>
+              <select
+                name="campaignClassification2"
+                value={formData.campaignClassification2}
+                onChange={handleChange}
+              >
+                <option value="">[선택]</option>
+                <option value="subCategoryA">Subcategory A</option>
+              </select>
+            </S.SelectContainer>
+          </S.FormGroup>
+
+          {/* Campaign Name */}
+          <S.FormGroup>
+            <S.Label>캠페인명</S.Label>
+            <S.Input
               type="text"
-              className="form-control"
-              name="name"
-              value={formData.name}
+              name="campaignName"
+              value={formData.campaignName}
               onChange={handleChange}
             />
           </S.FormGroup>
 
+          {/* Campaign Description */}
           <S.FormGroup>
             <S.Label>캠페인 설명</S.Label>
-            <textarea
-              className="form-control"
-              name="description"
-              value={formData.description}
+            <S.TextArea
+              name="campaignDescription"
+              value={formData.campaignDescription}
               onChange={handleChange}
-              rows="3"
             />
           </S.FormGroup>
 
-          <div className="row mb-3">
-            <div className="col-md-8">
-              <S.FormGroup>
-                <S.Label>수행 일자</S.Label>
-                <S.DateRangeContainer>
-                  <S.DateInput defaultValue="2024-10-15" />
-                  <span>~</span>
-                  <S.DateInput defaultValue="2024-10-15" />
-                </S.DateRangeContainer>
-              </S.FormGroup>
-            </div>
-            <div className="col-md-4">
-              <S.Label>종료 후</S.Label>
-              <S.FormGroup>
-                <div className="d-flex align-items-center">
-                  <input
-                    type="number"
-                    className="form-control"
-                    name="targetCount"
-                    value={formData.targetCount}
-                    onChange={handleChange}
-                    min="0"
-                    style={{ width: "60px", marginRight: "10px" }}
-                  />
-                  <span>일후까지 실적으로 인정</span>
-                </div>
-              </S.FormGroup>
-            </div>
-          </div>
-
+          {/* Date Range */}
           <S.FormGroup>
-            <S.Label>고객군 유형</S.Label>
-            <select
-              className="form-select"
-              name="resourceType"
-              value={formData.resourceType}
-              onChange={handleChange}
-            >
-              <option value="personal">개인</option>
-            </select>
+            <S.Label>수행 일자</S.Label>
+            <S.DateContainer>
+              <S.Input
+                type="date"
+                name="startDate"
+                value={formData.startDate}
+                onChange={handleChange}
+              />
+              <span>~</span>
+              <S.Input
+                type="date"
+                name="endDate"
+                value={formData.endDate}
+                onChange={handleChange}
+              />
+            </S.DateContainer>
           </S.FormGroup>
 
+          <S.FormGroup>
+            <S.EndAfterContainer>
+              <S.Label>종료 후</S.Label>
+              <S.NumberInput
+                type="number"
+                name="endAfter"
+                value={formData.endAfter}
+                onChange={handleChange}
+              />
+              <span>일후 까지 실적으로 인정</span>
+            </S.EndAfterContainer>
+          </S.FormGroup>
+
+          {/* Customer Type */}
+          <S.FormGroup>
+            <S.Label>고객군 유형</S.Label>
+            <S.CustomerTypeSelect
+              name="customerType"
+              value={formData.customerType}
+              onChange={handleChange}
+            >
+              <option value="individual">개인</option>
+              <option value="corporate">법인</option>
+            </S.CustomerTypeSelect>
+          </S.FormGroup>
+
+          {/* Visibility */}
           <S.FormGroup>
             <S.Label>공개 설정</S.Label>
             <S.RadioContainer>
-              <div className="form-check">
+              <S.RadioButton>
                 <input
                   type="radio"
-                  className="form-check-input"
                   name="visibility"
-                  id="private"
                   value="private"
                   checked={formData.visibility === "private"}
                   onChange={handleChange}
                 />
-                <label className="form-check-label" htmlFor="private">
-                  비공개
-                </label>
-              </div>
-              <div className="form-check">
+                <span>비공개</span>
+              </S.RadioButton>
+              <S.RadioButton>
                 <input
                   type="radio"
-                  className="form-check-input"
                   name="visibility"
-                  id="public"
-                  value="public"
-                  checked={formData.visibility === "public"}
-                  onChange={handleChange}
-                />
-                <label className="form-check-label" htmlFor="public">
-                  모두공개
-                </label>
-              </div>
-              <div className="form-check">
-                <input
-                  type="radio"
-                  className="form-check-input"
-                  name="visibility"
-                  id="department"
                   value="department"
                   checked={formData.visibility === "department"}
                   onChange={handleChange}
                 />
-                <label className="form-check-label" htmlFor="department">
-                  부서공개
-                </label>
-              </div>
+                <span>부서공개</span>
+              </S.RadioButton>
+              <S.RadioButton>
+                <input
+                  type="radio"
+                  name="visibility"
+                  value="public"
+                  checked={formData.visibility === "public"}
+                  onChange={handleChange}
+                />
+                <span>부서공개</span>
+              </S.RadioButton>
             </S.RadioContainer>
           </S.FormGroup>
 
+          {/* Tags */}
           <S.FormGroup>
             <S.Label>태그</S.Label>
-            <input
+            <S.Input
               type="text"
-              className="form-control"
               name="tags"
               value={formData.tags}
               onChange={handleChange}
@@ -195,11 +175,7 @@ export function CreateCampaign() {
             />
           </S.FormGroup>
 
-          <S.ButtonContainer>
-            <button type="submit" className="btn btn-primary">
-              저장하기
-            </button>
-          </S.ButtonContainer>
+          <S.SubmitButton type="submit">저장하기</S.SubmitButton>
         </form>
       </S.FormCard>
     </S.FormContainer>
