@@ -6,7 +6,7 @@ const api = axios.create({
   baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
-    "Accept": "application/json",
+    Accept: "application/json",
   },
 });
 
@@ -23,9 +23,9 @@ export const fetchCampaignData = async () => {
 
 export const createCampaignData = async (formData) => {
   try {
-      console.log("FormData received:", formData);
+    console.log("FormData received:", formData);
 
-    const campaignDTO = JSON.stringify({
+    const campaignDTO = {
       campaignId: generateCampaignId(),
       campaignClassification1: formData.campaignClassification1,
       campaignClassification2: formData.campaignClassification2,
@@ -41,7 +41,7 @@ export const createCampaignData = async (formData) => {
       author: 1, // 임시값
       createdDate: new Date().toISOString().split("T")[0],
       tags: formData.tags,
-    });
+    };
     console.log("Sending data to server:", campaignDTO);
     console.log(api.post("/campaigns/add"));
     const response = await api.post("/campaigns/add", campaignDTO);
@@ -57,10 +57,10 @@ export const categoryAPI = {
   // Category1 목록 조회
   async getCategory1List() {
     try {
-      const response = await api.get('/categories/category1');
+      const response = await api.get("/categories/category1");
       return response.data;
     } catch (error) {
-      console.error('Error in getCategory1List:', error);
+      console.error("Error in getCategory1List:", error);
       throw error;
     }
   },
@@ -72,10 +72,10 @@ export const categoryAPI = {
       const response = await api.get(`/categories/category2/${category1Id}`);
       return response.data;
     } catch (error) {
-      console.error('Error in getCategory2List:', error);
+      console.error("Error in getCategory2List:", error);
       throw error;
     }
-  }
+  },
 };
 
 // 유틸리티 함수들
@@ -106,7 +106,7 @@ const convertVisibilityToIsPublic = (visibility) => {
 //     category2: []
 //   });
 //   const [error, setError] = useState(null);
-  
+
 //   useEffect(() => {
 //     const fetchCategories = async () => {
 //       try {
