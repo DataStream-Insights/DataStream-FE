@@ -2,63 +2,34 @@ import React from "react";
 import { useTable, useRowSelect } from "react-table"; // react-table은 그대로 사용
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// import useCampaignData from "../hooks/useCampaginData";
+import useCampaignData from "../hooks/useCampaginData";
 import * as S from "../styles/main/tableStyle";
 
 export function CampaignTable() {
   const navigate = useNavigate();
-  // const { data, isLoading } = useCampaignData();
+  const { data, isLoading } = useCampaignData();
 
   const handleCreateClick = () => {
     navigate("/campaignform"); // /campaignform으로 이동
   };
-
-  //프론트 화면 테스트용 데이터
-  const data = React.useMemo(
-    () => [
-      {
-        no: 1,
-        campaignId: "CAMP001",
-        category1: "Category A",
-        category2: "Category B",
-        campaignName: "Campaign 1",
-        status: "Active",
-        startDate: "2024-10-01",
-        endDate: "2024-10-15",
-        isPublic: "Yes",
-        department: "Marketing",
-        author: "John Doe",
-        createdDate: "2024-09-25",
-      },
-      {
-        no: 2,
-        campaignId: "CAMP002",
-        category1: "Category A",
-        category2: "Category C",
-        campaignName: "Campaign 2",
-        status: "Inactive",
-        startDate: "2024-09-20",
-        endDate: "2024-10-05",
-        isPublic: "No",
-        department: "Sales",
-        author: "Jane Doe",
-        createdDate: "2024-09-10",
-      },
-    ],
-    []
-  );
 
   //Header
   const columns = React.useMemo(
     () => [
       {
         id: "selection",
-        Header: ({ getToggleAllRowsSelectedProps }) => (
-          <S.Checkbox {...getToggleAllRowsSelectedProps()} />
-        ),
-        Cell: ({ row }) => <S.Checkbox {...row.getToggleRowSelectedProps()} />,
+        Header: ({ getToggleAllRowsSelectedProps }) => {
+          const props = getToggleAllRowsSelectedProps();
+          const { key, ...restProps } = props;
+          return <S.Checkbox type="checkbox" {...restProps} />;
+        },
+        Cell: ({ row }) => {
+          const props = row.getToggleRowSelectedProps();
+          const { key, ...restProps } = props;
+          return <S.Checkbox type="checkbox" {...restProps} />;
+        },
       },
-      { Header: "No", accessor: "no" },
+      { Header: "No", accessor: "id" },
       { Header: "캠페인 ID", accessor: "campaignId" },
       { Header: "분류1", accessor: "category1" },
       { Header: "분류2", accessor: "category2" },
@@ -83,10 +54,9 @@ export function CampaignTable() {
       useRowSelect // useRowSelect 추가
     );
 
-  // 테스트 데이터는 로딩 상태가 필요 없으므로 로딩 메시지 주석 처리
-  // if (isLoading) {
-  //   return <LoadingMessage>데이터를 불러오는 중...</LoadingMessage>;
-  // }
+  if (isLoading) {
+    return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
+  }
 
   return (
     <>
@@ -129,33 +99,35 @@ export function CampaignTable() {
       </S.HeaderContainer>
 
       <S.TableContainer>
-        <S.StyledTable {...getTableProps()}>
+        <S.StyledTable>
           <S.THead>
-            {headerGroups.map((headerGroup) => (
-              <S.Tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map((column) => (
-                  <S.Th {...column.getHeaderProps()}>
-                    {column.render("Header")}
-                  </S.Th>
-                ))}
-              </S.Tr>
-            ))}
+            {headerGroups.map((headerGroup) => {
+              const { key, ...headerGroupProps } =
+                headerGroup.getHeaderGroupProps();
+              return (
+                <S.Tr key={key} {...headerGroupProps}>
+                  {headerGroup.headers.map((column) => {
+                    const { key, ...columnProps } = column.getHeaderProps();
+                    return (
+                      <S.Th key={key} {...columnProps}>
+                        {column.render("Header")}
+                      </S.Th>
+                    );
+                  })}
+                </S.Tr>
+              );
+            })}
           </S.THead>
-          <tbody {...getTableBodyProps()}>
+          <tbody>
             {rows.map((row) => {
               prepareRow(row);
+              const { key, ...rowProps } = row.getRowProps();
               return (
-                <S.Tr {...row.getRowProps()}>
+                <S.Tr key={key} {...rowProps}>
                   {row.cells.map((cell) => {
-                    if (cell.column.id === "selection") {
-                      return (
-                        <S.CheckboxCell {...cell.getCellProps()}>
-                          {cell.render("Cell")}
-                        </S.CheckboxCell>
-                      );
-                    }
+                    const { key, ...cellProps } = cell.getCellProps();
                     return (
-                      <S.Td {...cell.getCellProps()}>
+                      <S.Td key={key} {...cellProps}>
                         {cell.render("Cell")}
                       </S.Td>
                     );

@@ -140,3 +140,12 @@ export const LoadingMessage = styled.div`
   padding: 20px;
   color: #495057;
 `;
+
+export const LoadingContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 1.2rem;
+  color: #666;
+`;
