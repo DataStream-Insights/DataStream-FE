@@ -6,7 +6,7 @@ const api = axios.create({
   baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
-    Accept: "application/json",
+    "Accept": "application/json",
   },
 });
 
@@ -43,7 +43,7 @@ export const createCampaignData = async (formData) => {
       tags: formData.tags,
     };
     console.log("Sending data to server:", campaignDTO);
-    console.log(api.post("/campaigns/add"));
+    //console.log(api.post("/campaigns/add"));
     const response = await api.post("/campaigns/add", campaignDTO);
     return response.data;
   } catch (error) {
