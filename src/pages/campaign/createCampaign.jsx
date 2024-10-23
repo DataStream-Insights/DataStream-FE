@@ -76,7 +76,7 @@ export function CreateCampaign() {
       const result = await createCampaign(formData);
       console.log("Campaign created successfully:", result);
       alert("캠페인이 성공적으로 생성되었습니다.");
-      navigate("/campaigns"); // 목록 페이지로 이동
+      navigate("/"); // 목록 페이지로 이동
     } catch (err) {
       console.error("Failed to create campaign:", err);
       alert("캠페인 생성에 실패했습니다. 다시 시도해주세요.");
