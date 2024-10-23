@@ -2,10 +2,10 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCampaignData from "../../hooks/useCampaginData";
 import * as S from "../../styles/campaign/createCampaignStyle";
-import useCategoryData from '../../hooks/useCategoryData';
+import useCategoryData from "../../hooks/useCategoryData";
 
 export function CreateCampaign() {
-  const {categories1, categories2, loadCategory2Data} = useCategoryData(); 
+  const { categories1, categories2, loadCategory2Data } = useCategoryData();
   const navigate = useNavigate();
   const { createCampaign, isLoading, error } = useCampaignData();
   //const [ categories1_name, setcategories1_name ] = useState([]);
@@ -37,7 +37,7 @@ export function CreateCampaign() {
   // }, [categories2]);
 
   const renderCategory1Options = () => {
-    return categories1.map(category => (
+    return categories1.map((category) => (
       <option key={category.id} value={category.id}>
         {category.name}
       </option>
@@ -45,7 +45,7 @@ export function CreateCampaign() {
   };
 
   const renderCategory2Options = () => {
-    return categories2.map(category => (
+    return categories2.map((category) => (
       <option key={category.id} value={category.id}>
         {category.name}
       </option>
@@ -54,32 +54,51 @@ export function CreateCampaign() {
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
-  
-  // 이전 상태를 기반으로 새로운 상태 설정
-    setFormData(prev => ({
+
+    // 이전 상태를 기반으로 새로운 상태 설정
+    setFormData((prev) => ({
       ...prev,
       [name]: value,
-    // campaignClassification1이 변경되면 campaignClassification2를 초기화
-      ...(name === 'campaignClassification1' && { campaignClassification2: ''/*,campaignClassification1Name: categories1_name*/}),
+      // campaignClassification1이 변경되면 campaignClassification2를 초기화
+      ...(name === "campaignClassification1" && {
+        campaignClassification2:
+          "" /*,campaignClassification1Name: categories1_name*/,
+      }),
       //...(name === 'campaignClassification2' && {campaignClassification2Name: categories2_name}),
     }));
 
-  // campaignClassification1이 변경되었을 때 category2 데이터 로드
-    if (name === 'campaignClassification1') {
+    // campaignClassification1이 변경되었을 때 category2 데이터 로드
+    if (name === "campaignClassification1") {
       await loadCategory2Data(value);
-  }
-};
+    }
+  };
   // 폼 제출 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const result = await createCampaign(formData);
       console.log("Campaign created successfully:", result);
+
+      // 성공적으로 저장되었을 때만 알림과 페이지 이동
       alert("캠페인이 성공적으로 생성되었습니다.");
-      navigate("/campaigns"); // 목록 페이지로 이동
+      navigate("/");
     } catch (err) {
       console.error("Failed to create campaign:", err);
-      alert("캠페인 생성에 실패했습니다. 다시 시도해주세요.");
+
+      // 사용자에게 더 자세한 에러 메시지 제공
+      let errorMessage = "캠페인 생성에 실패했습니다.";
+      if (err.message) {
+        errorMessage += ` (${err.message})`;
+      }
+      alert(errorMessage);
+
+      // 에러가 발생했지만 데이터가 저장된 경우를 위한 추가 처리
+      const confirmNavigation = window.confirm(
+        "오류가 발생했지만 데이터가 저장되었을 수 있습니다. 목록 페이지로 이동하시겠습니까?"
+      );
+      if (confirmNavigation) {
+        navigate("/");
+      }
     }
   };
 
@@ -107,7 +126,7 @@ export function CreateCampaign() {
                 value={formData.campaignClassification2}
                 onChange={handleChange}
                 disabled={!formData.campaignClassification1}
-                >
+              >
                 <option value="">[선택]</option>
                 {renderCategory2Options()}
               </select>
