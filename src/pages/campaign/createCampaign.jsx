@@ -8,12 +8,12 @@ export function CreateCampaign() {
   const {categories1, categories2, loadCategory2Data} = useCategoryData(); 
   const navigate = useNavigate();
   const { createCampaign, isLoading, error } = useCampaignData();
+  //const [ categories1_name, setcategories1_name ] = useState([]);
+  //const [ categories2_name, setcategories2_name ] = useState([]);
 
   const [formData, setFormData] = useState({
     campaignClassification1: "",
     campaignClassification2: "",
-    campaignClassification1Name: '',
-    campaignClassification2Name: '',
     campaignName: "",
     campaignDescription: "",
     startDate: new Date().toISOString().split("T")[0],
@@ -25,6 +25,16 @@ export function CreateCampaign() {
     visibility: "private",
     tags: "",
   });
+
+  // useEffect(() => {
+  //   const name1 = categories1.map(category => category.name);
+  //   setcategories1_name(name1);
+  // }, [categories1]);
+
+  // useEffect(() => {
+  //   const name2 = categories2.map(category => category.name);
+  //   setcategories2_name(name2);
+  // }, [categories2]);
 
   const renderCategory1Options = () => {
     return categories1.map(category => (
@@ -50,7 +60,8 @@ export function CreateCampaign() {
       ...prev,
       [name]: value,
     // campaignClassification1이 변경되면 campaignClassification2를 초기화
-      ...(name === 'campaignClassification1' && { campaignClassification2: '' } && {campaignClassification1Name: category.name})
+      ...(name === 'campaignClassification1' && { campaignClassification2: ''/*,campaignClassification1Name: categories1_name*/}),
+      //...(name === 'campaignClassification2' && {campaignClassification2Name: categories2_name}),
     }));
 
   // campaignClassification1이 변경되었을 때 category2 데이터 로드
