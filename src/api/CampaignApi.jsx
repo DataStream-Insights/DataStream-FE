@@ -6,6 +6,7 @@ const api = axios.create({
   baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
+    "Accept": "application/json",
   },
 });
 
@@ -22,15 +23,33 @@ export const fetchCampaignData = async () => {
 
 export const createCampaignData = async (formData) => {
   try {
+      console.log("FormData received:", formData);
+      console.log("Categories1:", campaignClassification1Name);
+      console.log("Categories2:", campaignClassification2Name);
+      const selectedCategory1 = campaignClassification1.find(
+          category => category.id === formData.campaignClassification1
+      );
+
+      // 선택된 카테고리2의 이름 찾기
+      const selectedCategory2 = categories2.find(
+          category => category.id === formData.campaignClassification2
+      );
+
+      if (!selectedCategory1 || !selectedCategory2) {
+          throw new Error("카테고리를 모두 선택해주세요.");
+      }
+
     const campaignDTO = {
       campaignId: generateCampaignId(),
-      category1: formData.campaignClassification1,
-      category2: formData.campaignClassification2,
+      campaignClassification1: campaignClassification1Name,
+      campaignClassification2: campaignClassification2Name,
+      campaignDescription: formData.campaignDescription,
       campaignName: formData.campaignName,
       status: "DRAFT",
       startDate: formData.startDate,
       endDate: formData.endDate,
-      isPublic: formData.visibility,
+      endAfter: formData.endAfter,
+      visibility: formData.visibility,
       department: "테스트부서", // 임시값
       author: "테스트작성자", // 임시값
       createdDate: new Date().toISOString().split("T")[0],
@@ -92,28 +111,28 @@ const convertVisibilityToIsPublic = (visibility) => {
 };
 
 // 카테고리 데이터를 관리하는 커스텀 훅
-export const useCategoryData = () => {
-  const [categories, setCategories] = useState({
-    category1: [],
-    category2: []
-  });
-  const [error, setError] = useState(null);
+// export const useCategoryData = () => {
+//   const [categories, setCategories] = useState({
+//     category1: [],
+//     category2: []
+//   });
+//   const [error, setError] = useState(null);
   
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const category1Data = await categoryAPI.getCategory1List();
-        setCategories(prev => ({
-          ...prev,
-          category1: category1Data
-        }));
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-        setError(error);
-      }
-    };
-    fetchCategories();
-  }, []);
+//   useEffect(() => {
+//     const fetchCategories = async () => {
+//       try {
+//         const category1Data = await categoryAPI.getCategory1List();
+//         setCategories(prev => ({
+//           ...prev,
+//           category1: category1Data
+//         }));
+//       } catch (error) {
+//         console.error('Error fetching categories:', error);
+//         setError(error);
+//       }
+//     };
+//     fetchCategories();
+//   }, []);
 
-  return { categories, error };
-};
+//   return { categories, error };
+// };

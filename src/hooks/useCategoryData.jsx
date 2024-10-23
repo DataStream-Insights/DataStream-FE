@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { axioscategoryData } from '../api/CampaignApi.jsx';
+import {categoryAPI} from '../api/CampaignApi.jsx';
 
 const useCategoryData = () => {
     const [categories1, setcategories1] = useState([]);
@@ -9,7 +9,7 @@ const useCategoryData = () => {
     useEffect(() => {
         const loadCategory1Data = async () => {
             try {
-                const response = await axioscategoryData.getCategory1List();
+                const response = await categoryAPI.getCategory1List();
                 const parsedCategories1 = response.map(category => ({
                     id: category.id,
                     name: category.category1,
@@ -33,9 +33,9 @@ const useCategoryData = () => {
         }
 
         try {
-            const response = await axioscategoryData.getCategory2List(category1Id);
+            const response = await categoryAPI.getCategory2List(category1Id);
             console.log('Raw API Response:', response);
-            const parsedCategories2 = response.data.map(category => ({
+            const parsedCategories2 = response.map(category => ({
                 id: category.id,
                 name: category.category2,
             }));

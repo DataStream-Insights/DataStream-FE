@@ -6,57 +6,57 @@ import useCampaignData from "../hooks/useCampaginData";
 import * as S from "../styles/main/tableStyle";
 
 export function CampaignTable() {
-  const navigate = useNavigate();
-  const { data, isLoading } = useCampaignData();
+    const navigate = useNavigate();
+    const { data, isLoading } = useCampaignData();
 
     const handleCreateClick = () => {
         navigate("/campaignform"); // /campaignform으로 이동
     };
 
-  //Header
-  const columns = React.useMemo(
-    () => [
-      {
-        id: "selection",
-        Header: ({ getToggleAllRowsSelectedProps }) => {
-          const props = getToggleAllRowsSelectedProps();
-          const { key, ...restProps } = props;
-          return <S.Checkbox type="checkbox" {...restProps} />;
-        },
-        Cell: ({ row }) => {
-          const props = row.getToggleRowSelectedProps();
-          const { key, ...restProps } = props;
-          return <S.Checkbox type="checkbox" {...restProps} />;
-        },
-      },
-      { Header: "No", accessor: "id" },
-      { Header: "캠페인 ID", accessor: "campaignId" },
-      { Header: "분류1", accessor: "category1" },
-      { Header: "분류2", accessor: "category2" },
-      { Header: "캠페인명", accessor: "campaignName" },
-      { Header: "상태", accessor: "status" },
-      { Header: "시작 일자", accessor: "startDate" },
-      { Header: "종료 일자", accessor: "endDate" },
-      { Header: "공개 여부", accessor: "isPublic" },
-      { Header: "기안 부서", accessor: "department" },
-      { Header: "기안자", accessor: "author" },
-      { Header: "기안일자", accessor: "createdDate" },
-    ],
-    []
-  );
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns,
-        data: data || [], // 임시 데이터 사용
-      },
-      useRowSelect // useRowSelect 추가
+    //Header
+    const columns = React.useMemo(
+        () => [
+            {
+                id: "selection",
+                Header: ({ getToggleAllRowsSelectedProps }) => {
+                    const props = getToggleAllRowsSelectedProps();
+                    const { key, ...restProps } = props;
+                    return <S.Checkbox type="checkbox" {...restProps} />;
+                },
+                Cell: ({ row }) => {
+                    const props = row.getToggleRowSelectedProps();
+                    const { key, ...restProps } = props;
+                    return <S.Checkbox type="checkbox" {...restProps} />;
+                },
+            },
+            { Header: "No", accessor: "no" },
+            { Header: "캠페인 ID", accessor: "campaignId" },
+            { Header: "분류1", accessor: "campaignClassification1" },
+            { Header: "분류2", accessor: "campaignClassification2" },
+            { Header: "캠페인명", accessor: "campaignName" },
+            { Header: "상태", accessor: "status" },
+            { Header: "시작 일자", accessor: "startDate" },
+            { Header: "종료 일자", accessor: "endDate" },
+            { Header: "공개 여부", accessor: "visibility" },
+            { Header: "기안 부서", accessor: "department" },
+            { Header: "기안자", accessor: "author" },
+            { Header: "기안일자", accessor: "createdDate" },
+        ],
+        []
     );
 
-  if (isLoading) {
-    return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
-  }
+    const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
+        useTable(
+            {
+                columns,
+                data: data || [], // 임시 데이터 사용
+            },
+            useRowSelect // useRowSelect 추가
+        );
+
+    if (isLoading) {
+        return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
+    }
 
     return (
         <>
@@ -97,48 +97,48 @@ export function CampaignTable() {
                     </S.ButtonGroup>
                 </S.FilterRow>
             </S.HeaderContainer>
-      <S.TableContainer>
-        <S.StyledTable>
-          <S.THead>
-            {headerGroups.map((headerGroup) => {
-              const { key, ...headerGroupProps } =
-                headerGroup.getHeaderGroupProps();
-              return (
-                <S.Tr key={key} {...headerGroupProps}>
-                  {headerGroup.headers.map((column) => {
-                    const { key, ...columnProps } = column.getHeaderProps();
-                    return (
-                      <S.Th key={key} {...columnProps}>
-                        {column.render("Header")}
-                      </S.Th>
-                    );
-                  })}
-                </S.Tr>
-              );
-            })}
-          </S.THead>
-          <tbody>
-            {rows.map((row) => {
-              prepareRow(row);
-              const { key, ...rowProps } = row.getRowProps();
-              return (
-                <S.Tr key={key} {...rowProps}>
-                  {row.cells.map((cell) => {
-                    const { key, ...cellProps } = cell.getCellProps();
-                    return (
-                      <S.Td key={key} {...cellProps}>
-                        {cell.render("Cell")}
-                      </S.Td>
-                    );
-                  })}
-                </S.Tr>
-              );
-            })}
-          </tbody>
-        </S.StyledTable>
-      </S.TableContainer>
-    </>
-  );
+            <S.TableContainer>
+                <S.StyledTable>
+                    <S.THead>
+                        {headerGroups.map((headerGroup) => {
+                            const { key, ...headerGroupProps } =
+                                headerGroup.getHeaderGroupProps();
+                            return (
+                                <S.Tr key={key} {...headerGroupProps}>
+                                    {headerGroup.headers.map((column) => {
+                                        const { key, ...columnProps } = column.getHeaderProps();
+                                        return (
+                                            <S.Th key={key} {...columnProps}>
+                                                {column.render("Header")}
+                                            </S.Th>
+                                        );
+                                    })}
+                                </S.Tr>
+                            );
+                        })}
+                    </S.THead>
+                    <tbody>
+                        {rows.map((row) => {
+                            prepareRow(row);
+                            const { key, ...rowProps } = row.getRowProps();
+                            return (
+                                <S.Tr key={key} {...rowProps}>
+                                    {row.cells.map((cell) => {
+                                        const { key, ...cellProps } = cell.getCellProps();
+                                        return (
+                                            <S.Td key={key} {...cellProps}>
+                                                {cell.render("Cell")}
+                                            </S.Td>
+                                        );
+                                    })}
+                                </S.Tr>
+                            );
+                        })}
+                    </tbody>
+                </S.StyledTable>
+            </S.TableContainer>
+        </>
+    );
 }
 
 export default CampaignTable;

@@ -12,6 +12,8 @@ export function CreateCampaign() {
   const [formData, setFormData] = useState({
     campaignClassification1: "",
     campaignClassification2: "",
+    campaignClassification1Name: '',
+    campaignClassification2Name: '',
     campaignName: "",
     campaignDescription: "",
     startDate: new Date().toISOString().split("T")[0],
@@ -48,7 +50,7 @@ export function CreateCampaign() {
       ...prev,
       [name]: value,
     // campaignClassification1이 변경되면 campaignClassification2를 초기화
-      ...(name === 'campaignClassification1' && { campaignClassification2: '' })
+      ...(name === 'campaignClassification1' && { campaignClassification2: '' } && {campaignClassification1Name: category.name})
     }));
 
   // campaignClassification1이 변경되었을 때 category2 데이터 로드
