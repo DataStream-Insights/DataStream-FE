@@ -1,10 +1,14 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8080/api/campaigns';
+const Campaign_URL = 'http://localhost:8080/api/campaigns';
+const Category_URL = 'http://localhost:8080/api/categories';
 
-export const fetchCampaignData = async () => {
+
+
+// 캠페인 목록 뽑아오는
+export const axiosCampaignData = async () => {
     try {
-        const response = await axios.get(API_URL);
+        const response = await axios.get(Campaign_URL);
         return response.data; // json형식으로
     } catch (error) {
         console.error('Error fetching campaign data:', error);
@@ -12,29 +16,26 @@ export const fetchCampaignData = async () => {
     } 
 };
 
-const useCategoryData = () => {
-    const [categories, setCategories] = useState({
-        category1: [],
-        category2: []
-    });
-    
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch('/api/categories'); // 실제 API 엔드포인트로 변경 필요
-                if (!response.ok) {
-                    throw new Error('Failed to fetch categories');
-                }
-                const data = await response.json();
-                setCategories(data);
-            } catch (error) {
-                console.error('Error fetching campaign data:', error);
-                throw error;
-            }
-        };
+export const axioscategoryData = {
+    // Category1 목록 조회
+    async getCategory1List() {
+        try {
+            const response = await axios.get(Category_URL+'/category1');
+            return response.data;
+        } catch (error) {
+            console.error('Error in getCategory1List:', error);
+            throw error;
+        }
+    },
 
-        fetchCategories();
-    }, []);
-
-    return { categories, error};
+    // Category2 목록 조회
+    async getCategory2List(category1Id) {
+        try {
+            if (!category1Id) return [];
+            return await axios.get(Category_URL+`/category2/${category1Id}`);
+        } catch (error) {
+            console.error('Error in getCategory2List:', error);
+            throw error;
+        }
+    }
 };

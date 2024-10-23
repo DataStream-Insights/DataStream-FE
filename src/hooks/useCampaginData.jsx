@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchCampaignData } from '../api/CampaignApi.jsx';
+import { axiosCampaignData } from '../api/CampaignApi.jsx';
 
 const useCampaignData = () => {
     const [data, setData] = useState([]);
@@ -8,7 +8,7 @@ const useCampaignData = () => {
     useEffect(() => {
         const loadData = async () => {
             try {
-                const campaignData = await fetchCampaignData();
+                const campaignData = await axiosCampaignData();
                 setData(campaignData);
             } catch (error) {
                 console.error('Failed to fetch campaign data:', error);

@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import * as S from "../../styles/campaign/createCampaignStyle";
+import useCategoryData from '../../hooks/useCategoryData';
 
 export function CreateCampaign() {
+  const {categories1, categories2, loadCategory2Data} = useCategoryData(); 
+
   const [formData, setFormData] = useState({
     campaignClassification1: "",
     campaignClassification2: "",
@@ -17,12 +20,33 @@ export function CreateCampaign() {
     tags: "",
   });
 
-  const handleChange = (e) => {
+  const renderCategory1Options = () => {
+    return categories1.map(category => (
+      <option key={category.id} value={category.id}>
+        {category.name}
+      </option>
+    ));
+  };
+
+  const renderCategory2Options = () => {
+    return categories2.map(category => (
+      <option key={category.id} value={category.id}>
+        {category.name}
+      </option>
+    ));
+  };
+
+  const handleChange = async (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value,
-    });
+      ...(name === 'campaignClassification1' && { campaignClassification2: '' })
+    }));
+
+    if (name === 'campaignClassification1') {
+      await loadCategory2Data(value);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -46,15 +70,16 @@ export function CreateCampaign() {
                 onChange={handleChange}
               >
                 <option value="">[선택]</option>
-                <option value="categoryA">Category A</option>
+                {renderCategory1Options()}
               </select>
               <select
                 name="campaignClassification2"
                 value={formData.campaignClassification2}
                 onChange={handleChange}
-              >
+                disabled={!formData.campaignClassification1}
+                >
                 <option value="">[선택]</option>
-                <option value="subCategoryA">Subcategory A</option>
+                {renderCategory2Options()}
               </select>
             </S.SelectContainer>
           </S.FormGroup>
