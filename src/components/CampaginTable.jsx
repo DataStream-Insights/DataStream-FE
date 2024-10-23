@@ -9,9 +9,9 @@ export function CampaignTable() {
   const navigate = useNavigate();
   const { data, isLoading } = useCampaignData();
 
-  const handleCreateClick = () => {
-    navigate("/campaignform"); // /campaignform으로 이동
-  };
+    const handleCreateClick = () => {
+        navigate("/campaignform"); // /campaignform으로 이동
+    };
 
   //Header
   const columns = React.useMemo(
@@ -58,46 +58,45 @@ export function CampaignTable() {
     return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
   }
 
-  return (
-    <>
-      <S.HeaderContainer>
-        <S.FilterRow>
-          <S.DateRangeContainer>
-            <S.DateInput defaultValue="2024-10-15" />
-            <span>~</span>
-            <S.DateInput defaultValue="2024-10-15" />
-          </S.DateRangeContainer>
+    return (
+        <>
+            <S.HeaderContainer>
+                <S.FilterRow>
+                    <S.DateRangeContainer>
+                        <S.DateInput defaultValue="2024-10-15" />
+                        <span>~</span>
+                        <S.DateInput defaultValue="2024-10-15" />
+                    </S.DateRangeContainer>
 
-          <S.StateDropdown>
-            <option value="">전체</option>
-            <option value="plan">계획</option>
-            <option value="progress">진행중</option>
-            <option value="complete">완료</option>
-          </S.StateDropdown>
+                    <S.StateDropdown>
+                        <option value="">전체</option>
+                        <option value="plan">계획</option>
+                        <option value="progress">진행중</option>
+                        <option value="complete">완료</option>
+                    </S.StateDropdown>
 
-          <S.SearchInput placeholder="캠페인 정보" />
+                    <S.SearchInput placeholder="캠페인 정보" />
 
-          <S.CheckboxContainer>
-            <input type="checkbox" id="myRegistration" />
-            <label htmlFor="myRegistration">내가 등록한 캠페인</label>
-          </S.CheckboxContainer>
+                    <S.CheckboxContainer>
+                        <input type="checkbox" id="myRegistration" />
+                        <label htmlFor="myRegistration">내가 등록한 캠페인</label>
+                    </S.CheckboxContainer>
 
-          <S.ButtonGroup>
-            <S.SearchButton>
-              <Search size={16} />
-            </S.SearchButton>
-            {/* 생성하기 버튼 클릭 시 /campaignform 으로 이동 */}
-            <S.CreateButton onClick={handleCreateClick}>
-              <Plus size={16} />
-              Create
-            </S.CreateButton>
-            <S.SearchButton>
-              <MoreVertical size={16} />
-            </S.SearchButton>
-          </S.ButtonGroup>
-        </S.FilterRow>
-      </S.HeaderContainer>
-
+                    <S.ButtonGroup>
+                        <S.SearchButton>
+                            <Search size={16} />
+                        </S.SearchButton>
+                        {/* 생성하기 버튼 클릭 시 /campaignform 으로 이동 */}
+                        <S.CreateButton onClick={handleCreateClick}>
+                            <Plus size={16} />
+                            Create
+                        </S.CreateButton>
+                        <S.SearchButton>
+                            <MoreVertical size={16} />
+                        </S.SearchButton>
+                    </S.ButtonGroup>
+                </S.FilterRow>
+            </S.HeaderContainer>
       <S.TableContainer>
         <S.StyledTable>
           <S.THead>

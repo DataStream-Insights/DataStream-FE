@@ -28,5 +28,5 @@
 //         "tags": ["신제품", "가을"]
 //     }
 // ];
-
 // export default campaignData;
+

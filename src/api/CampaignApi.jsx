@@ -1,5 +1,5 @@
-// src/api/CampaignApi.jsx
 import axios from "axios";
+import { useState, useEffect } from "react";
 
 const api = axios.create({
   baseURL: "http://localhost:8080/api",
@@ -21,7 +21,6 @@ export const fetchCampaignData = async () => {
 export const createCampaignData = async (formData) => {
   try {
     // DTO 형식에 맞게 데이터 변환
-
     const campaignDTO = {
       campaignId: generateCampaignId(),
       category1: formData.campaignClassification1,
@@ -35,9 +34,7 @@ export const createCampaignData = async (formData) => {
       author: "테스트작성자", // 임시값
       createdDate: new Date().toISOString().split("T")[0],
     };
-
     console.log("Sending data to server:", campaignDTO); //데이터 확인용
-
     const response = await api.post("/campaigns", campaignDTO);
     return response.data;
   } catch (error) {
@@ -64,4 +61,30 @@ const convertVisibilityToIsPublic = (visibility) => {
     private: "PRIVATE",
   };
   return visibilityMap[visibility] || "PRIVATE";
+};
+
+export const useCategoryData = () => {
+  const [categories, setCategories] = useState({
+    category1: [],
+    category2: []
+  });
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await api.get('/categories'); // api 인스턴스 사용
+        if (!response.ok) {
+          throw new Error('Failed to fetch categories');
+        }
+        setCategories(response.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+        setError(error);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  return { categories, error };
 };
