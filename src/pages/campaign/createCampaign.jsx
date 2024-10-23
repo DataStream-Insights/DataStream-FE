@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import useCampaignData from "../../hooks/useCampaginData";
 import * as S from "../../styles/campaign/createCampaignStyle";
+import useCategoryData from '../../hooks/useCategoryData';
 
 export function CreateCampaign() {
+  const {categories1, categories2, loadCategory2Data} = useCategoryData(); 
   const navigate = useNavigate();
   const { createCampaign, isLoading, error } = useCampaignData();
+
   const [formData, setFormData] = useState({
     campaignClassification1: "",
     campaignClassification2: "",
@@ -21,15 +24,38 @@ export function CreateCampaign() {
     tags: "",
   });
 
-  // 입력 필드 변경 처리
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const renderCategory1Options = () => {
+    return categories1.map(category => (
+      <option key={category.id} value={category.id}>
+        {category.name}
+      </option>
+    ));
   };
 
+  const renderCategory2Options = () => {
+    return categories2.map(category => (
+      <option key={category.id} value={category.id}>
+        {category.name}
+      </option>
+    ));
+  };
+
+  const handleChange = async (e) => {
+    const { name, value } = e.target;
+  
+  // 이전 상태를 기반으로 새로운 상태 설정
+    setFormData(prev => ({
+      ...prev,
+      [name]: value,
+    // campaignClassification1이 변경되면 campaignClassification2를 초기화
+      ...(name === 'campaignClassification1' && { campaignClassification2: '' })
+    }));
+
+  // campaignClassification1이 변경되었을 때 category2 데이터 로드
+    if (name === 'campaignClassification1') {
+      await loadCategory2Data(value);
+  }
+};
   // 폼 제출 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -61,15 +87,16 @@ export function CreateCampaign() {
                 onChange={handleChange}
               >
                 <option value="">[선택]</option>
-                <option value="categoryA">Category A</option>
+                {renderCategory1Options()}
               </select>
               <select
                 name="campaignClassification2"
                 value={formData.campaignClassification2}
                 onChange={handleChange}
-              >
+                disabled={!formData.campaignClassification1}
+                >
                 <option value="">[선택]</option>
-                <option value="subCategoryA">Subcategory A</option>
+                {renderCategory2Options()}
               </select>
             </S.SelectContainer>
           </S.FormGroup>

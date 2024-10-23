@@ -1,11 +1,22 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchCampaignData, createCampaignData } from "../api/CampaignApi";
+import { fetchCampaignData, createCampaignData, axiosCampaignData } from "../api/CampaignApi";
 
 const useCampaignData = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const campaignData = await axiosCampaignData();
+                setData(campaignData);
+            } catch (error) {
+                console.error('Failed to fetch campaign data:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
   // 캠페인 목록 조회
   const loadCampaigns = useCallback(async () => {
     setIsLoading(true);
