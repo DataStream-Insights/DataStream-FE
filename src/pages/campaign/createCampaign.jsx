@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from "react";
-import "react-datepicker/dist/react-datepicker.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+import { useNavigate } from "react-router-dom";
+import useCampaignData from "../../hooks/useCampaginData";
 import * as S from "../../styles/campaign/createCampaignStyle";
 import useCategoryData from '../../hooks/useCategoryData';
 
 export function CreateCampaign() {
   const {categories1, categories2, loadCategory2Data} = useCategoryData(); 
+  const navigate = useNavigate();
+  const { createCampaign, isLoading, error } = useCampaignData();
 
   const [formData, setFormData] = useState({
     campaignClassification1: "",
     campaignClassification2: "",
     campaignName: "",
     campaignDescription: "",
-    startDate: "2024-10-15",
-    endDate: "2024-10-29",
+    startDate: new Date().toISOString().split("T")[0],
+    endDate: new Date(new Date().setDate(new Date().getDate() + 14))
+      .toISOString()
+      .split("T")[0],
     endAfter: 0,
     customerType: "individual",
     visibility: "private",
@@ -38,25 +42,38 @@ export function CreateCampaign() {
 
   const handleChange = async (e) => {
     const { name, value } = e.target;
+  
+  // 이전 상태를 기반으로 새로운 상태 설정
     setFormData(prev => ({
       ...prev,
       [name]: value,
+    // campaignClassification1이 변경되면 campaignClassification2를 초기화
       ...(name === 'campaignClassification1' && { campaignClassification2: '' })
     }));
 
+  // campaignClassification1이 변경되었을 때 category2 데이터 로드
     if (name === 'campaignClassification1') {
       await loadCategory2Data(value);
-    }
-  };
-
-  const handleSubmit = (e) => {
+  }
+};
+  // 폼 제출 처리
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Form Data Submitted:", formData);
+    try {
+      const result = await createCampaign(formData);
+      console.log("Campaign created successfully:", result);
+      alert("캠페인이 성공적으로 생성되었습니다.");
+      navigate("/campaigns"); // 목록 페이지로 이동
+    } catch (err) {
+      console.error("Failed to create campaign:", err);
+      alert("캠페인 생성에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   return (
     <S.FormContainer>
       <S.FormCard>
+        {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
         <form onSubmit={handleSubmit}>
           <S.SectionTitle>캠페인 기초 정보</S.SectionTitle>
 
@@ -183,7 +200,7 @@ export function CreateCampaign() {
                   checked={formData.visibility === "public"}
                   onChange={handleChange}
                 />
-                <span>부서공개</span>
+                <span>전체공개</span>
               </S.RadioButton>
             </S.RadioContainer>
           </S.FormGroup>
@@ -200,9 +217,13 @@ export function CreateCampaign() {
             />
           </S.FormGroup>
 
-          <S.SubmitButton type="submit">저장하기</S.SubmitButton>
+          <S.SubmitButton type="submit" disabled={isLoading}>
+            {isLoading ? "저장 중..." : "저장하기"}
+          </S.SubmitButton>
         </form>
       </S.FormCard>
     </S.FormContainer>
   );
 }
+
+export default CreateCampaign;
