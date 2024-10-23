@@ -24,38 +24,27 @@ export const fetchCampaignData = async () => {
 export const createCampaignData = async (formData) => {
   try {
       console.log("FormData received:", formData);
-      console.log("Categories1:", campaignClassification1Name);
-      console.log("Categories2:", campaignClassification2Name);
-      const selectedCategory1 = campaignClassification1.find(
-          category => category.id === formData.campaignClassification1
-      );
 
-      // 선택된 카테고리2의 이름 찾기
-      const selectedCategory2 = categories2.find(
-          category => category.id === formData.campaignClassification2
-      );
-
-      if (!selectedCategory1 || !selectedCategory2) {
-          throw new Error("카테고리를 모두 선택해주세요.");
-      }
-
-    const campaignDTO = {
+    const campaignDTO = JSON.stringify({
       campaignId: generateCampaignId(),
-      campaignClassification1: campaignClassification1Name,
-      campaignClassification2: campaignClassification2Name,
-      campaignDescription: formData.campaignDescription,
+      campaignClassification1: formData.campaignClassification1,
+      campaignClassification2: formData.campaignClassification2,
       campaignName: formData.campaignName,
+      customerType: formData.customerType,
       status: "DRAFT",
+      campaignDescription: formData.campaignDescription,
       startDate: formData.startDate,
       endDate: formData.endDate,
-      endAfter: formData.endAfter,
+      endAfter: parseInt(formData.endAfter),
       visibility: formData.visibility,
-      department: "테스트부서", // 임시값
-      author: "테스트작성자", // 임시값
+      department: 1, // 임시값
+      author: 1, // 임시값
       createdDate: new Date().toISOString().split("T")[0],
-    };
+      tags: formData.tags,
+    });
     console.log("Sending data to server:", campaignDTO);
-    const response = await api.post("/campaigns", campaignDTO);
+    console.log(api.post("/campaigns/add"));
+    const response = await api.post("/campaigns/add", campaignDTO);
     return response.data;
   } catch (error) {
     console.error("Error creating campaign:", error);
