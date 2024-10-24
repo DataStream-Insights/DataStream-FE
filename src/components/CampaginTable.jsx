@@ -1,5 +1,5 @@
 import React from "react";
-import { useTable, useRowSelect } from "react-table"; // react-table은 그대로 사용
+import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useCampaignData from "../hooks/useCampaginData";
@@ -10,7 +10,8 @@ export function CampaignTable() {
   const { data, isLoading } = useCampaignData();
 
   const handleCreateClick = () => {
-    navigate("/campaignform"); // /campaignform으로 이동
+    // /campaignform으로 이동
+    navigate("/campaignform");
   };
 
   //Header
@@ -56,9 +57,9 @@ export function CampaignTable() {
     useTable(
       {
         columns,
-        data: data || [], // 임시 데이터 사용
+        data: data || [],
       },
-      useRowSelect // useRowSelect 추가
+      useRowSelect
     );
 
   if (isLoading) {

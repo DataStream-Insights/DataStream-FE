@@ -8,8 +8,6 @@ export function CreateCampaign() {
   const { categories1, categories2, loadCategory2Data } = useCategoryData();
   const navigate = useNavigate();
   const { createCampaign, isLoading, error } = useCampaignData();
-  //const [ categories1_name, setcategories1_name ] = useState([]);
-  //const [ categories2_name, setcategories2_name ] = useState([]);
 
   const [formData, setFormData] = useState({
     campaignClassification1: "",
@@ -25,16 +23,6 @@ export function CreateCampaign() {
     visibility: "private",
     tags: "",
   });
-
-  // useEffect(() => {
-  //   const name1 = categories1.map(category => category.name);
-  //   setcategories1_name(name1);
-  // }, [categories1]);
-
-  // useEffect(() => {
-  //   const name2 = categories2.map(category => category.name);
-  //   setcategories2_name(name2);
-  // }, [categories2]);
 
   const renderCategory1Options = () => {
     return categories1.map((category) => (
@@ -61,10 +49,8 @@ export function CreateCampaign() {
       [name]: value,
       // campaignClassification1이 변경되면 campaignClassification2를 초기화
       ...(name === "campaignClassification1" && {
-        campaignClassification2:
-          "" /*,campaignClassification1Name: categories1_name*/,
+        campaignClassification2: "",
       }),
-      //...(name === 'campaignClassification2' && {campaignClassification2Name: categories2_name}),
     }));
 
     // campaignClassification1이 변경되었을 때 category2 데이터 로드
@@ -72,6 +58,7 @@ export function CreateCampaign() {
       await loadCategory2Data(value);
     }
   };
+
   // 폼 제출 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -85,20 +72,12 @@ export function CreateCampaign() {
     } catch (err) {
       console.error("Failed to create campaign:", err);
 
-      // 사용자에게 더 자세한 에러 메시지 제공
+      // 실패
       let errorMessage = "캠페인 생성에 실패했습니다.";
       if (err.message) {
         errorMessage += ` (${err.message})`;
       }
       alert(errorMessage);
-
-      // 에러가 발생했지만 데이터가 저장된 경우를 위한 추가 처리
-      const confirmNavigation = window.confirm(
-        "오류가 발생했지만 데이터가 저장되었을 수 있습니다. 목록 페이지로 이동하시겠습니까?"
-      );
-      if (confirmNavigation) {
-        navigate("/");
-      }
     }
   };
 
@@ -109,7 +88,6 @@ export function CreateCampaign() {
         <form onSubmit={handleSubmit}>
           <S.SectionTitle>캠페인 기초 정보</S.SectionTitle>
 
-          {/* Campaign Classification */}
           <S.FormGroup>
             <S.Label>캠페인 분류</S.Label>
             <S.SelectContainer>
@@ -133,7 +111,6 @@ export function CreateCampaign() {
             </S.SelectContainer>
           </S.FormGroup>
 
-          {/* Campaign Name */}
           <S.FormGroup>
             <S.Label>캠페인명</S.Label>
             <S.Input
@@ -144,7 +121,6 @@ export function CreateCampaign() {
             />
           </S.FormGroup>
 
-          {/* Campaign Description */}
           <S.FormGroup>
             <S.Label>캠페인 설명</S.Label>
             <S.TextArea
@@ -154,7 +130,6 @@ export function CreateCampaign() {
             />
           </S.FormGroup>
 
-          {/* Date Range */}
           <S.FormGroup>
             <S.Label>수행 일자</S.Label>
             <S.DateContainer>
@@ -187,7 +162,6 @@ export function CreateCampaign() {
             </S.EndAfterContainer>
           </S.FormGroup>
 
-          {/* Customer Type */}
           <S.FormGroup>
             <S.Label>고객군 유형</S.Label>
             <S.CustomerTypeSelect
@@ -200,7 +174,6 @@ export function CreateCampaign() {
             </S.CustomerTypeSelect>
           </S.FormGroup>
 
-          {/* Visibility */}
           <S.FormGroup>
             <S.Label>공개 설정</S.Label>
             <S.RadioContainer>
@@ -237,7 +210,6 @@ export function CreateCampaign() {
             </S.RadioContainer>
           </S.FormGroup>
 
-          {/* Tags */}
           <S.FormGroup>
             <S.Label>태그</S.Label>
             <S.Input
