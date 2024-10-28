@@ -4,6 +4,8 @@ import * as S from "../styles/format/formatDetailStyle";
 
 const LogFormatDetail = ({ format, onClose, isNew = false }) => {
   const [fields, setFields] = useState(
+    //생성하기 누르면 - 빈 폼 나오도록 -> 추후 수정 필요
+    //샘플 데이터
     isNew
       ? []
       : [
@@ -15,36 +17,60 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
             value:
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...",
             decode: false,
-            split: false,
+            split: "false",
           },
         ]
   );
 
+  //초기값 세팅
   const [fileFormat, setFileFormat] = useState("JSONFile");
   const [fileContent, setFileContent] = useState("");
   const [fileName, setFileName] = useState("");
   const fileInputRef = useRef(null);
 
+  // formData: 포맷의 이름과 설명을 관리하는 state
+  // name: 포맷의 이름 (화면 하단 이름 입력 필드)
+  // description: 포맷의 설명 (화면 하단 설명 입력 필드)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
   });
 
+  //파일 업로드 시 실행되는 이벤트 핸들러 함수
   const handleFileChange = (event) => {
+    // event.target.files[0]: 선택된 파일 중 첫 번째 파일을 가져옴
     const file = event.target.files[0];
+
+    // 선택된 파일이 존재하고, 파일 타입이 text/plain(txt 파일)인 경우에만 처리
     if (file && file.type === "text/plain") {
+      // 파일명을 state에 저장
       setFileName(file.name);
+
+      // FileReader 객체 생성 (파일 내용을 읽기 위한 웹 API)
       const reader = new FileReader();
+
+      // 파일 읽기가 완료되면 실행되는 콜백 함수
       reader.onload = (e) => {
+        // 읽은 파일의 내용을 state에 저장
         setFileContent(e.target.result);
       };
+
+      // 파일을 텍스트로 읽기 시작
       reader.readAsText(file);
     }
   };
 
+  // 체크박스 상태 변경을 처리하는 함수
+  // index: 수정할 필드의 배열 인덱스
+  // field: 수정할 속성 이름 (decode 또는 split)
   const handleCheckboxChange = (index, field) => {
+    // 기존 fields 배열을 복사
     const newFields = [...fields];
+
+    // 해당 인덱스의 필드에서 지정된 속성값을 반전 (true -> false 또는 false -> true)
     newFields[index][field] = !newFields[index][field];
+
+    // 변경된 배열로 상태 업데이트
     setFields(newFields);
   };
 
@@ -53,11 +79,14 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
     setFields([...fields, { name: "", type: "STRING", required: false }]);
   };
 
-  //필드 삭제 기능
+  // 특정 인덱스의 필드를 삭제하는 함수
+  // index: 삭제할 필드의 인덱스
   const handleDeleteField = (index) => {
+    // filter 메서드를 사용하여 삭제할 인덱스를 제외한 새로운 배열 생성
+    // (_: 현재 요소 값 (사용하지 않음), i: 현재 인덱스)
+    // i !== index: 현재 인덱스가 삭제하려는 인덱스와 다른 요소만 남김
     setFields(fields.filter((_, i) => i !== index));
   };
-
   return (
     <S.Container>
       <S.Card>
@@ -140,6 +169,16 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
         {/* 필드 테이블 */}
         <S.TableContainer>
           <S.Table>
+            <colgroup>
+              <col style={{ width: "15%" }} /> {/* Field 명 */}
+              <col style={{ width: "17%" }} /> {/* Item 표시 명 */}
+              <col style={{ width: "15%" }} /> {/* Item 설명 */}
+              <col style={{ width: "12%" }} /> {/* Item 타입 */}
+              <col style={{ width: "15%" }} /> {/* Item 컨텐츠 예시 */}
+              <col style={{ width: "7%" }} /> {/* 디코드여부 */}
+              <col style={{ width: "10%" }} /> {/* Log 분할여부 */}
+              <col style={{ width: "9%" }} /> {/* 액션 버튼 */}
+            </colgroup>
             <S.Thead>
               <tr>
                 <S.Th>Field 명</S.Th>
@@ -149,7 +188,7 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
                 <S.Th>Item 컨텐츠 예시</S.Th>
                 <S.Th style={{ textAlign: "center" }}>디코드여부</S.Th>
                 <S.Th style={{ textAlign: "center" }}>Log 분할여부</S.Th>
-                <S.Th style={{ width: "100px" }}></S.Th>
+                <S.Th></S.Th>
               </tr>
             </S.Thead>
             <tbody>
@@ -181,10 +220,7 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
                     />
                   </S.Td>
                   <S.Td style={{ textAlign: "center" }}>
-                    <S.Checkbox
-                      checked={field.split}
-                      onChange={() => handleCheckboxChange(index, "split")}
-                    />
+                    <S.TableText>{field.split}</S.TableText>
                   </S.Td>
                   <S.Td>
                     <div
@@ -215,8 +251,8 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
               <S.Label>이름</S.Label>
               <S.Input
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
+                onChange={
+                  (e) => setFormData({ ...formData, name: e.target.value }) // 이름 입력값 업데이트
                 }
                 placeholder="Log Format A"
               />
@@ -225,8 +261,9 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
               <S.Label>설명</S.Label>
               <S.Input
                 value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
+                onChange={
+                  (e) =>
+                    setFormData({ ...formData, description: e.target.value }) // 설명 입력값 업데이트
                 }
                 placeholder="Log Format A"
               />
