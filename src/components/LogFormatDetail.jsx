@@ -1,26 +1,38 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import * as S from "../styles/format/formatDetailStyle";
 
 const LogFormatDetail = ({ format, onClose, isNew = false }) => {
-  const [fields, setFields] = useState(
-    //생성하기 누르면 - 빈 폼 나오도록 -> 추후 수정 필요
-    //샘플 데이터
-    isNew
-      ? []
-      : [
-          {
-            name: "HTTP_USER_AGENT",
-            displayName: "HTTP_USER_AGENT",
-            description: "사용자 브라우저 정보",
-            type: "STRING",
-            value:
-              "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...",
-            decode: false,
-            split: "false",
-          },
-        ]
-  );
+  const SAMPLE_DATA = [
+    {
+      name: "HTTP_USER_AGENT",
+      displayName: "HTTP_USER_AGENT",
+      description: "사용자 브라우저 정보",
+      type: "STRING",
+      value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...",
+      decode: false,
+      split: "false",
+    },
+  ];
+
+  const [fields, setFields] = useState(() => {
+    if (isNew) {
+      return []; // 생성하기로 진입했을 때는 빈 배열
+    }
+    if (format) {
+      return format.fields || SAMPLE_DATA; // 선택된 format이 있으면 그 데이터 사용
+    }
+    return SAMPLE_DATA; // 기본값
+  });
+
+  // format이나 isNew가 변경될 때 fields 업데이트
+  useEffect(() => {
+    if (isNew) {
+      setFields([]); // 생성하기 모드면 빈 배열로 초기화
+    } else if (format) {
+      setFields(format.fields || SAMPLE_DATA); // 선택된 format 데이터로 설정
+    }
+  }, [format, isNew]);
 
   //초기값 세팅
   const [fileFormat, setFileFormat] = useState("JSONFile");
