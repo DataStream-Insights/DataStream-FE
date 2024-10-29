@@ -182,14 +182,14 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
         <S.TableContainer>
           <S.Table>
             <colgroup>
-              <col style={{ width: "15%" }} /> {/* Field 명 */}
-              <col style={{ width: "17%" }} /> {/* Item 표시 명 */}
-              <col style={{ width: "15%" }} /> {/* Item 설명 */}
-              <col style={{ width: "12%" }} /> {/* Item 타입 */}
-              <col style={{ width: "15%" }} /> {/* Item 컨텐츠 예시 */}
-              <col style={{ width: "7%" }} /> {/* 디코드여부 */}
-              <col style={{ width: "10%" }} /> {/* Log 분할여부 */}
-              <col style={{ width: "9%" }} /> {/* 액션 버튼 */}
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "17%" }} />
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "12%" }} />
+              <col style={{ width: "15%" }} />
+              <col style={{ width: "7%" }} />
+              <col style={{ width: "10%" }} />
+              <col style={{ width: "9%" }} />
             </colgroup>
             <S.Thead>
               <tr>

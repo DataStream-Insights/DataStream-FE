@@ -124,3 +124,58 @@ export const CreateButton = styled.button`
     height: 16px;
   }
 `;
+/**
+ * 페이지네이션 컨테이너
+ * - 페이지 번호와 이전/다음 버튼을 중앙 정렬로 배치
+ * - 요소들 사이에 일정한 간격 유지
+ */
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+`;
+
+/**
+ * 이전/다음 페이지 버튼
+ * - 테두리와 호버 효과 포함
+ * - 비활성화 상태일 때 시각적 피드백 제공
+ */
+export const PaginationButton = styled.button`
+  padding: 8px;
+  border: 1px solid #e9ecef;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #f8f9fa;
+  }
+`;
+
+/**
+ * 페이지 번호 버튼
+ * - $isActive prop에 따라 활성/비활성 상태 스타일 변경
+ * - 호버 효과 포함
+ */
+export const PageNumber = styled.button`
+  padding: 8px 12px;
+  border: 1px solid #e9ecef;
+  background-color: ${(props) => (props.$isActive ? "#4263eb" : "white")};
+  color: ${(props) => (props.$isActive ? "white" : "#495057")};
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: ${(props) => (props.$isActive ? "#4263eb" : "#f8f9fa")};
+  }
+`;
