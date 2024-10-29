@@ -2,8 +2,18 @@ import React, { useState } from 'react';
 import { Search, X } from 'lucide-react';
 import { useTable } from 'react-table';
 import * as F from '../styles/filter/filterStyle';
+import { CustomTablePagination } from '../styles/filter/filterPagenationStyle'
+
+
+import FirstPageRoundedIcon from '@mui/icons-material/FirstPageRounded';
+import LastPageRoundedIcon from '@mui/icons-material/LastPageRounded';
+import ChevronLeftRoundedIcon from '@mui/icons-material/ChevronLeftRounded';
+import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded';
 const LogFilter = () => {
     const [searchTerm, setSearchTerm] = useState('');
+    const [page, setPage] = React.useState(0);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+
 
     //샘플 데이터
     const data = React.useMemo(
@@ -21,6 +31,33 @@ const LogFilter = () => {
             { id: 'vst_dywk', name: '방문요일코드', type: 'STRING' },
             { id: 'vst_ipadr', name: '방문IP주소', type: 'STRING' },
             { id: 'vst_srno', name: '방문일련번호', type: 'NUMERIC' },
+            { id: 'vst_dtm_t', name: '방문일시시간간(초)', type: 'NUMERIC' },
+            { id: 'vst_dywk', name: '방문요일코드', type: 'STRING' },
+            { id: 'vst_ipadr', name: '방문IP주소', type: 'STRING' },
+            { id: 'vst_srno', name: '방문일련번호', type: 'NUMERIC' },
+            { id: 'vst_dtm_t', name: '방문일시시간간(초)', type: 'NUMERIC' },
+            { id: 'vst_dywk', name: '방문요일코드', type: 'STRING' },
+            { id: 'vst_ipadr', name: '방문IP주소', type: 'STRING' },
+            { id: 'vst_srno', name: '방문일련번호', type: 'NUMERIC' },
+            { id: 'vst_dtm_t', name: '방문일시시간간(초)', type: 'NUMERIC' },
+            { id: 'vst_dywk', name: '방문요일코드', type: 'STRING' },
+            { id: 'vst_ipadr', name: '방문IP주소', type: 'STRING' },
+            { id: 'vst_srno', name: '방문일련번호', type: 'NUMERIC' },
+            { id: 'vst_dtm_t', name: '방문일시시간간(초)', type: 'NUMERIC' },
+            { id: 'vst_dywk', name: '방문요일코드', type: 'STRING' },
+            { id: 'vst_ipadr', name: '방문IP주소', type: 'STRING' },
+            { id: 'vst_srno', name: '방문일련번호', type: 'NUMERIC' },
+            { id: 'vst_dtm_t', name: '방문일시시간간(초)', type: 'NUMERIC' },
+            { id: 'vst_dywk', name: '방문요일코드', type: 'STRING' },
+            { id: 'vst_ipadr', name: '방문IP주소', type: 'STRING' },
+            { id: 'vst_srno', name: '방문일련번호', type: 'NUMERIC' },
+            { id: 'sitsw', name: '내부검색어', type: 'STRING' },
+            { id: 'ssn_evt_o', name: '세션이벤트발생시간', type: 'NUMERIC' },
+            { id: 'ssn_id', name: '세션식별번호', type: 'STRING' },
+            { id: 'st_page_yn', name: '시작페이지여부', type: 'STRING' },
+            { id: 'tag_id', name: 'tag_id', type: 'STRING' },
+            { id: 'usr_evt_oc', name: '사용자별이벤트발생', type: 'NUMERIC' },
+            { id: 'vcst_uid', name: '방문고객단일식별자', type: 'STRING' },
         ],
         []
     );
@@ -34,6 +71,14 @@ const LogFilter = () => {
         ],
         []
     );
+    const filteredData = React.useMemo(
+        () => data.filter(item =>
+            item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            item.type.toLowerCase().includes(searchTerm.toLowerCase())
+        ),
+        [data, searchTerm]
+    );
 
     const {
         getTableProps,
@@ -43,12 +88,27 @@ const LogFilter = () => {
         prepareRow,
     } = useTable({
         columns,
-        data: data.filter(item =>
-            item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            item.type.toLowerCase().includes(searchTerm.toLowerCase())
-        ),
+        data: filteredData,
+
     });
+
+    const paginatedRows = rows.slice(
+        page * rowsPerPage,
+        page * rowsPerPage + rowsPerPage
+    );
+
+    // const emptyRows =
+    //     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+
+    const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+    };
+
+    const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(parseInt(event.target.value, 10));
+        setPage(0);
+    };
+
 
     return (
         <F.Container>
@@ -75,7 +135,7 @@ const LogFilter = () => {
                             ))}
                         </F.THead>
                         <tbody {...getTableBodyProps()}>
-                            {rows.map(row => {
+                            {paginatedRows.map(row => {
                                 prepareRow(row);
                                 return (
                                     <F.Tr {...row.getRowProps()}>
@@ -88,6 +148,34 @@ const LogFilter = () => {
                                 );
                             })}
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <CustomTablePagination
+                                    rowsPerPageOptions={[5, 10, 20, { label: 'All', value: filteredData.length }]}
+                                    colSpan={3}
+                                    count={rows.length}
+                                    rowsPerPage={rowsPerPage}
+                                    page={page}
+                                    slotProps={{
+                                        select: {
+                                            'aria-label': 'rows per page',
+                                        },
+                                        actions: {
+                                            showFirstButton: true,
+                                            showLastButton: true,
+                                            slots: {
+                                                firstPageIcon: FirstPageRoundedIcon,
+                                                lastPageIcon: LastPageRoundedIcon,
+                                                nextPageIcon: ChevronRightRoundedIcon,
+                                                backPageIcon: ChevronLeftRoundedIcon,
+                                            },
+                                        },
+                                    }}
+                                    onPageChange={handleChangePage}
+                                    onRowsPerPageChange={handleChangeRowsPerPage}
+                                />
+                            </tr>
+                        </tfoot>
                     </F.StyledTable>
                 </F.TableContainer>
             </F.LeftSection>
@@ -98,12 +186,12 @@ const LogFilter = () => {
 
                     <F.FilterTag>
                         <F.Tag className="and">And</F.Tag>
-                        <button style={{  background: 'none', border: 'none', cursor: 'pointer' }}>
+                        <button style={{ background: 'none', border: 'none', cursor: 'pointer' }}>
                             <X size={16} />
                         </button>
                         <F.Tag className="id">아이템ID</F.Tag>
                         <F.Tag className="equals">Equals</F.Tag>
-                        
+
                     </F.FilterTag>
 
                     <div style={{ height: '500px' }} />
