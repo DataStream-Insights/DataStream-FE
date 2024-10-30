@@ -80,22 +80,6 @@ export const DropdownContent = styled.div`
   z-index: 1000;
 `;
 
-export const OptionGroup = styled.div`
-  padding: 8px 0;
-  border-bottom: 1px solid #dee2e6;
-
-  &:last-child {
-    border-bottom: none;
-  }
-`;
-
-export const OptionTitle = styled.div`
-  padding: 4px 12px;
-  font-size: 12px;
-  color: #868e96;
-  font-weight: 500;
-`;
-
 export const Option = styled.div`
   padding: 8px 12px;
   cursor: pointer;
@@ -105,21 +89,18 @@ export const Option = styled.div`
   }
 `;
 
-// 옵션 컨테이너 스타일 추가
 export const OptionContainer = styled.div`
   display: flex;
   gap: 8px;
   flex: 1;
 `;
 
-// 드롭다운 컨테이너 수정
 export const DropdownContainer = styled.div`
   position: relative;
   flex: 1;
   min-width: 120px;
 `;
 
-// 태그 스타일 수정
 export const Tag = styled.span`
   padding: 6px 12px;
   border-radius: 4px;
@@ -148,5 +129,28 @@ export const Tag = styled.span`
   &.actionOption {
     background: #fff3bf;
     color: #994500;
+  }
+`;
+
+export const CustomInputContainer = styled.div`
+  position: relative;
+  flex: 1;
+  min-width: 120px;
+
+  form {
+    margin: 0;
+  }
+`;
+
+export const CustomInput = styled.input`
+  width: 100%;
+  padding: 6px 12px;
+  border: 1px solid #e9ecef;
+  border-radius: 4px;
+  font-size: 14px;
+
+  &:focus {
+    outline: none;
+    border-color: #4dabf7;
   }
 `;
