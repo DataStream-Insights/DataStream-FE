@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import {categoryAPI} from '../api/CampaignApi.jsx';
+import {categoryAPI} from '../../api/CampaignApi.jsx';
 
 const useCategoryData = () => {
     const [categories1, setcategories1] = useState([]);

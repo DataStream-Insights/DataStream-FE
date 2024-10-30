@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import useCampaignData from "../../hooks/useCampaginData";
+import useCampaignData from "../../hooks/campaign/useCampaginData";
 import * as S from "../../styles/campaign/createCampaignStyle";
-import useCategoryData from "../../hooks/useCategoryData";
+import useCategoryData from "../../hooks/campaign/useCategoryData";
 
 export function CreateCampaign() {
   const { categories1, categories2, loadCategory2Data } = useCategoryData();

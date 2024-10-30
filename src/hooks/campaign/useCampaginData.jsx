@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchCampaignData, createCampaignData } from "../api/CampaignApi";
+import { fetchCampaignData, createCampaignData } from "../../api/CampaignApi";
 
 const useCampaignData = () => {
     const [data, setData] = useState([]);
