@@ -2,7 +2,7 @@ import React from "react";
 import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import useCampaignData from "../hooks/useCampaginData";
+import useCampaignData from "../hooks/campaign/useCampaginData";
 import * as S from "../styles/main/tableStyle";
 
 export function CampaignTable() {

@@ -12,21 +12,26 @@ const SamplemainPage =() =>{
                 <button
                     onClick={() => navigate('/campaignmanagement')}
                     className="px-16 py-8 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >campaignmanagement page</button>
+                >/campaignmanagement page</button>
                 <br />
                 <br />
                 <br />
                 <button
                     onClick={() => navigate('/format')}
                     className="px-16 py-8 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >format page</button>
+                >/format page</button>
                 <br />
                 <br />
                 <br />
                 <button
                     onClick={() => navigate('/filter')}
                     className="px-16 py-8 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >filter page</button>
+                >/filter page</button>
+
+                <button
+                    onClick={() => navigate('/filtermanagement')}
+                    className="px-16 py-8 bg-blue-500 text-white rounded hover:bg-blue-600"
+                >/filtermanagement</button>
                 
             </div>
         </div>
