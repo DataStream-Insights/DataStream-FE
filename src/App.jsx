@@ -1,12 +1,15 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { CreateCampaign } from "./pages/campaign/createCampaign";
-import { CampaignManagementPage } from "./pages/main/CampaignManagementPage";
+import { CampaignManagementPage } from "./pages/campaign/CampaignManagementPage";
 import LogFormatPage from "./pages/format/format";
 import LogFilter from "./components/LogFilter";
+import SamplemainPage  from "./pages/main/samplemain";
 
 export function App() {
   const router = createBrowserRouter([
-    { path: "/", element: <CampaignManagementPage /> },
+    { path: "/", element: <SamplemainPage /> },
+
+    { path: "/campaignmanagement", element: <CampaignManagementPage /> },
 
     { path: "/campaignform", element: <CreateCampaign /> }, //캠페인 생성하기
 
