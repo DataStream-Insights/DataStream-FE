@@ -40,8 +40,6 @@ export function FilterManagement() {
             { Header: "No", accessor: "no" },
             { Header: "필터 ID", accessor: "filterId" },
             { Header: "필터링명", accessor: "campaignName" },
-            { Header: "공개 여부", accessor: "visibility" },
-            { Header: "기안 부서", accessor: "department" },
             { Header: "기안자", accessor: "author" },
             { Header: "기안일자", accessor: "createdDate" },
         ],
@@ -71,14 +69,14 @@ export function FilterManagement() {
                         <S.DateInput defaultValue="2024-10-15" />
                     </S.DateRangeContainer>
 
-                    <S.StateDropdown>
+                    {/* <S.StateDropdown>
                         <option value="">전체</option>
                         <option value="plan">계획</option>
                         <option value="progress">진행중</option>
                         <option value="complete">완료</option>
-                    </S.StateDropdown>
+                    </S.StateDropdown> */}
 
-                    <S.SearchInput placeholder="캠페인 정보" />
+                    <S.SearchInput placeholder="필터링명 검색" />
 
                     {/* <S.CheckboxContainer>
                         <input type="checkbox" id="myRegistration" />
