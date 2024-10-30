@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SamplemainPage =() =>{
+const SamplemainPage = () => {
     const navigate = useNavigate();
 
     return (
@@ -24,15 +24,10 @@ const SamplemainPage =() =>{
                 <br />
                 <br />
                 <button
-                    onClick={() => navigate('/filter')}
-                    className="px-16 py-8 bg-blue-500 text-white rounded hover:bg-blue-600"
-                >/filter page</button>
-
-                <button
                     onClick={() => navigate('/filtermanagement')}
                     className="px-16 py-8 bg-blue-500 text-white rounded hover:bg-blue-600"
                 >/filtermanagement</button>
-                
+
             </div>
         </div>
     );
