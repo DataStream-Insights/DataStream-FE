@@ -70,12 +70,6 @@ export function CampaignTable() {
     <>
       <S.HeaderContainer>
         <S.FilterRow>
-          <S.DateRangeContainer>
-            <S.DateInput defaultValue="2024-10-15" />
-            <span>~</span>
-            <S.DateInput defaultValue="2024-10-15" />
-          </S.DateRangeContainer>
-
           <S.StateDropdown>
             <option value="">전체</option>
             <option value="plan">계획</option>

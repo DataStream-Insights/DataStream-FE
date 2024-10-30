@@ -13,19 +13,6 @@ export const FilterRow = styled.div`
   margin-bottom: 16px;
 `;
 
-export const DateRangeContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-`;
-
-export const DateInput = styled.input.attrs({ type: "date" })`
-  padding: 8px;
-  border: 1px solid #e1e1e1;
-  border-radius: 4px;
-  font-size: 14px;
-`;
-
 export const StateDropdown = styled.select`
   padding: 8px;
   border: 1px solid #e1e1e1;
