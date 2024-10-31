@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { fetchLogItems, createLogFilter } from "../../api/FilterApi";
 
 // LogFilter 화면에서 사용할 Hook
-const useLogFilter = () => {
+const useFilterCreate = () => {
   const [items, setItems] = useState([]);
   const [filterOptions, setFilterOptions] = useState({
     idOptions: [],
@@ -32,11 +32,14 @@ const useLogFilter = () => {
     }
   }, []);
 
+  //1
   const loadItems = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
+      //2. fetchLogItems로 백에서 목록 받아옴
       const data = await fetchLogItems();
+      //3. 데이터 items에 저장
       setItems(data);
     } catch (error) {
       console.error("Failed to fetch items:", error);
@@ -68,6 +71,7 @@ const useLogFilter = () => {
     }));
   };
 
+  //1. useFilterCreate 훅 마운트 될 때 loadItems 실행
   useEffect(() => {
     loadItems();
     loadOptions();
@@ -84,4 +88,4 @@ const useLogFilter = () => {
   };
 };
 
-export default useLogFilter;
+export default useFilterCreate;

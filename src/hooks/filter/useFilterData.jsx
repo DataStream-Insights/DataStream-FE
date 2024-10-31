@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { fetchFilters } from "../../api/FilterApi";
 
 // FilterManagement 화면에서 사용할 Hook
-const useFilter = () => {
+const useFilterData = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -32,4 +32,4 @@ const useFilter = () => {
   };
 };
 
-export default useFilter;
+export default useFilterData;

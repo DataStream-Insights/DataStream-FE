@@ -8,16 +8,17 @@ import LastPageRoundedIcon from "@mui/icons-material/LastPageRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import BehaviorFilter from "./BehaviorFilter";
-import useLogFilter from "../hooks/filter/useFilterCreate";
+import useFilterCreate from "../hooks/filter/useFilterCreate";
 
 const LogFilter = () => {
+  //hook에서 items 받아옴
   const { items, filterSettings, updateFilterSettings, saveFilter } =
-    useLogFilter();
+    useFilterCreate();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const data = React.useMemo(() => items, [items]);
+  const data = items;
 
   const columns = React.useMemo(
     () => [

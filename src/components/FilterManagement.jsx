@@ -2,12 +2,12 @@ import React from "react";
 import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import useFilter from "../hooks/filter/useFilterData";
+import useFilterData from "../hooks/filter/useFilterData";
 import * as S from "../styles/main/tableStyle";
 
 export function FilterManagement() {
   const navigate = useNavigate();
-  const { data, isLoading } = useFilter(); // useFilter hook 사용
+  const { data, isLoading } = useFilterData(); // useFilter hook 사용
 
   const handleCreateClick = () => {
     navigate("/filter");
