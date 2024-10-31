@@ -1,104 +1,76 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import * as S from "../styles/format/formatDetailStyle";
+import useLogFormat from "../hooks/format/useFormatData";
 
-const LogFormatDetail = ({ format, onClose, isNew = false }) => {
-  const SAMPLE_DATA = [
-    {
-      name: "HTTP_USER_AGENT",
-      displayName: "HTTP_USER_AGENT",
-      description: "사용자 브라우저 정보",
-      type: "STRING",
-      value: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36...",
-      decode: false,
-      split: "false",
-    },
-  ];
+const LogFormatDetail = ({ onClose, isNew = false }) => {
+  const {
+    logFiles,
+    fields,
+    selectedFileId,
+    isLoading,
+    selectLogFile,
+    createFormat,
+    updateField,
+  } = useLogFormat();
 
-  const [fields, setFields] = useState(() => {
-    if (isNew) {
-      return []; // 생성하기로 진입했을 때는 빈 배열
-    }
-    if (format) {
-      return format.fields || SAMPLE_DATA; // 선택된 format이 있으면 그 데이터 사용
-    }
-    return SAMPLE_DATA; // 기본값
-  });
-
-  // format이나 isNew가 변경될 때 fields 업데이트
-  useEffect(() => {
-    if (isNew) {
-      setFields([]); // 생성하기 모드면 빈 배열로 초기화
-    } else if (format) {
-      setFields(format.fields || SAMPLE_DATA); // 선택된 format 데이터로 설정
-    }
-  }, [format, isNew]);
-
-  //초기값 세팅
   const [fileFormat, setFileFormat] = useState("JSONFile");
-  const [fileContent, setFileContent] = useState("");
-  const [fileName, setFileName] = useState("");
-  const fileInputRef = useRef(null);
-
-  // formData: 포맷의 이름과 설명을 관리하는 state
-  // name: 포맷의 이름 (화면 하단 이름 입력 필드)
-  // description: 포맷의 설명 (화면 하단 설명 입력 필드)
+  const [substringType, setSubstringType] = useState("Substring");
+  const [startType, setStartType] = useState("indexOf");
+  const [startValue, setStartValue] = useState("{");
+  const [startOffset, setStartOffset] = useState(0);
+  const [endType, setEndType] = useState("lastIndex");
+  const [endValue, setEndValue] = useState("}");
+  const [endOffset, setEndOffset] = useState(1);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
   });
 
-  //파일 업로드 시 실행되는 이벤트 핸들러 함수
-  const handleFileChange = (event) => {
-    // event.target.files[0]: 선택된 파일 중 첫 번째 파일을 가져옴
-    const file = event.target.files[0];
-
-    // 선택된 파일이 존재하고, 파일 타입이 text/plain(txt 파일)인 경우에만 처리
-    if (file && file.type === "text/plain") {
-      // 파일명을 state에 저장
-      setFileName(file.name);
-
-      // FileReader 객체 생성 (파일 내용을 읽기 위한 웹 API)
-      const reader = new FileReader();
-
-      // 파일 읽기가 완료되면 실행되는 콜백 함수
-      reader.onload = (e) => {
-        // 읽은 파일의 내용을 state에 저장
-        setFileContent(e.target.result);
-      };
-
-      // 파일을 텍스트로 읽기 시작
-      reader.readAsText(file);
+  // 파일 선택 핸들러
+  const handleLogFileSelect = async (e) => {
+    const fileId = e.target.value;
+    try {
+      await selectLogFile(fileId);
+    } catch (error) {
+      console.error("Failed to select log file:", error);
     }
   };
 
-  // 체크박스 상태 변경을 처리하는 함수
-  // index: 수정할 필드의 배열 인덱스
-  // field: 수정할 속성 이름 (decode 또는 split)
+  // 체크박스 상태 변경
   const handleCheckboxChange = (index, field) => {
-    // 기존 fields 배열을 복사
-    const newFields = [...fields];
-
-    // 해당 인덱스의 필드에서 지정된 속성값을 반전 (true -> false 또는 false -> true)
-    newFields[index][field] = !newFields[index][field];
-
-    // 변경된 배열로 상태 업데이트
-    setFields(newFields);
+    updateField(index, { [field]: !fields[index][field] });
   };
 
-  //+버튼 누르면 필드 추가
-  const handleAddField = () => {
-    setFields([...fields, { name: "", type: "STRING", required: false }]);
+  // 필드 입력값 변경
+  const handleFieldInputChange = (index, field, value) => {
+    updateField(index, { [field]: value });
   };
 
-  // 특정 인덱스의 필드를 삭제하는 함수
-  // index: 삭제할 필드의 인덱스
-  const handleDeleteField = (index) => {
-    // filter 메서드를 사용하여 삭제할 인덱스를 제외한 새로운 배열 생성
-    // (_: 현재 요소 값 (사용하지 않음), i: 현재 인덱스)
-    // i !== index: 현재 인덱스가 삭제하려는 인덱스와 다른 요소만 남김
-    setFields(fields.filter((_, i) => i !== index));
+  // 최종 저장
+  const handleSubmit = async () => {
+    try {
+      const formatData = {
+        name: formData.name,
+        description: formData.description,
+        fileFormat,
+        substringType,
+        startType,
+        startValue,
+        startOffset,
+        endType,
+        endValue,
+        endOffset,
+        fields,
+      };
+
+      await createFormat(formatData);
+      onClose();
+    } catch (error) {
+      console.error("Failed to create format:", error);
+    }
   };
+
   return (
     <S.Container>
       <S.Card>
@@ -109,55 +81,65 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
           </S.CloseButton>
         </S.Header>
 
-        {/* 파일 업로드 섹션 */}
+        {/* 파일 선택 섹션 */}
         <S.Section>
-          <S.Label>파일 등록</S.Label>
-          <S.FileInputContainer>
-            <S.FileNameInput
-              value={fileName}
-              readOnly
-              placeholder="Log Format A.txt"
-            />
-            <S.FileButton onClick={() => fileInputRef.current?.click()}>
-              찾아보기
-            </S.FileButton>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".txt"
-              onChange={handleFileChange}
-              style={{ display: "none" }}
-            />
-          </S.FileInputContainer>
-          {fileContent && <S.FileContent>{fileContent}</S.FileContent>}
+          <S.Label>로그 파일 선택</S.Label>
+          <S.Select value={selectedFileId || ""} onChange={handleLogFileSelect}>
+            <option value="">파일을 선택하세요</option>
+            {logFiles.map((file) => (
+              <option key={file.id} value={file.id}>
+                {file.name}
+              </option>
+            ))}
+          </S.Select>
         </S.Section>
 
-        {/* Log 서식 스타일 섹션 */}
+        {/* Log 서브스트링 섹션 */}
         <S.Section>
           <S.Label>Log 서브 스트링</S.Label>
           <S.LogStyleRow>
-            <S.StyleSelect defaultValue="Substring">
+            <S.StyleSelect
+              value={substringType}
+              onChange={(e) => setSubstringType(e.target.value)}
+            >
               <option>Substring</option>
+              <option>Split</option>
             </S.StyleSelect>
             <S.Label style={{ minWidth: "40px" }}>시작</S.Label>
-            <S.StyleSelect defaultValue="indexOf">
+            <S.StyleSelect
+              value={startType}
+              onChange={(e) => setStartType(e.target.value)}
+            >
               <option>indexOf</option>
             </S.StyleSelect>
-            <S.Input defaultValue="{" />
-            <div style={{ display: "flex" }}>
-              <S.NumberInput type="number" defaultValue="0" />
-            </div>
+            <S.Input
+              value={startValue}
+              onChange={(e) => setStartValue(e.target.value)}
+            />
+            <S.NumberInput
+              type="number"
+              value={startOffset}
+              onChange={(e) => setStartOffset(Number(e.target.value))}
+            />
           </S.LogStyleRow>
           <S.LogStyleRow>
-            <div style={{ minWidth: "120px" }} />{" "}
-            {/* Substring select 자리 맞춤용 빈 공간 */}
+            <div style={{ minWidth: "120px" }} />
             <S.Label style={{ minWidth: "40px" }}>끝</S.Label>
-            <S.StyleSelect defaultValue="lastIndex">
+            <S.StyleSelect
+              value={endType}
+              onChange={(e) => setEndType(e.target.value)}
+            >
               <option>lastIndex</option>
             </S.StyleSelect>
-            <S.Input defaultValue="}" />
-            <S.NumberInput type="number" defaultValue="1" />
-            <div style={{ display: "flex" }}></div>
+            <S.Input
+              value={endValue}
+              onChange={(e) => setEndValue(e.target.value)}
+            />
+            <S.NumberInput
+              type="number"
+              value={endOffset}
+              onChange={(e) => setEndOffset(Number(e.target.value))}
+            />
           </S.LogStyleRow>
         </S.Section>
 
@@ -173,10 +155,6 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
             <option>XML</option>
           </S.Select>
         </S.Section>
-
-        <S.ButtonContainer>
-          <S.SubmitButton>포맷 적용</S.SubmitButton>
-        </S.ButtonContainer>
 
         {/* 필드 테이블 */}
         <S.TableContainer>
@@ -210,13 +188,36 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
                     <S.TableText>{field.name}</S.TableText>
                   </S.Td>
                   <S.Td>
-                    <S.TableInput defaultValue={field.displayName} />
+                    <S.TableInput
+                      value={field.displayName || ""}
+                      onChange={(e) =>
+                        handleFieldInputChange(
+                          index,
+                          "displayName",
+                          e.target.value
+                        )
+                      }
+                    />
                   </S.Td>
                   <S.Td>
-                    <S.TableInput defaultValue={field.description} />
+                    <S.TableInput
+                      value={field.description || ""}
+                      onChange={(e) =>
+                        handleFieldInputChange(
+                          index,
+                          "description",
+                          e.target.value
+                        )
+                      }
+                    />
                   </S.Td>
                   <S.Td>
-                    <S.TableSelect defaultValue={field.type}>
+                    <S.TableSelect
+                      value={field.type}
+                      onChange={(e) =>
+                        handleFieldInputChange(index, "type", e.target.value)
+                      }
+                    >
                       <option>STRING</option>
                       <option>FLOAT</option>
                       <option>INTEGER</option>
@@ -242,10 +243,14 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
                         justifyContent: "center",
                       }}
                     >
-                      <S.ActionButton onClick={handleAddField}>
+                      <S.ActionButton
+                        onClick={() =>
+                          handleFieldInputChange(index, "split", !field.split)
+                        }
+                      >
                         <Plus size={16} />
                       </S.ActionButton>
-                      <S.ActionButton onClick={() => handleDeleteField(index)}>
+                      <S.ActionButton onClick={() => updateField(index, null)}>
                         <Trash2 size={16} />
                       </S.ActionButton>
                     </div>
@@ -263,8 +268,8 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
               <S.Label>이름</S.Label>
               <S.Input
                 value={formData.name}
-                onChange={
-                  (e) => setFormData({ ...formData, name: e.target.value }) // 이름 입력값 업데이트
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
                 }
                 placeholder="Log Format A"
               />
@@ -273,9 +278,8 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
               <S.Label>설명</S.Label>
               <S.Input
                 value={formData.description}
-                onChange={
-                  (e) =>
-                    setFormData({ ...formData, description: e.target.value }) // 설명 입력값 업데이트
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
                 }
                 placeholder="Log Format A"
               />
@@ -284,7 +288,7 @@ const LogFormatDetail = ({ format, onClose, isNew = false }) => {
         </S.Section>
 
         <S.ButtonContainer>
-          <S.Button>적용</S.Button>
+          <S.Button onClick={handleSubmit}>적용</S.Button>
         </S.ButtonContainer>
       </S.Card>
     </S.Container>
