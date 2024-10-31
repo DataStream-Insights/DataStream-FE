@@ -7,7 +7,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
   const {
     logFiles,
     fields,
-    selectedFileId,
+    selectedFileName,
     isLoading,
     selectLogFile,
     createFormat,
@@ -29,9 +29,9 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
 
   // 파일 선택 핸들러
   const handleLogFileSelect = async (e) => {
-    const fileId = e.target.value;
+    const fileName = e.target.value;
     try {
-      await selectLogFile(fileId);
+      await selectLogFile(fileName);
     } catch (error) {
       console.error("Failed to select log file:", error);
     }
@@ -84,10 +84,14 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
         {/* 파일 선택 섹션 */}
         <S.Section>
           <S.Label>로그 파일 선택</S.Label>
-          <S.Select value={selectedFileId || ""} onChange={handleLogFileSelect}>
+          <S.Select
+            value={selectedFileName || ""}
+            onChange={handleLogFileSelect}
+          >
             <option value="">파일을 선택하세요</option>
-            {logFiles.map((file) => (
-              <option key={file.id} value={file.id}>
+            {logFiles.map((fileName) => (
+              // name만 있어도 됨
+              <option key={fileName} value={fileName}>
                 {file.name}
               </option>
             ))}

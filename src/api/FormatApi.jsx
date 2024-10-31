@@ -11,7 +11,8 @@ const api = axios.create({
 export const fetchLogFiles = async () => {
   try {
     const response = await api.get("/logs/files");
-    // [{id: "1", name: "log1.txt"}, {id: "2", name: "log2.txt"}]
+    // id 필요 없고 name만 있으면 됨
+    // ["log1.txt", "log2.txt", ...]
     return response.data;
   } catch (error) {
     console.error("Error fetching log files:", error);
@@ -19,9 +20,10 @@ export const fetchLogFiles = async () => {
   }
 };
 
-export const getLogFileFields = async (logFileId) => {
+// 선택한 파일 이름을 서버에 전송하고 해당 파일의 필드 정보를 받아옴
+export const getLogFileFields = async (fileName) => {
   try {
-    const response = await api.get(`/logs/files/${logFileId}/fields`);
+    const response = await api.post("/logs/files/select", { fileName });
     return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
   } catch (error) {
     console.error("Error getting log file fields:", error);
@@ -38,7 +40,7 @@ export const createLogFormat = async (formatData) => {
       id: generateFormatId(),
       name: formatData.name,
       description: formatData.description,
-      logFileId: formatData.logFileId, // 선택한 로그 파일 ID
+      fileName: formatData.fileName,
       fileFormat: formatData.fileFormat,
       logSubstring: {
         type: formatData.substringType,

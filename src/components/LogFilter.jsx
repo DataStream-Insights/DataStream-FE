@@ -8,27 +8,16 @@ import LastPageRoundedIcon from "@mui/icons-material/LastPageRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import BehaviorFilter from "./BehaviorFilter";
+import useLogFilter from "../hooks/filter/useFilterCreate";
 
 const LogFilter = () => {
+  const { items, filterSettings, updateFilterSettings, saveFilter } =
+    useLogFilter();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
-  const data = React.useMemo(
-    () => [
-      { id: "sitsw", name: "내부검색어", type: "STRING" },
-      { id: "ssn_evt_o", name: "세션이벤트발생시간", type: "NUMERIC" },
-      { id: "ssn_id", name: "세션식별번호", type: "STRING" },
-      { id: "st_page_yn", name: "시작페이지여부", type: "STRING" },
-      { id: "tag_id", name: "tag_id", type: "STRING" },
-      { id: "usr_evt_oc", name: "사용자별이벤트발생", type: "NUMERIC" },
-      { id: "vcst_uid", name: "방문고객단일식별자", type: "STRING" },
-      { id: "vst_dt", name: "방문일자", type: "STRING" },
-      { id: "vst_dtm", name: "방문일시", type: "STRING" },
-      // ... 나머지 데이터
-    ],
-    []
-  );
+  const data = React.useMemo(() => items, [items]);
 
   const columns = React.useMemo(
     () => [
@@ -68,6 +57,15 @@ const LogFilter = () => {
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+  };
+
+  const handleSave = async () => {
+    try {
+      await saveFilter();
+      alert("저장되었습니다.");
+    } catch (error) {
+      alert("저장에 실패했습니다.");
+    }
   };
 
   return (
@@ -148,19 +146,53 @@ const LogFilter = () => {
       <F.RightSection>
         <F.FilterSection>
           <F.FilterTitle>행동 정의 설정</F.FilterTitle>
-          <BehaviorFilter />
+          <BehaviorFilter
+            filters={filterSettings.behaviors}
+            onChange={(behaviors) => updateFilterSettings({ behaviors })}
+          />
 
           <div style={{ height: "50px" }} />
 
           <F.RepeatSection>
             <F.InputGroup>
-              <F.NumberInput type="number" defaultValue="1" min="1" />
+              <F.NumberInput
+                type="number"
+                value={filterSettings.repeatCount}
+                onChange={(e) =>
+                  updateFilterSettings({
+                    repeatCount: parseInt(e.target.value),
+                  })
+                }
+                min="1"
+              />
               <span>회 반복하여 조건 만족 시 통과</span>
             </F.InputGroup>
 
             <F.InputGroup>
-              <F.NumberInput type="number" defaultValue="5" min="1" />
-              <F.Select defaultValue="분">
+              <F.NumberInput
+                type="number"
+                value={filterSettings.timeLimit.value}
+                onChange={(e) =>
+                  updateFilterSettings({
+                    timeLimit: {
+                      ...filterSettings.timeLimit,
+                      value: parseInt(e.target.value),
+                    },
+                  })
+                }
+                min="1"
+              />
+              <F.Select
+                value={filterSettings.timeLimit.unit}
+                onChange={(e) =>
+                  updateFilterSettings({
+                    timeLimit: {
+                      ...filterSettings.timeLimit,
+                      unit: e.target.value,
+                    },
+                  })
+                }
+              >
                 <option value="분">분</option>
                 <option value="시간">시간</option>
                 <option value="일">일</option>
@@ -172,7 +204,15 @@ const LogFilter = () => {
             <F.InputGroup>
               <span>행동 정의 미충족 수집</span>
               <F.Switch>
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={filterSettings.collectUnmatched}
+                  onChange={(e) =>
+                    updateFilterSettings({
+                      collectUnmatched: e.target.checked,
+                    })
+                  }
+                />
                 <span></span>
               </F.Switch>
               <span style={{ fontSize: "12px", color: "#868e96" }}>
@@ -180,7 +220,7 @@ const LogFilter = () => {
               </span>
 
               <div style={{ textAlign: "right" }}>
-                <F.SaveButton>저장</F.SaveButton>
+                <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
               </div>
             </F.InputGroup>
           </F.RepeatSection>

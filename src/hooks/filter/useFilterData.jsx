@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchFilters } from "../../api/FilterListApi";
+import { fetchFilters } from "../../api/FilterApi";
 
+// FilterManagement 화면에서 사용할 Hook
 const useFilter = () => {
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 필터 목록 조회
   const loadFilters = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -21,7 +21,6 @@ const useFilter = () => {
     }
   }, []);
 
-  // 초기 데이터 로딩
   useEffect(() => {
     loadFilters();
   }, [loadFilters]);

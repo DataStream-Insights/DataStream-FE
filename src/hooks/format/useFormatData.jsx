@@ -7,11 +7,10 @@ import {
 
 const useLogFormat = () => {
   const [logFiles, setLogFiles] = useState([]); // 서버의 로그 파일 목록
-  const [selectedFileId, setSelectedFileId] = useState(null); // 선택된 로그 파일 ID
+  const [selectedFileName, setSelectedFileName] = useState(null); // 선택된 로그 파일 ID
   const [fields, setFields] = useState([]); // 선택된 파일의 필드 정보
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [formats, setFormats] = useState([]); // 빈 배열로 초기화
 
   // 서버의 로그 파일 목록 조회
   const loadLogFiles = useCallback(async () => {
@@ -29,12 +28,12 @@ const useLogFormat = () => {
   }, []);
 
   // 로그 파일 선택 및 필드 정보 조회
-  const selectLogFile = async (logFileId) => {
+  const selectLogFile = async (fileName) => {
     setIsLoading(true);
     setError(null);
     try {
-      setSelectedFileId(logFileId);
-      const fieldData = await getLogFileFields(logFileId);
+      setSelectedFileName(fileName);
+      const fieldData = await getLogFileFields(fileName);
 
       // 필드 데이터 초기화 (사용자 입력 필드 추가)
       const initializedFields = fieldData.map((field) => ({
@@ -63,17 +62,16 @@ const useLogFormat = () => {
     setIsLoading(true);
     setError(null);
     try {
-      // 선택된 파일 ID 추가
-      const dataWithFileId = {
+      const dataWithFileName = {
         ...formatData,
-        logFileId: selectedFileId,
+        fileName: selectedFileName,
         fields: fields.map((field) => ({
           ...field,
           displayName: field.displayName || field.name, // 표시명이 없으면 필드명 사용
         })),
       };
 
-      const result = await createLogFormat(dataWithFileId);
+      const result = await createLogFormat(dataWithFileName);
       return result;
     } catch (error) {
       console.error("Failed to create log format:", error);
@@ -100,7 +98,7 @@ const useLogFormat = () => {
 
   return {
     logFiles,
-    selectedFileId,
+    selectedFileName,
     fields,
     isLoading,
     error,
