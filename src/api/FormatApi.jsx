@@ -10,7 +10,7 @@ const api = axios.create({
 // 서버에 있는 로그 파일 목록 조회
 export const fetchLogFiles = async () => {
   try {
-    const response = await api.get("/logs/files");
+    const response = await api.get("/format/gettitle");
     // id 필요 없고 name만 있으면 됨
     // ["log1.txt", "log2.txt", ...]
     return response.data;
@@ -23,7 +23,7 @@ export const fetchLogFiles = async () => {
 // 선택한 파일 이름을 서버에 전송하고 해당 파일의 필드 정보를 받아옴
 export const getLogFileFields = async (fileName) => {
   try {
-    const response = await api.post("/logs/files/select", { fileName });
+    const response = await api.post("/format/posttitle", { title: fileName });
     return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
   } catch (error) {
     console.error("Error getting log file fields:", error);

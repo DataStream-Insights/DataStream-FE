@@ -89,10 +89,10 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
             onChange={handleLogFileSelect}
           >
             <option value="">파일을 선택하세요</option>
-            {logFiles.map((fileName) => (
+            {logFiles.map((fileName, index) => (
               // name만 있어도 됨
-              <option key={fileName} value={fileName}>
-                {file.name}
+              <option key={index} value={fileName.title}>
+                {fileName.title}
               </option>
             ))}
           </S.Select>
