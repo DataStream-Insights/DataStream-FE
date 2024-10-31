@@ -24,6 +24,7 @@ export const fetchLogFiles = async () => {
 export const getLogFileFields = async (fileName) => {
   try {
     const response = await api.post("/format/posttitle", { title: fileName });
+
     return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
   } catch (error) {
     console.error("Error getting log file fields:", error);
