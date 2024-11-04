@@ -71,6 +71,7 @@ const LogFilter = () => {
             behavior.actionOption?.id === "custom_input"
               ? behavior.customValue
               : behavior.actionOption?.id || null,
+          logicalOperator: behavior.logicalOperator, // 논리 연산자 추가
         }))
         .filter((b) => b.field && b.operator && b.value), // 완성되지 않은 필터는 제외
       repeatCount: filterSettings.repeatCount,

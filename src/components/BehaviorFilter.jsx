@@ -50,8 +50,24 @@ const BehaviorFilter = ({
         actionOption: null,
         customValue: "",
         isEditing: false,
+        logicalOperator: filters.length > 0 ? "AND" : null, // 첫 번째 필터가 아닐 경우 기본값 AND
       },
     ]);
+  };
+
+  // logicalOperator 변경 처리 함수 추가
+  const handleLogicalOperatorChange = (filterId, value) => {
+    onChange(
+      filters.map((filter) => {
+        if (filter.id === filterId) {
+          return {
+            ...filter,
+            logicalOperator: value,
+          };
+        }
+        return filter;
+      })
+    );
   };
 
   const removeFilter = (id) => {
@@ -215,32 +231,57 @@ const BehaviorFilter = ({
     );
   };
 
+  // 로직 연산자 렌더링 함수
+  const renderLogicalOperator = (filter, index) => {
+    if (index === 0) return null; // 첫 번째 필터는 로직 연산자가 필요 없음
+
+    return (
+      <S.LogicalOperatorContainer>
+        <S.LogicalOperatorGroup>
+          <S.OperatorTag
+            active={filter.logicalOperator === "AND"}
+            onClick={() => handleLogicalOperatorChange(filter.id, "AND")}
+          >
+            AND
+          </S.OperatorTag>
+          <S.OperatorTag
+            active={filter.logicalOperator === "OR"}
+            onClick={() => handleLogicalOperatorChange(filter.id, "OR")}
+          >
+            OR
+          </S.OperatorTag>
+        </S.LogicalOperatorGroup>
+      </S.LogicalOperatorContainer>
+    );
+  };
+
   return (
     <S.Container>
       {filters.map((filter, index) => (
-        <S.FilterRow key={filter.id}>
-          <S.RemoveButton onClick={() => removeFilter(filter.id)}>
-            <X size={16} />
-          </S.RemoveButton>
+        <React.Fragment key={filter.id}>
+          {renderLogicalOperator(filter, index)}
+          <S.FilterRow>
+            <S.RemoveButton onClick={() => removeFilter(filter.id)}>
+              <X size={16} />
+            </S.RemoveButton>
 
-          <S.OptionContainer>
-            {renderOptionDropdown(
-              filter,
-              "idOption",
-              // options.idOptions,
-              mergedOptions.idOptions,
-              "Select ID"
-            )}
-            {renderOptionDropdown(
-              filter,
-              "operatorOption",
-              // options.operatorOptions,
-              mergedOptions.operatorOptions,
-              "Select Operator"
-            )}
-            {renderActionOption(filter)}
-          </S.OptionContainer>
-        </S.FilterRow>
+            <S.OptionContainer>
+              {renderOptionDropdown(
+                filter,
+                "idOption",
+                mergedOptions.idOptions,
+                "Select ID"
+              )}
+              {renderOptionDropdown(
+                filter,
+                "operatorOption",
+                mergedOptions.operatorOptions,
+                "Select Operator"
+              )}
+              {renderActionOption(filter)}
+            </S.OptionContainer>
+          </S.FilterRow>
+        </React.Fragment>
       ))}
 
       <S.AddButton onClick={addFilter}>

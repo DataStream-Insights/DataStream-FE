@@ -154,3 +154,34 @@ export const CustomInput = styled.input`
     border-color: #4dabf7;
   }
 `;
+
+export const LogicalOperatorContainer = styled.div`
+  margin: 8px 0;
+  padding-left: 32px; // RemoveButton 너비만큼 띄우기
+`;
+
+export const LogicalOperatorGroup = styled.div`
+  display: inline-flex;
+  gap: 8px;
+`;
+
+export const OperatorTag = styled.div`
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+
+  // 선택된 상태와 기본 상태의 스타일
+  background: ${(props) => (props.active ? "#ffe3e3" : "#f8f9fa")};
+  color: ${(props) => (props.active ? "#c92a2a" : "#868e96")};
+  border: 1px solid ${(props) => (props.active ? "#ffc9c9" : "#dee2e6")};
+  font-weight: ${(props) => (props.active ? "500" : "normal")};
+
+  &:hover {
+    background: ${(props) => (props.active ? "#ffe3e3" : "#fff0f0")};
+    color: #c92a2a;
+    border-color: #ffc9c9;
+  }
+`;
