@@ -61,6 +61,29 @@ const LogFilter = () => {
   };
 
   const handleSave = async () => {
+    // 서버로 전송할 데이터 형태로 변환
+    const requestData = {
+      behaviors: filterSettings.behaviors
+        .map((behavior) => ({
+          field: behavior.idOption?.id || null,
+          operator: behavior.operatorOption?.id || null,
+          value:
+            behavior.actionOption?.id === "custom_input"
+              ? behavior.customValue
+              : behavior.actionOption?.id || null,
+        }))
+        .filter((b) => b.field && b.operator && b.value), // 완성되지 않은 필터는 제외
+      repeatCount: filterSettings.repeatCount,
+      timeLimit: filterSettings.timeLimit,
+      collectUnmatched: filterSettings.collectUnmatched,
+    };
+
+    // 콘솔에 출력
+    console.log(
+      "서버로 전송될 필터 데이터:",
+      JSON.stringify(requestData, null, 2)
+    );
+
     try {
       await saveFilter();
       alert("저장되었습니다.");
