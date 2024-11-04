@@ -2,8 +2,43 @@ import React, { useState } from "react";
 import { Plus, X, ChevronDown } from "lucide-react";
 import * as S from "../styles/filter/behaviorFilterStyle";
 
-const BehaviorFilter = ({ filters, onChange, options }) => {
+// 임시 데이터 정의
+const TEMP_OPTIONS = {
+  idOptions: [
+    { id: "ID1", label: "ID1" },
+    { id: "ID2", label: "ID2" },
+  ],
+  operatorOptions: [
+    { id: "equals", label: "=" },
+    { id: "not_equals", label: "!=" },
+    { id: "greater_than", label: ">" },
+    { id: "less_than", label: "<" },
+    { id: "greater_equals", label: ">=" },
+    { id: "less_equals", label: "<=" },
+  ],
+  actionOptions: [
+    { id: "view_cart", label: "장바구니 보기" },
+    { id: "add_to_cart", label: "장바구니 추가" },
+    { id: "remove_from_cart", label: "장바구니 제거" },
+    { id: "purchase", label: "구매하기" },
+    { id: "view_product", label: "상품 상세보기" },
+    { id: "custom_input", label: "직접 입력" },
+  ],
+};
+
+const BehaviorFilter = ({
+  filters = [],
+  onChange = () => {},
+  options = {},
+}) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+  // options 객체에서 idOptions만 사용하고 나머지는 임시 데이터 사용
+  const mergedOptions = {
+    idOptions: options.idOptions || TEMP_OPTIONS.idOptions,
+    operatorOptions: TEMP_OPTIONS.operatorOptions,
+    actionOptions: TEMP_OPTIONS.actionOptions,
+  };
 
   const addFilter = () => {
     onChange([
@@ -174,7 +209,8 @@ const BehaviorFilter = ({ filters, onChange, options }) => {
     return renderOptionDropdown(
       filter,
       "actionOption",
-      options.actionOptions,
+      // options.actionOptions,
+      mergedOptions.actionOptions,
       "Select Action"
     );
   };
@@ -191,13 +227,15 @@ const BehaviorFilter = ({ filters, onChange, options }) => {
             {renderOptionDropdown(
               filter,
               "idOption",
-              options.idOptions,
+              // options.idOptions,
+              mergedOptions.idOptions,
               "Select ID"
             )}
             {renderOptionDropdown(
               filter,
               "operatorOption",
-              options.operatorOptions,
+              // options.operatorOptions,
+              mergedOptions.operatorOptions,
               "Select Operator"
             )}
             {renderActionOption(filter)}
