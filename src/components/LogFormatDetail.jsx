@@ -11,6 +11,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     isLoading,
     selectLogFile,
     createFormat,
+    analyzeFormat,
     updateField,
     addNewField,
   } = useLogFormat();
@@ -29,12 +30,35 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
   });
 
   // 파일 선택 핸들러
-  const handleLogFileSelect = async (e) => {
+  const handleLogFileSelect = (e) => {
     const fileName = e.target.value;
+    selectLogFile(fileName);
+  };
+
+  // 포맷 적용 핸들러
+  const handleFormatApply = async () => {
+    if (!selectedFileName) {
+      alert("파일을 선택해주세요.");
+      return;
+    }
+
     try {
-      await selectLogFile(fileName);
+      const analysisData = {
+        fileName: selectedFileName,
+        fileFormat,
+        substringType,
+        startType,
+        startValue,
+        startOffset,
+        endType,
+        endValue,
+        endOffset,
+      };
+      console.log("포맷 데이터:", analysisData);
+
+      await analyzeFormat(analysisData);
     } catch (error) {
-      console.error("Failed to select log file:", error);
+      console.error("Failed to apply format:", error);
     }
   };
 
@@ -176,6 +200,10 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
             <option>XML</option>
           </S.Select>
         </S.Section>
+
+        <S.ButtonContainer>
+          <S.Button onClick={handleFormatApply}>포맷 적용</S.Button>
+        </S.ButtonContainer>
 
         {/* 필드 테이블 */}
         <S.TableContainer>
