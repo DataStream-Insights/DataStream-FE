@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import {
   fetchLogFiles,
-  getLogFileFields,
   createLogFormat,
+  analyzeLogFile,
 } from "../../api/FormatApi";
 
 const useLogFormat = () => {
@@ -27,30 +27,35 @@ const useLogFormat = () => {
     }
   }, []);
 
-  // 로그 파일 선택 및 필드 정보 조회
-  const selectLogFile = async (fileName) => {
+  // 파일 선택 처리
+  const selectLogFile = (fileName) => {
+    setSelectedFileName(fileName);
+    setFields([]); // 필드 초기화
+  };
+
+  // 로그 파일 분석 요청
+  const analyzeFormat = async (analysisData) => {
     setIsLoading(true);
     setError(null);
     try {
-      setSelectedFileName(fileName);
-      const fieldData = await getLogFileFields(fileName);
+      const fieldData = await analyzeLogFile(analysisData);
 
-      // 필드 데이터 초기화 (사용자 입력 필드 추가)
+      // 백엔드에서 받은 필드 데이터를 테이블에 표시할 형태로 변환
       const initializedFields = fieldData.map((field) => ({
-        name: field.name, // 서버에서 받은 Field 명
-        value: field.value, // 서버에서 받은 Item 컨텐츠 예시
-        displayName: "", // 사용자 입력용 빈 값
-        description: "", // 사용자 입력용 빈 값
-        type: "STRING", // 기본값
+        name: field.name,
+        value: field.value,
+        displayName: "",
+        description: "",
+        type: "STRING",
         decode: false,
         split: false,
       }));
 
-      setFields(initializedFields);
+      setFields(initializedFields); // 상태 업데이트하여 테이블에 표시
       return initializedFields;
     } catch (error) {
-      console.error("Failed to get log file fields:", error);
-      setError("필드 정보를 불러오는데 실패했습니다.");
+      console.error("Failed to analyze log file:", error);
+      setError("로그 파일 분석에 실패했습니다.");
       throw error;
     } finally {
       setIsLoading(false);
@@ -113,6 +118,7 @@ const useLogFormat = () => {
     error,
     loadLogFiles,
     selectLogFile,
+    analyzeFormat,
     createFormat,
     updateField,
     addNewField,

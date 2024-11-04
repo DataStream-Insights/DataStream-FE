@@ -174,6 +174,7 @@ export const ButtonContainer = styled.div`
   justify-content: flex-end;
   gap: 0.5rem;
   margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
 `;
 
 export const Button = styled.button`
@@ -182,7 +183,7 @@ export const Button = styled.button`
   font-weight: 500;
   font-size: 0.875rem;
   border: none;
-  background-color: #f3f4f6;
+  background-color: #ccdeeb;
   color: #374151;
 
   &:hover {
