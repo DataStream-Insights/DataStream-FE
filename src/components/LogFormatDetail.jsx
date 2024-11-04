@@ -12,6 +12,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     selectLogFile,
     createFormat,
     updateField,
+    addNewField,
   } = useLogFormat();
 
   const [fileFormat, setFileFormat] = useState("JSONFile");
@@ -47,6 +48,20 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     updateField(index, { [field]: value });
   };
 
+  const handleAddField = () => {
+    const newField = {
+      name: "",
+      value: "",
+      displayName: "",
+      description: "",
+      type: "STRING", //default value
+      decode: false,
+      split: false,
+      isUserCreated: true, //사용자 생성 필드 표시
+    };
+    addNewField(newField);
+  };
+
   // 최종 저장
   const handleSubmit = async () => {
     try {
@@ -63,6 +78,8 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
         endOffset,
         fields,
       };
+
+      console.log("전체 데이터:", formatData);
 
       await createFormat(formatData);
       onClose();
@@ -189,7 +206,17 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
               {fields.map((field, index) => (
                 <tr key={index}>
                   <S.Td>
-                    <S.TableText>{field.name}</S.TableText>
+                    {field.isUserCreated ? (
+                      <S.TableInput
+                        value={field.name}
+                        onChange={(e) =>
+                          handleFieldInputChange(index, "name", e.target.value)
+                        }
+                        placeholder="필드명 입력"
+                      />
+                    ) : (
+                      <S.TableText>{field.name}</S.TableText>
+                    )}
                   </S.Td>
                   <S.Td>
                     <S.TableInput
@@ -228,7 +255,17 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                     </S.TableSelect>
                   </S.Td>
                   <S.Td>
-                    <S.TableText>{field.value}</S.TableText>
+                    {field.isUserCreated ? (
+                      <S.TableInput
+                        value={field.value || ""}
+                        onChange={(e) =>
+                          handleFieldInputChange(index, "value", e.target.value)
+                        }
+                        placeholder="예시값 입력"
+                      />
+                    ) : (
+                      <S.TableText>{field.value}</S.TableText>
+                    )}
                   </S.Td>
                   <S.Td style={{ textAlign: "center" }}>
                     <S.Checkbox
@@ -237,7 +274,10 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                     />
                   </S.Td>
                   <S.Td style={{ textAlign: "center" }}>
-                    <S.TableText>{field.split}</S.TableText>
+                    <S.Checkbox
+                      checked={field.split}
+                      onChange={() => handleCheckboxChange(index, "split")}
+                    />
                   </S.Td>
                   <S.Td>
                     <div
@@ -247,11 +287,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                         justifyContent: "center",
                       }}
                     >
-                      <S.ActionButton
-                        onClick={() =>
-                          handleFieldInputChange(index, "split", !field.split)
-                        }
-                      >
+                      <S.ActionButton onClick={handleAddField}>
                         <Plus size={16} />
                       </S.ActionButton>
                       <S.ActionButton onClick={() => updateField(index, null)}>
@@ -264,7 +300,6 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
             </tbody>
           </S.Table>
         </S.TableContainer>
-
         {/* 이름과 설명 입력 섹션 */}
         <S.Section>
           <S.FormGrid>

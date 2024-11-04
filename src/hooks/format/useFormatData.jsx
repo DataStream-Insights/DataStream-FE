@@ -87,13 +87,22 @@ const useLogFormat = () => {
     loadLogFiles();
   }, [loadLogFiles]);
 
+  //새로운 필드 추가 함수
+  const addNewField = (newField) => {
+    setFields((currentFields) => [...currentFields, newField]);
+  };
+
   // 필드 업데이트 함수 (테이블에서 사용자 입력값 업데이트)
   const updateField = (index, updates) => {
-    setFields((currentFields) => {
-      const newFields = [...currentFields];
-      newFields[index] = { ...newFields[index], ...updates };
-      return newFields;
-    });
+    if (updates === null) {
+      setFields((currentFields) => currentFields.filter((_, i) => i !== index));
+    } else {
+      setFields((currentFields) => {
+        const newFields = [...currentFields];
+        newFields[index] = { ...newFields[index], ...updates };
+        return newFields;
+      });
+    }
   };
 
   return {
@@ -106,6 +115,7 @@ const useLogFormat = () => {
     selectLogFile,
     createFormat,
     updateField,
+    addNewField,
   };
 };
 
