@@ -55,29 +55,17 @@ export const createLogFormat = async (formatData) => {
       id: generateFormatId(),
       name: formatData.name,
       description: formatData.description,
-      fileName: formatData.fileName,
-      fileFormat: formatData.fileFormat,
-      logSubstring: {
-        type: formatData.substringType,
-        start: {
-          type: formatData.startType,
-          value: formatData.startValue,
-          offset: formatData.startOffset,
-        },
-        end: {
-          type: formatData.endType,
-          value: formatData.endValue,
-          offset: formatData.endOffset,
-        },
-      },
+      title: formatData.fileName,
+      startdepth: formatData.startOffset,
+      enddepth: formatData.endOffset,
       fields: formatData.fields.map((field) => ({
         name: field.name, // 스프링에서 받은 필드명
         displayName: field.displayName, // 사용자가 입력한 표시명
         description: field.description, // 사용자가 입력한 설명
         type: field.type, // 사용자가 선택한 타입
         value: field.value, // 스프링에서 받은 예시값
-        decode: field.decode || false,
-        split: field.split || false,
+        // decode: field.decode || false,
+        // split: field.split || false,
       })),
     };
 
