@@ -328,3 +328,16 @@ export const NumberInput = styled.input`
   border-radius: 4px;
   text-align: center;
 `;
+
+export const ToggleButton = styled.button`
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #666;
+
+  &:hover {
+    color: #000;
+  }
+`;

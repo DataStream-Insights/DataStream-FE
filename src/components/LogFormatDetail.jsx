@@ -7,16 +7,19 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
   const {
     logFiles,
     fields,
+    setFields,
     selectedFileName,
     isLoading,
     selectLogFile,
     createFormat,
     analyzeFormat,
+    analyzeSubFields,
     updateField,
     addNewField,
   } = useLogFormat();
 
   // const [fileFormat, setFileFormat] = useState("JSONFile");
+  const [expandedRows, setExpandedRows] = useState(new Set()); // 토글 상태 관리용
   const [substringType, setSubstringType] = useState("Substring");
   const [startType, setStartType] = useState("indexOf");
   const [startValue, setStartValue] = useState("{");
@@ -35,6 +38,72 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     selectLogFile(fileName);
   };
 
+  // 토글 클릭 시 실행되는 핸들러
+  const handleToggleClick = async (field, index) => {
+    //각 행을 구분하기 위한 고유 키 생성 (인덱스-필드이름)
+    const rowKey = `${index}-${field.name}`;
+    //현재 확장된 행들의 상태를 복사
+    const newExpandedRows = new Set(expandedRows);
+
+    //이미 확장된 행인 경우(토글이 이미 열려있는 경우)
+    if (expandedRows.has(rowKey)) {
+      //Set에서 해당 행 제거(토글 닫기)
+      newExpandedRows.delete(rowKey);
+      //현재 필드의 path로 시작하는 모든 하위 필드들을 제거
+      // 예: 현재 path가 "user"이면 "user.name", "user.age" 등을 모두 제거
+      setFields((currentFields) =>
+        currentFields.filter((f) => !f.path.startsWith(field.path + "."))
+      );
+    }
+    //확장되지 않은 행인 경우(토글이 닫혀있는 경우)
+    else {
+      try {
+        //백엔드로 하위 필드 조회 요청
+        //title(fileName)과 현재 필드의 path 전송
+        console.log("토글 클릭 시 전송 데이터: ", {
+          title: selectedFileName,
+          path: field.path,
+        });
+        const response = await analyzeSubFields({
+          title: selectedFileName,
+          path: field.path,
+        });
+
+        //받아온 하위 필드 데이터를 현재 fields 배열에 삽입
+        setFields((currentFields) => {
+          //현재 필드의 바로 다음 위치를 찾아서 그 위치에 하위 필드들을 삽입
+          const insertIndex =
+            currentFields.findIndex((f) => f.path === field.path) + 1;
+          //받아온 하위 필드 데이터를 테이블에 표시할 형태로 변환
+          const newSubFields = response.map((subField) => ({
+            value: subField.value,
+            path: subField.path,
+            hasChild: subField.hasChild,
+            name: subField.name,
+            displayName: "",
+            description: "",
+            type: "STRING",
+          }));
+
+          //원본 배열을 세 부분으로 나눠서 하위 필드들을 중간에 삽입
+          return [
+            ...currentFields.slice(0, insertIndex), //현재 필드까지
+            ...newSubFields, //새로운 하위 필드들
+            ...currentFields.slice(insertIndex), //나머지 필드들
+          ];
+        });
+
+        //Set에 해당 행 추가(토글 열기)
+        newExpandedRows.add(rowKey);
+      } catch (error) {
+        console.error("Failed to fetch sub fields:", error);
+      }
+    }
+
+    //토글 상태 업데이트
+    setExpandedRows(newExpandedRows);
+  };
+
   // 포맷 적용 핸들러
   const handleFormatApply = async () => {
     if (!selectedFileName) {
@@ -45,13 +114,12 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     try {
       const analysisData = {
         fileName: selectedFileName,
-        // fileFormat,
         startOffset,
         endOffset,
       };
       console.log("포맷 데이터:", analysisData);
 
-      await analyzeFormat(analysisData);
+      await analyzeFormat(analysisData); // 상태 업데이트는 hook 내부에서 처리
     } catch (error) {
       console.error("Failed to apply format:", error);
     }
@@ -74,12 +142,77 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
       displayName: "",
       description: "",
       type: "STRING", //default value
-      decode: false,
-      split: false,
       isUserCreated: true, //사용자 생성 필드 표시
     };
     addNewField(newField);
   };
+
+  // 테이블의 각 행을 렌더링하는 컴포넌트
+  // const RenderField = ({ field, index, level = 0, parentKey = "" }) => {
+  //   //각행의 고유키 생성
+  //   const rowKey = `${parentKey}${index}-${field.name}`;
+  //   //현재 행이 확장되어 있는지 여부 확인
+  //   const isExpanded = expandedRows.has(rowKey);
+
+  //   return (
+  //     <tr>
+  //       {/* 계층구조 시각화 위한 들여쓰기 */}
+  //       <S.Td style={{ paddingLeft: `${level * 20}px` }}>
+  //         <div style={{ display: "flex", alignItems: "center" }}>
+  //           {/* hasChild가 true인 경우에만 토글 버튼 표시 */}
+  //           {field.hasChild && (
+  //             <S.ToggleButton onClick={() => handleToggleClick(field, index)}>
+  //               {/* 토글 상태에 따라 아이콘 변경 */}
+  //               {isExpanded ? "▼" : "▶"}
+  //             </S.ToggleButton>
+  //           )}
+  //           <span>{field.name}</span>
+  //         </div>
+  //       </S.Td>
+  //       <S.Td>{field.value}</S.Td>
+  //       <S.Td>
+  //         <S.TableInput
+  //           value={field.displayName || ""}
+  //           onChange={(e) =>
+  //             handleFieldInputChange(index, "displayName", e.target.value)
+  //           }
+  //         />
+  //       </S.Td>
+  //       <S.Td>
+  //         <S.TableInput
+  //           value={field.description || ""}
+  //           onChange={(e) =>
+  //             handleFieldInputChange(index, "description", e.target.value)
+  //           }
+  //         />
+  //       </S.Td>
+  //       <S.Td>
+  //         <S.TableSelect
+  //           value={field.type || "STRING"}
+  //           onChange={(e) =>
+  //             handleFieldInputChange(index, "type", e.target.value)
+  //           }
+  //         >
+  //           <option>STRING</option>
+  //           <option>FLOAT</option>
+  //           <option>INTEGER</option>
+  //         </S.TableSelect>
+  //       </S.Td>
+  //       <S.Td style={{ textAlign: "center" }}>
+  //         <S.Checkbox
+  //           checked={field.decode}
+  //           onChange={() => handleCheckboxChange(index, "decode")}
+  //         />
+  //       </S.Td>
+  //       <S.Td style={{ textAlign: "center" }}>
+  //         <S.Checkbox
+  //           checked={field.split}
+  //           onChange={() => handleCheckboxChange(index, "split")}
+  //         />
+  //       </S.Td>
+  //     </tr>
+  //   );
+  // };
 
   // 최종 저장
   const handleSubmit = async () => {
@@ -88,14 +221,15 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
         name: formData.name,
         description: formData.description,
         // fileFormat,
-        substringType,
-        startType,
-        startValue,
         startOffset,
-        endType,
-        endValue,
         endOffset,
-        fields,
+        fields: fields.map((field) => ({
+          value: field.value,
+          path: field.path,
+          displayName: field.displayName || field.key,
+          description: field.description,
+          type: field.type,
+        })),
       };
 
       console.log("전체 데이터:", formatData);
@@ -208,8 +342,6 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
               <col style={{ width: "15%" }} />
               <col style={{ width: "12%" }} />
               <col style={{ width: "15%" }} />
-              {/* <col style={{ width: "7%" }} />
-              <col style={{ width: "10%" }} /> */}
               <col style={{ width: "9%" }} />
             </colgroup>
             <S.Thead>
@@ -219,77 +351,103 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                 <S.Th>Item 설명</S.Th>
                 <S.Th>Item 타입</S.Th>
                 <S.Th>Item 컨텐츠 예시</S.Th>
-                {/* <S.Th style={{ textAlign: "center" }}>디코드여부</S.Th>
-                <S.Th style={{ textAlign: "center" }}>Log 분할여부</S.Th> */}
                 <S.Th></S.Th>
               </tr>
             </S.Thead>
             <tbody>
-              {fields.map((field, index) => (
-                <tr key={index}>
-                  <S.Td>
-                    {field.isUserCreated ? (
+              {fields.map((field, index) => {
+                // path의 점(.) 개수로 계층 레벨 계산 (예: "user.name"은 레벨 1)
+                const level = field.path ? field.path.split(".").length - 1 : 0;
+                return (
+                  <tr key={index}>
+                    <S.Td>
+                      <div
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          paddingLeft: `${level * 20}px`,
+                        }}
+                      >
+                        {field.hasChild && (
+                          <S.ToggleButton
+                            onClick={() => handleToggleClick(field, index)}
+                          >
+                            {expandedRows.has(`${index}-${field.name}`)
+                              ? "▼"
+                              : "▶"}
+                          </S.ToggleButton>
+                        )}
+                        {field.isUserCreated ? (
+                          <S.TableInput
+                            value={field.name}
+                            onChange={(e) =>
+                              handleFieldInputChange(
+                                index,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            placeholder="필드명 입력"
+                          />
+                        ) : (
+                          <S.TableText>{field.name}</S.TableText>
+                        )}
+                      </div>
+                    </S.Td>
+                    <S.Td>
                       <S.TableInput
-                        value={field.name}
+                        value={field.displayName || ""}
                         onChange={(e) =>
-                          handleFieldInputChange(index, "name", e.target.value)
+                          handleFieldInputChange(
+                            index,
+                            "displayName",
+                            e.target.value
+                          )
                         }
-                        placeholder="필드명 입력"
                       />
-                    ) : (
-                      <S.TableText>{field.name}</S.TableText>
-                    )}
-                  </S.Td>
-                  <S.Td>
-                    <S.TableInput
-                      value={field.displayName || ""}
-                      onChange={(e) =>
-                        handleFieldInputChange(
-                          index,
-                          "displayName",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </S.Td>
-                  <S.Td>
-                    <S.TableInput
-                      value={field.description || ""}
-                      onChange={(e) =>
-                        handleFieldInputChange(
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                    />
-                  </S.Td>
-                  <S.Td>
-                    <S.TableSelect
-                      value={field.type}
-                      onChange={(e) =>
-                        handleFieldInputChange(index, "type", e.target.value)
-                      }
-                    >
-                      <option>STRING</option>
-                      <option>FLOAT</option>
-                      <option>INTEGER</option>
-                    </S.TableSelect>
-                  </S.Td>
-                  <S.Td>
-                    {field.isUserCreated ? (
+                    </S.Td>
+                    <S.Td>
                       <S.TableInput
-                        value={field.value || ""}
+                        value={field.description || ""}
                         onChange={(e) =>
-                          handleFieldInputChange(index, "value", e.target.value)
+                          handleFieldInputChange(
+                            index,
+                            "description",
+                            e.target.value
+                          )
                         }
-                        placeholder="예시값 입력"
                       />
-                    ) : (
-                      <S.TableText>{field.value}</S.TableText>
-                    )}
-                  </S.Td>
-                  {/* <S.Td style={{ textAlign: "center" }}>
+                    </S.Td>
+                    <S.Td>
+                      <S.TableSelect
+                        value={field.type}
+                        onChange={(e) =>
+                          handleFieldInputChange(index, "type", e.target.value)
+                        }
+                      >
+                        <option>STRING</option>
+                        <option>FLOAT</option>
+                        <option>INTEGER</option>
+                      </S.TableSelect>
+                    </S.Td>
+                    <S.Td>
+                      {field.isUserCreated ? (
+                        <S.TableInput
+                          value={field.value || ""}
+                          onChange={(e) =>
+                            handleFieldInputChange(
+                              index,
+                              "value",
+                              e.target.value
+                            )
+                          }
+                          placeholder="예시값 입력"
+                        />
+                      ) : (
+                        <S.TableText>{field.value}</S.TableText>
+                      )}
+                    </S.Td>
+                    {/* <S.Td style={{ textAlign: "center" }}>
                     <S.Checkbox
                       checked={field.decode}
                       onChange={() => handleCheckboxChange(index, "decode")}
@@ -301,24 +459,27 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                       onChange={() => handleCheckboxChange(index, "split")}
                     />
                   </S.Td> */}
-                  <S.Td>
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "0.5rem",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <S.ActionButton onClick={handleAddField}>
-                        <Plus size={16} />
-                      </S.ActionButton>
-                      <S.ActionButton onClick={() => updateField(index, null)}>
-                        <Trash2 size={16} />
-                      </S.ActionButton>
-                    </div>
-                  </S.Td>
-                </tr>
-              ))}
+                    <S.Td>
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "0.5rem",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <S.ActionButton onClick={handleAddField}>
+                          <Plus size={16} />
+                        </S.ActionButton>
+                        <S.ActionButton
+                          onClick={() => updateField(index, null)}
+                        >
+                          <Trash2 size={16} />
+                        </S.ActionButton>
+                      </div>
+                    </S.Td>
+                  </tr>
+                );
+              })}
             </tbody>
           </S.Table>
         </S.TableContainer>

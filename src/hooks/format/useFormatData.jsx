@@ -4,6 +4,7 @@ import {
   createLogFormat,
   analyzeLogFile,
   fetchLogFormats,
+  analyzeSubFields,
 } from "../../api/FormatApi";
 
 const useLogFormat = () => {
@@ -59,8 +60,10 @@ const useLogFormat = () => {
 
       // 백엔드에서 받은 필드 데이터를 테이블에 표시할 형태로 변환
       const initializedFields = fieldData.map((field) => ({
-        name: field.name,
         value: field.value,
+        path: field.path,
+        hasChild: field.hasChild,
+        name: field.name,
         displayName: "",
         description: "",
         type: "STRING",
@@ -73,6 +76,22 @@ const useLogFormat = () => {
     } catch (error) {
       console.error("Failed to analyze log file:", error);
       setError("로그 파일 분석에 실패했습니다.");
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // 하위 필드 분석 요청 함수 추가
+  const analyzeChildFields = async (title, path) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await analyzeSubFields({ title, path });
+      return response;
+    } catch (error) {
+      console.error("Failed to analyze child fields:", error);
+      setError("하위 필드 분석에 실패했습니다.");
       throw error;
     } finally {
       setIsLoading(false);
@@ -137,6 +156,7 @@ const useLogFormat = () => {
     logFiles,
     selectedFileName,
     fields,
+    setFields,
     formats,
     isLoading,
     error,
@@ -144,6 +164,8 @@ const useLogFormat = () => {
     loadFormats,
     selectLogFile,
     analyzeFormat,
+    analyzeChildFields,
+    analyzeSubFields,
     createFormat,
     updateField,
     addNewField,
