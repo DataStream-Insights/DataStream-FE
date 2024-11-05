@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchLogItems, createLogFilter } from "../../api/FilterApi";
+import {
+  fetchLogItems,
+  createLogFilter,
+  fetchFilterOptions,
+} from "../../api/FilterApi";
 
 // LogFilter 화면에서 사용할 Hook
 const useFilterCreate = () => {
@@ -11,6 +15,7 @@ const useFilterCreate = () => {
   });
 
   const [filterSettings, setFilterSettings] = useState({
+    name: "", // 필터 이름 필드 추가
     behaviors: [],
     repeatCount: 1,
     timeLimit: {
@@ -53,6 +58,10 @@ const useFilterCreate = () => {
     setIsLoading(true);
     setError(null);
     try {
+      if (!filterSettings.name.trim()) {
+        throw new Error("필터 이름을 입력해주세요.");
+      }
+
       const result = await createLogFilter(filterSettings);
       return result;
     } catch (error) {

@@ -77,27 +77,26 @@ export const FilterTag = styled.div`
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
-  padding: 8px 12px; 
+  padding: 8px 12px;
   background: #f8f9fa;
   border-radius: 4px;
-
 `;
 
 export const Tag = styled.span`
   padding: 4px 8px;
   border-radius: 4px;
   font-size: 14px;
-  
+
   &.and {
     background: #ffe3e3;
     color: #c92a2a;
   }
-  
+
   &.id {
     background: #e7f5ff;
     color: #1971c2;
   }
-  
+
   &.equals {
     background: #e6fcf5;
     color: #087f5b;
@@ -133,13 +132,13 @@ export const Switch = styled.label`
   display: inline-block;
   width: 40px;
   height: 20px;
-  
+
   input {
     opacity: 0;
     width: 0;
     height: 0;
   }
-  
+
   span {
     position: absolute;
     cursor: pointer;
@@ -148,9 +147,9 @@ export const Switch = styled.label`
     right: 0;
     bottom: 0;
     background-color: #ccc;
-    transition: .4s;
+    transition: 0.4s;
     border-radius: 20px;
-    
+
     &:before {
       position: absolute;
       content: "";
@@ -159,15 +158,15 @@ export const Switch = styled.label`
       left: 2px;
       bottom: 2px;
       background-color: white;
-      transition: .4s;
+      transition: 0.4s;
       border-radius: 50%;
     }
   }
-  
+
   input:checked + span {
-    background-color: #2196F3;
+    background-color: #2196f3;
   }
-  
+
   input:checked + span:before {
     transform: translateX(20px);
   }
@@ -181,9 +180,39 @@ export const SaveButton = styled.button`
   border-radius: 4px;
   cursor: pointer;
   float: right;
-  
+
   &:hover {
     background: #1c7ed6;
   }
 `;
 
+export const Section = styled.div`
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const Label = styled.label`
+  font-size: 0.813rem;
+  font-weight: 500;
+  color: #374151;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: ${(props) => (props.readOnly ? "#f9fafb" : "white")};
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+`;
