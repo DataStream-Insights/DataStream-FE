@@ -3,6 +3,7 @@ import {
   fetchLogFiles,
   createLogFormat,
   analyzeLogFile,
+  fetchLogFormats,
 } from "../../api/FormatApi";
 
 const useLogFormat = () => {
@@ -11,6 +12,22 @@ const useLogFormat = () => {
   const [fields, setFields] = useState([]); // 선택된 파일의 필드 정보
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [formats, setFormats] = useState([]); // 포맷 목록을 위한 상태 추가
+
+  // 포맷 목록 조회 함수
+  const loadFormats = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const formatList = await fetchLogFormats();
+      setFormats(formatList);
+    } catch (error) {
+      console.error("Failed to fetch formats:", error);
+      setError("포맷 목록을 불러오는데 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   // 서버의 로그 파일 목록 조회
   const loadLogFiles = useCallback(async () => {
@@ -87,11 +104,6 @@ const useLogFormat = () => {
     }
   };
 
-  // 초기 로그 파일 목록 로딩
-  useEffect(() => {
-    loadLogFiles();
-  }, [loadLogFiles]);
-
   //새로운 필드 추가 함수
   const addNewField = (newField) => {
     setFields((currentFields) => [...currentFields, newField]);
@@ -110,13 +122,23 @@ const useLogFormat = () => {
     }
   };
 
+  // 초기 로딩시 포맷 목록과 로그 파일 목록을 함께 가져오기
+  useEffect(() => {
+    const loadInitialData = async () => {
+      await Promise.all([loadFormats(), loadLogFiles()]);
+    };
+    loadInitialData();
+  }, [loadFormats, loadLogFiles]);
+
   return {
     logFiles,
     selectedFileName,
     fields,
+    formats,
     isLoading,
     error,
     loadLogFiles,
+    loadFormats,
     selectLogFile,
     analyzeFormat,
     createFormat,
