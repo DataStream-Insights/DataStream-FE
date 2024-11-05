@@ -64,8 +64,8 @@ const useLogFormat = () => {
         displayName: "",
         description: "",
         type: "STRING",
-        decode: false,
-        split: false,
+        // decode: false,
+        // split: false,
       }));
 
       setFields(initializedFields); // 상태 업데이트하여 테이블에 표시

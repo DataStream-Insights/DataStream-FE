@@ -58,9 +58,9 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
   };
 
   // 체크박스 상태 변경
-  const handleCheckboxChange = (index, field) => {
-    updateField(index, { [field]: !fields[index][field] });
-  };
+  // const handleCheckboxChange = (index, field) => {
+  //   updateField(index, { [field]: !fields[index][field] });
+  // };
 
   // 필드 입력값 변경
   const handleFieldInputChange = (index, field, value) => {
@@ -143,7 +143,6 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
               onChange={(e) => setSubstringType(e.target.value)}
             >
               <option>Substring</option>
-              <option>Split</option>
             </S.StyleSelect>
             <S.Label style={{ minWidth: "40px" }}>시작</S.Label>
             <S.StyleSelect
@@ -209,8 +208,8 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
               <col style={{ width: "15%" }} />
               <col style={{ width: "12%" }} />
               <col style={{ width: "15%" }} />
-              <col style={{ width: "7%" }} />
-              <col style={{ width: "10%" }} />
+              {/* <col style={{ width: "7%" }} />
+              <col style={{ width: "10%" }} /> */}
               <col style={{ width: "9%" }} />
             </colgroup>
             <S.Thead>
@@ -220,8 +219,8 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                 <S.Th>Item 설명</S.Th>
                 <S.Th>Item 타입</S.Th>
                 <S.Th>Item 컨텐츠 예시</S.Th>
-                <S.Th style={{ textAlign: "center" }}>디코드여부</S.Th>
-                <S.Th style={{ textAlign: "center" }}>Log 분할여부</S.Th>
+                {/* <S.Th style={{ textAlign: "center" }}>디코드여부</S.Th>
+                <S.Th style={{ textAlign: "center" }}>Log 분할여부</S.Th> */}
                 <S.Th></S.Th>
               </tr>
             </S.Thead>
@@ -290,7 +289,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                       <S.TableText>{field.value}</S.TableText>
                     )}
                   </S.Td>
-                  <S.Td style={{ textAlign: "center" }}>
+                  {/* <S.Td style={{ textAlign: "center" }}>
                     <S.Checkbox
                       checked={field.decode}
                       onChange={() => handleCheckboxChange(index, "decode")}
@@ -301,7 +300,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
                       checked={field.split}
                       onChange={() => handleCheckboxChange(index, "split")}
                     />
-                  </S.Td>
+                  </S.Td> */}
                   <S.Td>
                     <div
                       style={{
