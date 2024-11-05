@@ -16,7 +16,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     addNewField,
   } = useLogFormat();
 
-  const [fileFormat, setFileFormat] = useState("JSONFile");
+  // const [fileFormat, setFileFormat] = useState("JSONFile");
   const [substringType, setSubstringType] = useState("Substring");
   const [startType, setStartType] = useState("indexOf");
   const [startValue, setStartValue] = useState("{");
@@ -45,13 +45,8 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
     try {
       const analysisData = {
         fileName: selectedFileName,
-        fileFormat,
-        substringType,
-        startType,
-        startValue,
+        // fileFormat,
         startOffset,
-        endType,
-        endValue,
         endOffset,
       };
       console.log("포맷 데이터:", analysisData);
@@ -92,7 +87,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
       const formatData = {
         name: formData.name,
         description: formData.description,
-        fileFormat,
+        // fileFormat,
         substringType,
         startType,
         startValue,
@@ -189,7 +184,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
         </S.Section>
 
         {/* 파일 포맷 섹션 */}
-        <S.Section>
+        {/* <S.Section>
           <S.Label>파일 형식</S.Label>
           <S.Select
             value={fileFormat}
@@ -199,7 +194,7 @@ const LogFormatDetail = ({ onClose, isNew = false }) => {
             <option>CSV</option>
             <option>XML</option>
           </S.Select>
-        </S.Section>
+        </S.Section> */}
 
         <S.ButtonContainer>
           <S.Button onClick={handleFormatApply}>포맷 적용</S.Button>
