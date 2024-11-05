@@ -39,9 +39,24 @@ export const analyzeLogFile = async (analysisData) => {
       startdepth: analysisData.startOffset,
       enddepth: analysisData.startOffset,
     });
+    console.log("서버 응답 데이터:", response.data);
     return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
   } catch (error) {
     console.error("Error analyzing log file:", error);
+    throw error;
+  }
+};
+
+// 하위 필드 분석을 위한 새로운 API 추가
+export const analyzeSubFields = async (analysisData) => {
+  try {
+    const response = await api.post("/format/analyze/search", {
+      title: analysisData.title,
+      path: analysisData.path,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error analyzing sub fields:", error);
     throw error;
   }
 };
@@ -52,24 +67,27 @@ export const createLogFormat = async (formatData) => {
     console.log("Creating format:", formatData);
 
     const logFormatDTO = {
-      id: generateFormatId(),
-      name: formatData.name,
-      description: formatData.description,
-      title: formatData.fileName,
-      startdepth: formatData.startOffset,
-      enddepth: formatData.endOffset,
-      fields: formatData.fields.map((field) => ({
-        name: field.name, // 스프링에서 받은 필드명
-        displayName: field.displayName, // 사용자가 입력한 표시명
-        description: field.description, // 사용자가 입력한 설명
-        type: field.type, // 사용자가 선택한 타입
-        value: field.value, // 스프링에서 받은 예시값
-        // decode: field.decode || false,
-        // split: field.split || false,
-      })),
+      start: formatData.startOffset,
+      end: formatData.endOffset,
+      formatname: formatData.name,
+      formatId: generateFormatId(),
+      formatexplain: formatData.description,
+      //title: formatData.fileName, //파일 이름
+      formatSets: {
+        formatItemResponse: formatData.fields.map((field) => ({
+          fieldName: field.name, // 스프링에서 받은 필드명
+          itemAlias: field.displayName, // 사용자가 입력한 표시명
+          itemExplain: field.description, // 사용자가 입력한 설명
+          itemType: field.type, // 사용자가 선택한 타입
+          itemContent: field.value, // 스프링에서 받은 예시값
+          path: field.path, //path 추가
+          // decode: field.decode || false,
+          // split: field.split || false,
+        })),
+      },
     };
 
-    const response = await api.post("/log-formats/create", logFormatDTO);
+    const response = await api.post("/format/addformatfields", logFormatDTO);
     return response.data;
   } catch (error) {
     console.error("Error creating log format:", error);
