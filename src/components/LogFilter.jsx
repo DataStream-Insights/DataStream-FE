@@ -31,12 +31,18 @@ const LogFilter = () => {
 
   const filteredData = React.useMemo(
     () =>
-      data.filter(
-        (item) =>
-          item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.type.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
+      data.filter((item) => {
+        // id를 문자열로 변환
+        const idStr = String(item.id);
+        const nameStr = String(item.name);
+        const typeStr = String(item.type);
+
+        return (
+          idStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          nameStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          typeStr.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      }),
     [data, searchTerm]
   );
 
@@ -61,35 +67,42 @@ const LogFilter = () => {
   };
 
   const handleSave = async () => {
-    // 서버로 전송할 데이터 형태로 변환
-    const requestData = {
-      behaviors: filterSettings.behaviors
-        .map((behavior) => ({
-          field: behavior.idOption?.id || null,
-          operator: behavior.operatorOption?.id || null,
-          value:
-            behavior.actionOption?.id === "custom_input"
-              ? behavior.customValue
-              : behavior.actionOption?.id || null,
-          logicalOperator: behavior.logicalOperator, // 논리 연산자 추가
-        }))
-        .filter((b) => b.field && b.operator && b.value), // 완성되지 않은 필터는 제외
-      repeatCount: filterSettings.repeatCount,
-      timeLimit: filterSettings.timeLimit,
-      collectUnmatched: filterSettings.collectUnmatched,
-    };
-
-    // 콘솔에 출력
-    console.log(
-      "서버로 전송될 필터 데이터:",
-      JSON.stringify(requestData, null, 2)
-    );
-
     try {
-      await saveFilter();
+      if (!filterSettings.name?.trim()) {
+        alert("필터 이름을 입력해주세요.");
+        return;
+      }
+
+      // 서버로 전송할 데이터 형태로 변환
+      const requestData = {
+        name: filterSettings.name.trim(), // 이름 필드 추가
+        behaviors: filterSettings.behaviors
+          .map((behavior) => ({
+            field: behavior.idOption?.id || null,
+            operator: behavior.operatorOption?.id || null,
+            value:
+              behavior.actionOption?.id === "custom_input"
+                ? behavior.customValue
+                : behavior.actionOption?.id || null,
+            logicalOperator: behavior.logicalOperator,
+          }))
+          .filter((b) => b.field && b.operator && b.value),
+        repeatCount: filterSettings.repeatCount,
+        timeLimit: filterSettings.timeLimit,
+        collectUnmatched: filterSettings.collectUnmatched,
+      };
+
+      // 콘솔에 출력
+      console.log(
+        "서버로 전송될 필터 데이터:",
+        JSON.stringify(requestData, null, 2)
+      );
+
+      // saveFilter 호출 시 requestData를 전달
+      await saveFilter(requestData);
       alert("저장되었습니다.");
     } catch (error) {
-      alert("저장에 실패했습니다.");
+      alert(error.message || "저장에 실패했습니다.");
     }
   };
 
@@ -177,6 +190,16 @@ const LogFilter = () => {
           />
 
           <div style={{ height: "50px" }} />
+          <F.Section>
+            <F.FormGroup>
+              <F.Label>이름</F.Label>
+              <F.Input
+                value={filterSettings.name}
+                onChange={(e) => updateFilterSettings({ name: e.target.value })}
+                placeholder="Log Format A"
+              />
+            </F.FormGroup>
+          </F.Section>
 
           <F.RepeatSection>
             <F.InputGroup>
