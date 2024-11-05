@@ -21,7 +21,7 @@ export const fetchFilters = async () => {
 // 로그 아이템 목록 조회 (LogFilter 화면용)
 export const fetchLogItems = async () => {
   try {
-    const response = await api.get("/log-items");
+    const response = await api.get("/filter/log-items");
     return response.data;
   } catch (error) {
     console.error("Error fetching log items:", error);

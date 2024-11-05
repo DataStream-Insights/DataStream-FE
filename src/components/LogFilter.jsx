@@ -22,8 +22,8 @@ const LogFilter = () => {
 
   const columns = React.useMemo(
     () => [
-      { Header: "아이템 명", accessor: "id" },
-      { Header: "아이템 별명", accessor: "name" },
+      { Header: "아이템 명", accessor: "name" },
+      { Header: "아이템 별명", accessor: "namealias" },
       { Header: "TYPE", accessor: "type" },
     ],
     []
@@ -33,8 +33,8 @@ const LogFilter = () => {
     () =>
       data.filter(
         (item) =>
-          item.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.namealias.toLowerCase().includes(searchTerm.toLowerCase()) ||
           item.type.toLowerCase().includes(searchTerm.toLowerCase())
       ),
     [data, searchTerm]
