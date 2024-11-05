@@ -7,6 +7,17 @@ const api = axios.create({
   },
 });
 
+// 포맷 목록 조회 API 추가
+export const fetchLogFormats = async () => {
+  try {
+    const response = await api.get("/log-formats");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching log formats:", error);
+    throw error;
+  }
+};
+
 // 서버에 있는 로그 파일 목록 조회
 export const fetchLogFiles = async () => {
   try {
@@ -17,6 +28,33 @@ export const fetchLogFiles = async () => {
   } catch (error) {
     console.error("Error fetching log files:", error);
     return [];
+  }
+};
+
+// 선택한 로그 파일의 필드 분석 요청
+export const analyzeLogFile = async (analysisData) => {
+  try {
+    const response = await api.post("/format/analyze", {
+      fileName: analysisData.fileName,
+      fileFormat: analysisData.fileFormat,
+      logSubstring: {
+        type: analysisData.substringType,
+        start: {
+          type: analysisData.startType,
+          value: analysisData.startValue,
+          offset: analysisData.startOffset,
+        },
+        end: {
+          type: analysisData.endType,
+          value: analysisData.endValue,
+          offset: analysisData.endOffset,
+        },
+      },
+    });
+    return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
+  } catch (error) {
+    console.error("Error analyzing log file:", error);
+    throw error;
   }
 };
 
@@ -73,31 +111,4 @@ const generateFormatId = () => {
     .toString()
     .padStart(3, "0");
   return `FMT${year}${month}${day}${random}`;
-};
-
-// 선택한 로그 파일의 필드 분석 요청
-export const analyzeLogFile = async (analysisData) => {
-  try {
-    const response = await api.post("/format/analyze", {
-      fileName: analysisData.fileName,
-      fileFormat: analysisData.fileFormat,
-      logSubstring: {
-        type: analysisData.substringType,
-        start: {
-          type: analysisData.startType,
-          value: analysisData.startValue,
-          offset: analysisData.startOffset,
-        },
-        end: {
-          type: analysisData.endType,
-          value: analysisData.endValue,
-          offset: analysisData.endOffset,
-        },
-      },
-    });
-    return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
-  } catch (error) {
-    console.error("Error analyzing log file:", error);
-    throw error;
-  }
 };
