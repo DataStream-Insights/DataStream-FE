@@ -10,7 +10,7 @@ const api = axios.create({
 // 포맷 목록 조회 API 추가
 export const fetchLogFormats = async () => {
   try {
-    const response = await api.get("/log-formats");
+    const response = await api.get("/format");
     return response.data;
   } catch (error) {
     console.error("Error fetching log formats:", error);
@@ -35,21 +35,9 @@ export const fetchLogFiles = async () => {
 export const analyzeLogFile = async (analysisData) => {
   try {
     const response = await api.post("/format/analyze", {
-      fileName: analysisData.fileName,
-      fileFormat: analysisData.fileFormat,
-      logSubstring: {
-        type: analysisData.substringType,
-        start: {
-          type: analysisData.startType,
-          value: analysisData.startValue,
-          offset: analysisData.startOffset,
-        },
-        end: {
-          type: analysisData.endType,
-          value: analysisData.endValue,
-          offset: analysisData.endOffset,
-        },
-      },
+      title: analysisData.fileName,
+      startdepth: analysisData.startOffset,
+      enddepth: analysisData.startOffset,
     });
     return response.data; // [{name: "HTTP_USER_AGENT", value: "Mozilla/5.0..."}, ...]
   } catch (error) {

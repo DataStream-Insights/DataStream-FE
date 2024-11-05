@@ -124,11 +124,14 @@ const useLogFormat = () => {
 
   // 초기 로딩시 포맷 목록과 로그 파일 목록을 함께 가져오기
   useEffect(() => {
-    const loadInitialData = async () => {
-      await Promise.all([loadFormats(), loadLogFiles()]);
-    };
-    loadInitialData();
-  }, [loadFormats, loadLogFiles]);
+    // 아직 미완성
+    // const loadInitialData = async () => {
+    //   await Promise.all([loadFormats(), loadLogFiles()]);
+    // };
+    // loadInitialData();
+    loadLogFiles();
+    //[loadFormats, loadLogFiles])
+  }, [loadLogFiles]);
 
   return {
     logFiles,
