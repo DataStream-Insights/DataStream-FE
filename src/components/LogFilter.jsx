@@ -25,30 +25,29 @@ const LogFilter = () => {
       { Header: "아이템 명", accessor: "name" },
       { Header: "아이템 별명", accessor: "namealias" },
       { Header: "TYPE", accessor: "type" },
-    ],
-    []
+    ],[]
   );
 
   const filteredData = React.useMemo(
     () =>
 
-      data.filter(
-        (item) =>
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.namealias.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.type.toLowerCase().includes(searchTerm.toLowerCase())
-      ),
+      // data.filter(
+      //   (item) =>
+      //     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      //     item.namealias.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      //     item.type.toLowerCase().includes(searchTerm.toLowerCase())
+      // ),
 
       data.filter((item) => {
         // id를 문자열로 변환
-        const idStr = String(item.id);
-        const nameStr = String(item.name);
-        const typeStr = String(item.type);
+        // const idStr = String(item.id);
+        // const nameStr = String(item.name);
+        // const typeStr = String(item.type);
 
         return (
-          idStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          nameStr.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          typeStr.toLowerCase().includes(searchTerm.toLowerCase())
+          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.namealias.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.type.toLowerCase().includes(searchTerm.toLowerCase())
         );
       }),
 
