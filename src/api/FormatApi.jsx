@@ -64,36 +64,85 @@ export const analyzeSubFields = async (analysisData) => {
 // 로그 포맷 생성
 export const createLogFormat = async (formatData) => {
   try {
-    console.log("Creating format:", formatData);
+    console.log("Received format data:", formatData);
 
+    // 필수 필드 검증
+    if (!formatData.name) {
+      throw new Error("Format name is required");
+    }
+
+    if (!Array.isArray(formatData.fields) || formatData.fields.length === 0) {
+      throw new Error("At least one field is required");
+    }
+
+    // 서버 요구사항에 맞는 DTO 구조
     const logFormatDTO = {
-      start: formatData.startOffset,
-      end: formatData.endOffset,
+      start: parseInt(formatData.startOffset) || 0,
+      end: parseInt(formatData.endOffset) || 0,
       formatname: formatData.name,
-      formatId: generateFormatId(),
-      formatexplain: formatData.description,
-      //title: formatData.fileName, //파일 이름
-      formatSets: [
-        // 배열로 감싸기
-        {
-          formatItemResponse: formatData.fields.map((field) => ({
-            fieldName: field.name,
-            itemAlias: field.displayName,
-            itemExplain: field.description,
-            itemType: field.type,
-            itemContent: field.value,
-            path: field.path,
-          })),
+      formatID: formatData.formatId || generateFormatId(),
+      formatexplain: formatData.description || "",
+      formatSets: formatData.fields.map((field) => ({
+        formatItemResponse: {
+          fieldName: field.name || "",
+          itemAlias: field.displayName || field.name || "",
+          itemExplain: field.description || "",
+          itemType: field.type || "STRING",
+          itemContent: field.value || "",
+          path: field.path || "",
         },
-      ],
+      })),
     };
 
+    // 요청 전 최종 데이터 로깅
+    console.log(
+      "Final request payload:",
+      JSON.stringify(logFormatDTO, null, 2)
+    );
+
     const response = await api.post("/format/addformatfields", logFormatDTO);
+    console.log("Server response:", response);
+
     return response.data;
   } catch (error) {
     console.error("Error creating log format:", error);
+    if (error.response) {
+      console.error("Server error response:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    }
+    if (error.config) {
+      console.error("Request config:", {
+        url: error.config.url,
+        method: error.config.method,
+        headers: error.config.headers,
+        data:
+          typeof error.config.data === "string"
+            ? JSON.parse(error.config.data)
+            : error.config.data,
+      });
+    }
     throw error;
   }
+};
+
+// formatSets 배열을 올바른 형식으로 생성하는 헬퍼 함수
+export const createFormatSets = (fields) => {
+  if (!Array.isArray(fields)) {
+    console.warn("Fields is not an array:", fields);
+    return [];
+  }
+
+  return fields.map((field) => ({
+    fieldName: field.name || "",
+    itemAlias: field.displayName || field.name || "",
+    itemExplain: field.description || "",
+    itemType: field.type || "STRING",
+    itemContent: field.value || "",
+    path: field.path || "",
+  }));
 };
 
 // ID 생성 함수
