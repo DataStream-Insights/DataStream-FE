@@ -105,20 +105,47 @@ const useLogFormat = () => {
     setIsLoading(true);
     setError(null);
     try {
+      console.log("Original format data:", formatData);
+      console.log("Current fields:", fields);
+
+      // 필수 필드 검증
+      if (!formatData.name) {
+        throw new Error("포맷 이름은 필수입니다.");
+      }
+
       const dataWithFileName = {
         ...formatData,
         fileName: selectedFileName,
-        fields: fields.map((field) => ({
-          ...field,
-          displayName: field.displayName || field.name, // 표시명이 없으면 필드명 사용
-        })),
+        fields: fields.map((field) => {
+          if (!field.name) {
+            console.warn("Field missing name:", field);
+          }
+          return {
+            ...field,
+            name: field.name || "",
+            displayName: field.displayName || field.name || "",
+            description: field.description || "",
+            type: field.type || "STRING",
+            value: field.value || "",
+            path: field.path || "",
+          };
+        }),
       };
 
+      console.log("Prepared format data:", dataWithFileName);
       const result = await createLogFormat(dataWithFileName);
+      console.log("Format creation result:", result);
+
+      // 성공 시 포맷 목록 새로고침
+      await loadFormats();
       return result;
     } catch (error) {
       console.error("Failed to create log format:", error);
-      setError("로그 포맷 생성에 실패했습니다.");
+      if (error.response?.data) {
+        console.error("Server error details:", error.response.data);
+      }
+      const errorMessage = error.response?.data?.message || error.message;
+      setError(`로그 포맷 생성 실패: ${errorMessage}`);
       throw error;
     } finally {
       setIsLoading(false);
