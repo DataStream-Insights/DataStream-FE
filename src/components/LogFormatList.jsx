@@ -10,6 +10,8 @@ const LogFormatList = ({ onSelect, onCreate, isDetailVisible }) => {
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
   const itemsPerPage = 7; // 한 페이지당 표시할 항목 수
 
+  console.log("Received formats:", formats);
+
   /**
    * - 이름, ID, 설명 필드에서 검색어를 포함하는 항목만 필터링
    * - 대소문자 구분 없이 검색
@@ -19,9 +21,9 @@ const LogFormatList = ({ onSelect, onCreate, isDetailVisible }) => {
   const filteredFormats = useMemo(() => {
     return (formats || []).filter(
       (format) =>
-        format.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        format.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        format.description.toLowerCase().includes(searchTerm.toLowerCase())
+        format.formatName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        format.formatId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        format.formatexplain?.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [formats, searchTerm]);
 
@@ -88,11 +90,11 @@ const LogFormatList = ({ onSelect, onCreate, isDetailVisible }) => {
         <tbody>
           {paginatedData.map((format) => (
             <S.TableRow key={format.id} onClick={() => onSelect(format)}>
-              <S.TableCell>{format.name}</S.TableCell>
+              <S.TableCell>{format.formatName}</S.TableCell>
               <S.TableCell>
                 <div className="id-cell">
-                  {format.id}
-                  <span className="description">{format.description}</span>
+                  {format.formatId}
+                  <span className="description">{format.formatexplain}</span>
                 </div>
               </S.TableCell>
             </S.TableRow>

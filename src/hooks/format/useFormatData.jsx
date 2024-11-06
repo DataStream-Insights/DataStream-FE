@@ -20,7 +20,9 @@ const useLogFormat = () => {
     setIsLoading(true);
     setError(null);
     try {
+      console.log("Fetching formats...");
       const formatList = await fetchLogFormats();
+      console.log("Received format list:", formatList);
       setFormats(formatList);
     } catch (error) {
       console.error("Failed to fetch formats:", error);
@@ -143,14 +145,18 @@ const useLogFormat = () => {
 
   // 초기 로딩시 포맷 목록과 로그 파일 목록을 함께 가져오기
   useEffect(() => {
-    // 아직 미완성
-    // const loadInitialData = async () => {
-    //   await Promise.all([loadFormats(), loadLogFiles()]);
-    // };
-    // loadInitialData();
-    loadLogFiles();
-    //[loadFormats, loadLogFiles])
-  }, [loadLogFiles]);
+    const loadInitialData = async () => {
+      console.log("Loading initial data...");
+      try {
+        // loadFormats와 loadLogFiles를 순차적으로 실행
+        await loadFormats();
+        await loadLogFiles();
+      } catch (error) {
+        console.error("Error loading initial data:", error);
+      }
+    };
+    loadInitialData();
+  }, [loadFormats, loadLogFiles]);
 
   return {
     logFiles,
