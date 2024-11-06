@@ -10,7 +10,7 @@ const api = axios.create({
 // 포맷 목록 조회 API 추가
 export const fetchLogFormats = async () => {
   try {
-    const response = await api.get("/format");
+    const response = await api.get("/format/management");
     return response.data;
   } catch (error) {
     console.error("Error fetching log formats:", error);
@@ -73,18 +73,19 @@ export const createLogFormat = async (formatData) => {
       formatId: generateFormatId(),
       formatexplain: formatData.description,
       //title: formatData.fileName, //파일 이름
-      formatSets: {
-        formatItemResponse: formatData.fields.map((field) => ({
-          fieldName: field.name, // 스프링에서 받은 필드명
-          itemAlias: field.displayName, // 사용자가 입력한 표시명
-          itemExplain: field.description, // 사용자가 입력한 설명
-          itemType: field.type, // 사용자가 선택한 타입
-          itemContent: field.value, // 스프링에서 받은 예시값
-          path: field.path, //path 추가
-          // decode: field.decode || false,
-          // split: field.split || false,
-        })),
-      },
+      formatSets: [
+        // 배열로 감싸기
+        {
+          formatItemResponse: formatData.fields.map((field) => ({
+            fieldName: field.name,
+            itemAlias: field.displayName,
+            itemExplain: field.description,
+            itemType: field.type,
+            itemContent: field.value,
+            path: field.path,
+          })),
+        },
+      ],
     };
 
     const response = await api.post("/format/addformatfields", logFormatDTO);
