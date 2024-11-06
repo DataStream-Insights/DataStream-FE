@@ -1,10 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import * as S from "../styles/format/formatListStyle";
-import useLogFormat from "../hooks/format/useFormatData";
 
-const LogFormatList = ({ onSelect, onCreate, isDetailVisible }) => {
-  const { formats } = useLogFormat(); // Hook에서 format 목록 가져오기
+const LogFormatList = ({
+  onSelect,
+  onCreate,
+  isDetailVisible,
+  formats,
+  loadFormatDetail,
+}) => {
   // 상태 관리
   const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
   const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 번호
@@ -54,6 +58,17 @@ const LogFormatList = ({ onSelect, onCreate, isDetailVisible }) => {
     setCurrentPage(pageNumber);
   };
 
+  const handleFormatSelect = async (format) => {
+    try {
+      console.log("Format selected:", format); // 선택된 format 데이터 확인
+      await loadFormatDetail(format.id);
+      console.log("Detail loaded, calling onSelect"); // loadFormatDetail 완료 확인
+      onSelect(format);
+    } catch (error) {
+      console.error("Failed to load format detail:", error);
+    }
+  };
+
   return (
     <S.Container>
       <S.Header>
@@ -89,7 +104,10 @@ const LogFormatList = ({ onSelect, onCreate, isDetailVisible }) => {
         </thead>
         <tbody>
           {paginatedData.map((format) => (
-            <S.TableRow key={format.id} onClick={() => onSelect(format)}>
+            <S.TableRow
+              key={format.id}
+              onClick={() => handleFormatSelect(format)}
+            >
               <S.TableCell>{format.formatName}</S.TableCell>
               <S.TableCell>
                 <div className="id-cell">

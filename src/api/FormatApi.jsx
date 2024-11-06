@@ -18,6 +18,68 @@ export const fetchLogFormats = async () => {
   }
 };
 
+//상세 정보 조회
+export const fetchFormatDetail = async (id) => {
+  try {
+    console.log("Fetching format detail for ID:", id);
+    const response = await api.get(`/format/management/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching format detail:", error);
+    throw error;
+  }
+};
+
+//수정
+export const updateLogFormat = async (id, formatData) => {
+  try {
+    console.log("Updating format with ID:", id, formatData);
+
+    // 서버 요구사항에 맞는 DTO 구조
+    const logFormatDTO = {
+      start: parseInt(formatData.startOffset) || 0,
+      end: parseInt(formatData.endOffset) || 0,
+      formatname: formatData.name,
+      formatID: formatData.formatID, // 기존 ID 유지
+      formatexplain: formatData.description || "",
+      formatSets: formatData.fields.map((field) => ({
+        formatItemResponse: {
+          fieldName: field.name || "",
+          itemAlias: field.displayName || field.name || "",
+          itemExplain: field.description || "",
+          itemType: field.type || "STRING",
+          itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
+          path: field.path || "",
+        },
+      })),
+    };
+
+    console.log(
+      "Update request payload:",
+      JSON.stringify(logFormatDTO, null, 2)
+    );
+
+    // PUT 요청으로 변경
+    // const response = await api.put(
+    //   `/format/management/addformatfields`,
+    //   logFormatDTO
+    // );
+    console.log("Update response:", response);
+
+    return response.data;
+  } catch (error) {
+    console.error("Error updating log format:", error);
+    if (error.response) {
+      console.error("Server error response:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    }
+    throw error;
+  }
+};
+
 // 서버에 있는 로그 파일 목록 조회
 export const fetchLogFiles = async () => {
   try {
@@ -71,30 +133,28 @@ export const createLogFormat = async (formatData) => {
       throw new Error("Format name is required");
     }
 
-    if (!Array.isArray(formatData.fields) || formatData.fields.length === 0) {
-      throw new Error("At least one field is required");
-    }
+    // 각 필드를 개별 formatSets 항목으로 변환
+    const formatSets = formatData.fields.map((field) => ({
+      formatItemResponse: {
+        fieldName: field.name || "",
+        itemAlias: field.displayName || field.name || "",
+        itemExplain: field.description || "",
+        itemType: field.type || "STRING",
+        itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
+        path: field.path || "",
+      },
+    }));
 
-    // 서버 요구사항에 맞는 DTO 구조
+    // 서버가 기대하는 정확한 형식으로 변경
     const logFormatDTO = {
       start: parseInt(formatData.startOffset) || 0,
       end: parseInt(formatData.endOffset) || 0,
       formatname: formatData.name,
       formatID: formatData.formatId || generateFormatId(),
       formatexplain: formatData.description || "",
-      formatSets: formatData.fields.map((field) => ({
-        formatItemResponse: {
-          fieldName: field.name || "",
-          itemAlias: field.displayName || field.name || "",
-          itemExplain: field.description || "",
-          itemType: field.type || "STRING",
-          itemContent: field.value || "",
-          path: field.path || "",
-        },
-      })),
+      formatSets: formatSets,
     };
 
-    // 요청 전 최종 데이터 로깅
     console.log(
       "Final request payload:",
       JSON.stringify(logFormatDTO, null, 2)
@@ -111,17 +171,6 @@ export const createLogFormat = async (formatData) => {
         status: error.response.status,
         data: error.response.data,
         headers: error.response.headers,
-      });
-    }
-    if (error.config) {
-      console.error("Request config:", {
-        url: error.config.url,
-        method: error.config.method,
-        headers: error.config.headers,
-        data:
-          typeof error.config.data === "string"
-            ? JSON.parse(error.config.data)
-            : error.config.data,
       });
     }
     throw error;
