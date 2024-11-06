@@ -5,6 +5,7 @@ import {
   analyzeLogFile,
   fetchLogFormats,
   analyzeSubFields,
+  fetchFormatDetail,
 } from "../../api/FormatApi";
 
 const useLogFormat = () => {
@@ -14,6 +15,7 @@ const useLogFormat = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formats, setFormats] = useState([]); // 포맷 목록을 위한 상태 추가
+  const [selectedFormat, setSelectedFormat] = useState(null); //상세보기
 
   // 포맷 목록 조회 함수
   const loadFormats = useCallback(async () => {
@@ -31,6 +33,41 @@ const useLogFormat = () => {
       setIsLoading(false);
     }
   }, []);
+
+  //포맷 상세보기 조회
+  const loadFormatDetail = useCallback(async (id) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log("ID", id);
+      const detailData = await fetchFormatDetail(id);
+      console.log("받은 데이터", detailData);
+
+      // 상세 데이터를 fields 형식에 맞게 변환
+      const formattedFields = detailData.formatSets.map((set) => ({
+        name: set.formatItemResponse.fieldName,
+        displayName: set.formatItemResponse.itemAlias,
+        description: set.formatItemResponse.itemExplain,
+        type: set.formatItemResponse.itemType,
+        value: set.formatItemResponse.itemContent,
+        path: set.formatItemResponse.path,
+        hasChild: false,
+      }));
+
+      console.log("저장되는 데이터", detailData);
+      setSelectedFormat(detailData);
+      setFields(formattedFields);
+
+      return detailData;
+      c;
+    } catch (error) {
+      console.error("Failed to fetch format detail:", error);
+      setError("포맷 상세 정보를 불러오는데 실패했습니다.");
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  });
 
   // 서버의 로그 파일 목록 조회
   const loadLogFiles = useCallback(async () => {
@@ -196,6 +233,8 @@ const useLogFormat = () => {
     loadLogFiles,
     loadFormats,
     selectLogFile,
+    selectedFormat,
+    loadFormatDetail,
     analyzeFormat,
     analyzeChildFields,
     analyzeSubFields,
