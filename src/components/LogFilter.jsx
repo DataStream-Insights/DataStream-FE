@@ -12,8 +12,13 @@ import useFilterCreate from "../hooks/filter/useFilterCreate";
 
 const LogFilter = () => {
   //hook에서 items 받아옴
-  const { items, filterSettings, updateFilterSettings, saveFilter } =
-    useFilterCreate();
+  const {
+    items,
+    filterSettings,
+    filterOptions,
+    updateFilterSettings,
+    saveFilter,
+  } = useFilterCreate();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
@@ -25,12 +30,12 @@ const LogFilter = () => {
       { Header: "아이템 명", accessor: "name" },
       { Header: "아이템 별명", accessor: "namealias" },
       { Header: "TYPE", accessor: "type" },
-    ],[]
+    ],
+    []
   );
 
   const filteredData = React.useMemo(
     () =>
-
       // data.filter(
       //   (item) =>
       //     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,32 +86,26 @@ const LogFilter = () => {
         return;
       }
 
-      // 서버로 전송할 데이터 형태로 변환
+      // 필터 데이터 변환 로직 수정
       const requestData = {
-        name: filterSettings.name.trim(), // 이름 필드 추가
+        name: filterSettings.name.trim(),
         behaviors: filterSettings.behaviors
           .map((behavior) => ({
-            field: behavior.idOption?.id || null,
-            operator: behavior.operatorOption?.id || null,
-            value:
-              behavior.actionOption?.id === "custom_input"
-                ? behavior.customValue
-                : behavior.actionOption?.id || null,
+            field: behavior.idOption?.value || null, // value 사용
+            operator: behavior.operatorOption?.value || null, // value 사용
+            value: behavior.actionValue || null, // actionValue 직접 사용
             logicalOperator: behavior.logicalOperator,
           }))
           .filter((b) => b.field && b.operator && b.value),
-        repeatCount: filterSettings.repeatCount,
-        timeLimit: filterSettings.timeLimit,
-        collectUnmatched: filterSettings.collectUnmatched,
       };
 
-      // 콘솔에 출력
+      // 데이터 확인을 위한 로그
+      console.log("변환 전 데이터:", filterSettings.behaviors);
       console.log(
         "서버로 전송될 필터 데이터:",
         JSON.stringify(requestData, null, 2)
       );
 
-      // saveFilter 호출 시 requestData를 전달
       await saveFilter(requestData);
       alert("저장되었습니다.");
     } catch (error) {
@@ -194,6 +193,7 @@ const LogFilter = () => {
           <F.FilterTitle>행동 정의 설정</F.FilterTitle>
           <BehaviorFilter
             filters={filterSettings.behaviors}
+            options={filterOptions}
             onChange={(behaviors) => updateFilterSettings({ behaviors })}
           />
 
@@ -210,7 +210,7 @@ const LogFilter = () => {
           </F.Section>
 
           <F.RepeatSection>
-            <F.InputGroup>
+            {/* <F.InputGroup>
               <F.NumberInput
                 type="number"
                 value={filterSettings.repeatCount}
@@ -222,9 +222,9 @@ const LogFilter = () => {
                 min="1"
               />
               <span>회 반복하여 조건 만족 시 통과</span>
-            </F.InputGroup>
+            </F.InputGroup> */}
 
-            <F.InputGroup>
+            {/* <F.InputGroup>
               <F.NumberInput
                 type="number"
                 value={filterSettings.timeLimit.value}
@@ -255,9 +255,9 @@ const LogFilter = () => {
               </F.Select>
               <span>이내</span>
               <span>행동 정의 충족시 통과</span>
-            </F.InputGroup>
+            </F.InputGroup> */}
 
-            <F.InputGroup>
+            {/* <F.InputGroup>
               <span>행동 정의 미충족 수집</span>
               <F.Switch>
                 <input
@@ -275,6 +275,11 @@ const LogFilter = () => {
                 * 설정시 시간 제약 설정이 필수로 필요하지 않습니다.
               </span>
 
+              <div style={{ textAlign: "right" }}>
+                <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
+              </div>
+            </F.InputGroup> */}
+            <F.InputGroup>
               <div style={{ textAlign: "right" }}>
                 <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
               </div>

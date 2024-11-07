@@ -11,18 +11,17 @@ const useFilterCreate = () => {
   const [filterOptions, setFilterOptions] = useState({
     idOptions: [],
     operatorOptions: [],
-    actionOptions: [],
   });
 
   const [filterSettings, setFilterSettings] = useState({
     name: "", // 필터 이름 필드 추가
-    behaviors: [],
-    repeatCount: 1,
-    timeLimit: {
-      value: 5,
-      unit: "분",
-    },
-    collectUnmatched: false,
+    // behaviors: [],
+    // repeatCount: 1,
+    // timeLimit: {
+    //   value: 5,
+    //   unit: "분",
+    // },
+    // collectUnmatched: false,
   });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,10 +29,16 @@ const useFilterCreate = () => {
   // 옵션 목록 조회
   const loadOptions = useCallback(async () => {
     try {
+      console.log("Loading options...");
       const options = await fetchFilterOptions();
+      console.log("Received options:", options);
       setFilterOptions(options);
     } catch (error) {
       console.error("Failed to fetch filter options:", error);
+      setFilterOptions({
+        idOptions: [],
+        operatorOptions: [],
+      });
     }
   }, []);
 
@@ -84,7 +89,7 @@ const useFilterCreate = () => {
   useEffect(() => {
     loadItems();
     loadOptions();
-  }, [loadItems]);
+  }, [loadItems, loadOptions]);
 
   return {
     items,
