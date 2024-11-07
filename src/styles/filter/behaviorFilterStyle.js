@@ -78,6 +78,28 @@ export const DropdownContent = styled.div`
   margin-top: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+
+  // 최대 높이 설정 및 스크롤 추가
+  max-height: 200px; // 원하는 높이로 조정 가능
+  overflow-y: auto; // 세로 스크롤 추가
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `;
 
 export const Option = styled.div`
