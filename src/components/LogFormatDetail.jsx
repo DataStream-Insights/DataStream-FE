@@ -129,12 +129,50 @@ const LogFormatDetail = ({
     }
   };
 
-  // 필드 입력값 변경
+  // 필드 입력값 변경 시 path 업데이트 처리
   const handleFieldInputChange = (index, field, value) => {
+    if (field === "name") {
+      const currentField = fields[index];
+      const parentPath = currentField.path.split(".");
+      parentPath.pop(); // 마지막 세그먼트 제거
+
+      // 새로운 path 생성
+      const newPath =
+        parentPath.length > 0 ? `${parentPath.join(".")}.${value}` : value;
+
+      // 현재 필드와 그 하위 필드들의 path 업데이트
+      setFields((prevFields) => {
+        const newFields = [...prevFields];
+        const oldPath = currentField.path;
+
+        // 현재 필드와 모든 하위 필드의 path 업데이트
+        for (let i = index; i < newFields.length; i++) {
+          if (
+            i === index ||
+            (newFields[i].path && newFields[i].path.startsWith(oldPath + "."))
+          ) {
+            newFields[i] = {
+              ...newFields[i],
+              path:
+                i === index
+                  ? newPath
+                  : newFields[i].path.replace(oldPath, newPath),
+            };
+          }
+        }
+
+        return newFields;
+      });
+    }
+
     updateField(index, { [field]: value });
   };
 
-  const handleAddField = () => {
+  const handleAddField = (index, parentPath) => {
+    const currentField = fields[index];
+    const currentLevel = parentPath ? parentPath.split(".").length : 0;
+
+    // 새로운 필드 생성
     const newField = {
       name: "",
       value: "",
@@ -142,8 +180,32 @@ const LogFormatDetail = ({
       description: "",
       type: "STRING",
       isUserCreated: true,
+      path: parentPath || "",
+      hasChild: false,
     };
-    addNewField(newField);
+
+    // 같은 레벨의 다음 필드를 찾기 위한 함수
+    const findNextSiblingIndex = (startIndex, level) => {
+      for (let i = startIndex + 1; i < fields.length; i++) {
+        const fieldLevel = fields[i].path
+          ? fields[i].path.split(".").length
+          : 0;
+        if (fieldLevel <= level) {
+          return i;
+        }
+      }
+      return fields.length;
+    };
+
+    // 새 필드가 삽입될 위치 결정
+    const insertIndex = findNextSiblingIndex(index, currentLevel);
+
+    // 필드 배열 업데이트
+    setFields((prevFields) => [
+      ...prevFields.slice(0, insertIndex),
+      newField,
+      ...prevFields.slice(insertIndex),
+    ]);
   };
 
   // 저장/수정 버튼 클릭 시
@@ -387,7 +449,9 @@ const LogFormatDetail = ({
                           justifyContent: "center",
                         }}
                       >
-                        <S.ActionButton onClick={handleAddField}>
+                        <S.ActionButton
+                          onClick={() => handleAddField(index, field.path)}
+                        >
                           <Plus size={16} />
                         </S.ActionButton>
                         <S.ActionButton
