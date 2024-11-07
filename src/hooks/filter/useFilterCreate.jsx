@@ -59,15 +59,15 @@ const useFilterCreate = () => {
     }
   }, []);
 
-  const saveFilter = async () => {
+  const saveFilter = async (requestData) => {
     setIsLoading(true);
     setError(null);
     try {
-      if (!filterSettings.name.trim()) {
+      if (!requestData.filtername.trim()) {
         throw new Error("필터 이름을 입력해주세요.");
       }
 
-      const result = await createLogFilter(filterSettings);
+      const result = await createLogFilter(requestData);
       return result;
     } catch (error) {
       console.error("Failed to save filter:", error);

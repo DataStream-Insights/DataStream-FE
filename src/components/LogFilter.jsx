@@ -9,6 +9,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import BehaviorFilter from "./BehaviorFilter";
 import useFilterCreate from "../hooks/filter/useFilterCreate";
+import { generateFilterId } from "../utils/idGenerator";
 
 const LogFilter = () => {
   //hook에서 items 받아옴
@@ -86,17 +87,31 @@ const LogFilter = () => {
         return;
       }
 
-      // 필터 데이터 변환 로직 수정
+      const filterId = generateFilterId();
+
+      // 새로운 형식으로 데이터 변환
       const requestData = {
-        name: filterSettings.name.trim(),
-        behaviors: filterSettings.behaviors
-          .map((behavior) => ({
-            field: behavior.idOption?.value || null, // value 사용
-            operator: behavior.operatorOption?.value || null, // value 사용
-            value: behavior.actionValue || null, // actionValue 직접 사용
-            logicalOperator: behavior.logicalOperator,
-          }))
-          .filter((b) => b.field && b.operator && b.value),
+        filtername: filterSettings.name.trim(),
+        filtermanage_id: filterId,
+        filterSetList: {
+          filterSets: filterSettings.behaviors
+            .filter(
+              (behavior) =>
+                behavior.idOption &&
+                behavior.operatorOption &&
+                behavior.actionValue
+            )
+            .map((behavior) => ({
+              andor: behavior.logicalOperator || "AND", // 첫 번째 필터의 경우 null 대신 기본값 사용
+              filtervalue: {
+                value: behavior.actionValue,
+              },
+              operation: {
+                operation: behavior.operatorOption.value, // equals, not_equals 등
+              },
+              responseItemid: behavior.idOption.id, // FormatItem의 ID
+            })),
+        },
       };
 
       // 데이터 확인을 위한 로그

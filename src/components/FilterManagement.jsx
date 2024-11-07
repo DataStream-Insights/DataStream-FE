@@ -1,13 +1,23 @@
 import React from "react";
+import { useState } from "react";
 import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useFilterData from "../hooks/filter/useFilterData";
 import * as S from "../styles/main/tableStyle";
+import FilterDetail from "./FilterDetail";
 
 export function FilterManagement() {
+  const [selectedFilter, setSelectedFilter] = useState(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const navigate = useNavigate();
   const { data, isLoading } = useFilterData(); // useFilter hook 사용
+
+  const handleRowClick = (row) => {
+    console.log("Selected filter:", row.original);
+    setSelectedFilter(row.original);
+    setIsDetailOpen(true);
+  };
 
   const handleCreateClick = () => {
     navigate("/filter");
@@ -36,9 +46,10 @@ export function FilterManagement() {
           return <S.Checkbox {...props} />;
         },
       },
-      { Header: "No", accessor: "no" }, // API에서 추가한 no 필드
-      { Header: "필터 ID", accessor: "filterId" }, // 백엔드 응답의 filterId
+      { Header: "No", accessor: "id" }, // API에서 추가한 no 필드
+      { Header: "필터 ID", accessor: "filterManageId" }, // 백엔드 응답의 filterId
       { Header: "필터링명", accessor: "filterName" }, // 필터링명 필드
+      //{ Header: "기안일자", accessor: "createdDate" },
     ],
     []
   );
@@ -101,7 +112,12 @@ export function FilterManagement() {
               prepareRow(row);
               const { key, ...rowProps } = row.getRowProps();
               return (
-                <S.Tr key={key} {...rowProps}>
+                <S.Tr
+                  key={key}
+                  {...rowProps}
+                  onClick={() => handleRowClick(row)}
+                  style={{ cursor: "pointer" }}
+                >
                   {row.cells.map((cell) => {
                     const { key, ...cellProps } = cell.getCellProps();
                     return (
@@ -116,6 +132,12 @@ export function FilterManagement() {
           </tbody>
         </S.StyledTable>
       </S.TableContainer>
+
+      <FilterDetail
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        filterId={selectedFilter?.filterManageId}
+      />
     </>
   );
 }
