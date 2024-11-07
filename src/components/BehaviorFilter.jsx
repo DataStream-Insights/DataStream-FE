@@ -2,30 +2,6 @@ import React, { useState } from "react";
 import { Plus, X, ChevronDown } from "lucide-react";
 import * as S from "../styles/filter/behaviorFilterStyle";
 
-// 임시 데이터 정의
-const TEMP_OPTIONS = {
-  idOptions: [
-    { id: "ID1", label: "ID1" },
-    { id: "ID2", label: "ID2" },
-  ],
-  operatorOptions: [
-    { id: "equals", label: "=" },
-    { id: "not_equals", label: "!=" },
-    { id: "greater_than", label: ">" },
-    { id: "less_than", label: "<" },
-    { id: "greater_equals", label: ">=" },
-    { id: "less_equals", label: "<=" },
-  ],
-  actionOptions: [
-    { id: "view_cart", label: "장바구니 보기" },
-    { id: "add_to_cart", label: "장바구니 추가" },
-    { id: "remove_from_cart", label: "장바구니 제거" },
-    { id: "purchase", label: "구매하기" },
-    { id: "view_product", label: "상품 상세보기" },
-    { id: "custom_input", label: "직접 입력" },
-  ],
-};
-
 const BehaviorFilter = ({
   filters = [],
   onChange = () => {},
@@ -33,12 +9,11 @@ const BehaviorFilter = ({
 }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  // options 객체에서 idOptions만 사용하고 나머지는 임시 데이터 사용
   const mergedOptions = {
-    idOptions: options.idOptions || TEMP_OPTIONS.idOptions,
-    operatorOptions: TEMP_OPTIONS.operatorOptions,
-    actionOptions: TEMP_OPTIONS.actionOptions,
+    idOptions: options.idOptions || [],
+    operatorOptions: options.operatorOptions || [],
   };
+  console.log("Merged options:", mergedOptions);
 
   const addFilter = () => {
     onChange([
@@ -47,15 +22,13 @@ const BehaviorFilter = ({
         id: crypto.randomUUID(),
         idOption: null,
         operatorOption: null,
-        actionOption: null,
-        customValue: "",
-        isEditing: false,
-        logicalOperator: filters.length > 0 ? "AND" : null, // 첫 번째 필터가 아닐 경우 기본값 AND
+        actionValue: "",
+        isEditing: true,
+        logicalOperator: filters.length > 0 ? "AND" : null,
       },
     ]);
   };
 
-  // logicalOperator 변경 처리 함수 추가
   const handleLogicalOperatorChange = (filterId, value) => {
     onChange(
       filters.map((filter) => {
@@ -78,17 +51,14 @@ const BehaviorFilter = ({
     onChange(
       filters.map((filter) => {
         if (filter.id === filterId) {
-          const newFilter = {
+          return {
             ...filter,
-            [type]: value,
+            [type]: {
+              id: value.id,
+              value: value.value, // 실제 값 저장
+              label: value.label, // 화면 표시용 레이블
+            },
           };
-
-          if (type === "actionOption" && value.id === "custom_input") {
-            newFilter.isEditing = true;
-            newFilter.customValue = "";
-          }
-
-          return newFilter;
         }
         return filter;
       })
@@ -97,16 +67,41 @@ const BehaviorFilter = ({
   };
 
   const handleTagClick = (filterId, type) => {
+    if (type === "actionValue") {
+      onChange(
+        filters.map((filter) => {
+          if (filter.id === filterId) {
+            return {
+              ...filter,
+              actionValue: "",
+              isEditing: true,
+            };
+          }
+          return filter;
+        })
+      );
+    } else {
+      onChange(
+        filters.map((filter) => {
+          if (filter.id === filterId) {
+            return {
+              ...filter,
+              [type]: null,
+            };
+          }
+          return filter;
+        })
+      );
+    }
+  };
+
+  const handleActionValueChange = (filterId, value) => {
     onChange(
       filters.map((filter) => {
         if (filter.id === filterId) {
           return {
             ...filter,
-            [type]: null,
-            ...(type === "actionOption" && {
-              customValue: "",
-              isEditing: false,
-            }),
+            actionValue: value,
           };
         }
         return filter;
@@ -114,42 +109,14 @@ const BehaviorFilter = ({
     );
   };
 
-  const handleCustomValueChange = (filterId, value) => {
-    onChange(
-      filters.map((filter) => {
-        if (filter.id === filterId) {
-          return {
-            ...filter,
-            customValue: value,
-          };
-        }
-        return filter;
-      })
-    );
-  };
-
-  const handleCustomValueSubmit = (filterId, e) => {
+  const handleActionValueSubmit = (filterId, e) => {
     e.preventDefault();
     onChange(
       filters.map((filter) => {
-        if (filter.id === filterId && filter.customValue) {
+        if (filter.id === filterId && filter.actionValue) {
           return {
             ...filter,
             isEditing: false,
-          };
-        }
-        return filter;
-      })
-    );
-  };
-
-  const startEditing = (filterId) => {
-    onChange(
-      filters.map((filter) => {
-        if (filter.id === filterId) {
-          return {
-            ...filter,
-            isEditing: true,
           };
         }
         return filter;
@@ -161,10 +128,7 @@ const BehaviorFilter = ({
     const optionValue = filter[type];
     const dropdownId = `${filter.id}-${type}`;
 
-    if (
-      optionValue &&
-      !(type === "actionOption" && optionValue.id === "custom_input")
-    ) {
+    if (optionValue) {
       return (
         <S.Tag className={type} onClick={() => handleTagClick(filter.id, type)}>
           {optionValue.label}
@@ -194,58 +158,49 @@ const BehaviorFilter = ({
     );
   };
 
-  const renderActionOption = (filter) => {
-    if (filter.actionOption?.id === "custom_input") {
-      if (filter.isEditing || !filter.customValue) {
-        return (
-          <S.CustomInputContainer>
-            <form onSubmit={(e) => handleCustomValueSubmit(filter.id, e)}>
-              <S.CustomInput
-                type="number"
-                value={filter.customValue}
-                onChange={(e) =>
-                  handleCustomValueChange(filter.id, e.target.value)
-                }
-                placeholder="금액 입력 후 Enter"
-                autoFocus
-                min="0"
-              />
-            </form>
-          </S.CustomInputContainer>
-        );
-      }
-
+  const renderActionInput = (filter) => {
+    if (filter.isEditing || !filter.actionValue) {
       return (
-        <S.Tag className="actionOption" onClick={() => startEditing(filter.id)}>
-          {filter.customValue}원
-        </S.Tag>
+        <S.CustomInputContainer>
+          <form onSubmit={(e) => handleActionValueSubmit(filter.id, e)}>
+            <S.CustomInput
+              type="text"
+              value={filter.actionValue}
+              onChange={(e) =>
+                handleActionValueChange(filter.id, e.target.value)
+              }
+              placeholder="값 입력 후 Enter"
+              autoFocus
+            />
+          </form>
+        </S.CustomInputContainer>
       );
     }
 
-    return renderOptionDropdown(
-      filter,
-      "actionOption",
-      // options.actionOptions,
-      mergedOptions.actionOptions,
-      "Select Action"
+    return (
+      <S.Tag
+        className="actionOption"
+        onClick={() => handleTagClick(filter.id, "actionValue")}
+      >
+        {filter.actionValue}
+      </S.Tag>
     );
   };
 
-  // 로직 연산자 렌더링 함수
   const renderLogicalOperator = (filter, index) => {
-    if (index === 0) return null; // 첫 번째 필터는 로직 연산자가 필요 없음
+    if (index === 0) return null;
 
     return (
       <S.LogicalOperatorContainer>
         <S.LogicalOperatorGroup>
           <S.OperatorTag
-            active={filter.logicalOperator === "AND"}
+            $isActive={filter.logicalOperator === "AND"}
             onClick={() => handleLogicalOperatorChange(filter.id, "AND")}
           >
             AND
           </S.OperatorTag>
           <S.OperatorTag
-            active={filter.logicalOperator === "OR"}
+            $isActive={filter.logicalOperator === "OR"}
             onClick={() => handleLogicalOperatorChange(filter.id, "OR")}
           >
             OR
@@ -278,7 +233,7 @@ const BehaviorFilter = ({
                 mergedOptions.operatorOptions,
                 "Select Operator"
               )}
-              {renderActionOption(filter)}
+              {renderActionInput(filter)}
             </S.OptionContainer>
           </S.FilterRow>
         </React.Fragment>

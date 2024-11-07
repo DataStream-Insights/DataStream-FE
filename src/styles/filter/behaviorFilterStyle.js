@@ -174,13 +174,13 @@ export const OperatorTag = styled.div`
   transition: all 0.2s ease;
 
   // 선택된 상태와 기본 상태의 스타일
-  background: ${(props) => (props.active ? "#ffe3e3" : "#f8f9fa")};
-  color: ${(props) => (props.active ? "#c92a2a" : "#868e96")};
-  border: 1px solid ${(props) => (props.active ? "#ffc9c9" : "#dee2e6")};
-  font-weight: ${(props) => (props.active ? "500" : "normal")};
+  background: ${(props) => (props.$isActive ? "#ffe3e3" : "#f8f9fa")};
+  color: ${(props) => (props.$isActive ? "#c92a2a" : "#868e96")};
+  border: 1px solid ${(props) => (props.$isActive ? "#ffc9c9" : "#dee2e6")};
+  font-weight: ${(props) => (props.$isActive ? "500" : "normal")};
 
   &:hover {
-    background: ${(props) => (props.active ? "#ffe3e3" : "#fff0f0")};
+    background: ${(props) => (props.$isActive ? "#ffe3e3" : "#fff0f0")};
     color: #c92a2a;
     border-color: #ffc9c9;
   }

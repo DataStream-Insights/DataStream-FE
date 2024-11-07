@@ -39,8 +39,6 @@ export function FilterManagement() {
       { Header: "No", accessor: "no" }, // API에서 추가한 no 필드
       { Header: "필터 ID", accessor: "filterId" }, // 백엔드 응답의 filterId
       { Header: "필터링명", accessor: "filterName" }, // 필터링명 필드
-      { Header: "기안자", accessor: "author" }, // 기안자 필드
-      { Header: "기안일자", accessor: "createdDate" }, // 생성일자 필드
     ],
     []
   );

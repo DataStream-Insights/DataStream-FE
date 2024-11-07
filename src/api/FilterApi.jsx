@@ -10,7 +10,7 @@ const api = axios.create({
 // 필터 목록 조회 (FilterManagement 화면용)
 export const fetchFilters = async () => {
   try {
-    const response = await api.get("/filters");
+    const response = await api.get("/filter");
     return response.data;
   } catch (error) {
     console.error("Error fetching filters:", error);
@@ -31,7 +31,9 @@ export const fetchLogItems = async () => {
 
 export const fetchFilterOptions = async () => {
   try {
-    const response = await api.get("/filters/options");
+    console.log("Fetching filter options...");
+    const response = await api.get("/filter/options");
+    console.log("Filter options response:", response.data);
     return response.data;
     // 예상되는 응답 데이터 형태:
     // {
@@ -41,10 +43,16 @@ export const fetchFilterOptions = async () => {
     // }
   } catch (error) {
     console.error("Error fetching filter options:", error);
+    if (error.response) {
+      console.error("Error response:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    }
     return {
       idOptions: [],
       operatorOptions: [],
-      actionOptions: [],
     };
   }
 };
@@ -57,7 +65,7 @@ export const createLogFilter = async (filterData) => {
       throw new Error("필터 이름은 필수입니다.");
     }
 
-    const response = await api.post("/filters", filterData);
+    const response = await api.post("/filter", filterData);
     return response.data;
   } catch (error) {
     console.error("Error creating filter:", error);
