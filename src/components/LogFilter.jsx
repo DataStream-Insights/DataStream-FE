@@ -9,6 +9,7 @@ import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import BehaviorFilter from "./BehaviorFilter";
 import useFilterCreate from "../hooks/filter/useFilterCreate";
+import { generateFilterId } from "../utils/idGenerator";
 
 const LogFilter = () => {
   //hook에서 items 받아옴
@@ -86,10 +87,12 @@ const LogFilter = () => {
         return;
       }
 
+      const filterId = generateFilterId();
+
       // 새로운 형식으로 데이터 변환
       const requestData = {
         filtername: filterSettings.name.trim(),
-        filtermanage_id: crypto.randomUUID(), // 또는 백엔드에서 생성되는 ID 사용
+        filtermanage_id: filterId,
         filterSetList: {
           filterSets: filterSettings.behaviors
             .filter(

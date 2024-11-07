@@ -18,6 +18,26 @@ export const fetchFilters = async () => {
   }
 };
 
+//상세보기
+export const fetchFilterDetail = async (id) => {
+  try {
+    console.log("Calling API for filter detail, ID:", id);
+    const response = await api.get(`/filter/filtermanagement/${id}`);
+    console.log("API Response:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching filter detail:", error);
+    if (error.response) {
+      console.error("Error response:", {
+        status: error.response.status,
+        data: error.response.data,
+        headers: error.response.headers,
+      });
+    }
+    throw error;
+  }
+};
+
 // 로그 아이템 목록 조회 (LogFilter 화면용)
 export const fetchLogItems = async () => {
   try {
