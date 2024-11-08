@@ -63,47 +63,95 @@ const FilterItem = styled.div`
   margin-bottom: 12px;
 `;
 
-const FilterItemHeader = styled.div`
+const BadgeContainer = styled.div`
   display: flex;
   align-items: center;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
   gap: 8px;
+  flex-wrap: wrap;
 `;
 
 const Badge = styled.span`
   padding: 4px 8px;
-  background-color: #e9ecef;
   border-radius: 4px;
   font-size: 0.9rem;
-  color: #495057;
+  background-color: ${(props) => {
+    switch (props.$type) {
+      case "andor":
+        return "#e3f2fd"; // 연한 파랑
+      case "alias":
+        return "#f3e5f5"; // 연한 보라
+      case "operation":
+        return "#e8f5e9"; // 연한 초록
+      case "value":
+        return "#fff3e0"; // 연한 주황
+      default:
+        return "#e9ecef";
+    }
+  }};
+  color: ${(props) => {
+    switch (props.$type) {
+      case "andor":
+        return "#1976d2"; // 진한 파랑
+      case "alias":
+        return "#7b1fa2"; // 진한 보라
+      case "operation":
+        return "#2e7d32"; // 진한 초록
+      case "value":
+        return "#e65100"; // 진한 주황
+      default:
+        return "#495057";
+    }
+  }};
 `;
 
-const FilterValue = styled.div`
-  font-size: 1rem;
-  color: #495057;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  & > span:first-child {
-    font-weight: 500;
-    color: #343a40;
+const getOperationSymbol = (operation) => {
+  switch (operation) {
+    case "equals":
+      return "=";
+    case "not_equals":
+      return "≠";
+    case "greater_than":
+      return ">";
+    case "less_than":
+      return "<";
+    case "greater_equals":
+      return "≥";
+    case "less_equals":
+      return "≤";
+    default:
+      return operation;
   }
-`;
-
-const ItemAlias = styled.div`
-  font-size: 0.9rem;
-  color: #6c757d;
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px dashed #dee2e6;
-`;
+};
 
 const FilterDetail = ({ isOpen, onClose, filterId }) => {
   const { detailData, isLoading, error } = useFilterDetail(filterId, isOpen);
 
-  console.log("Render FilterDetail with data:", detailData); // 데이터 확인용 로그
+  if (error) {
+    return (
+      <SlideContainer $isOpen={isOpen}>
+        <Header>
+          <Title>필터 상세 정보</Title>
+          <CloseButton onClick={onClose}>
+            <X size={24} />
+          </CloseButton>
+        </Header>
+        <div
+          style={{
+            color: "red",
+            padding: "20px",
+            backgroundColor: "#fff3f3",
+            borderRadius: "4px",
+            margin: "20px",
+          }}
+        >
+          {error}
+          <div style={{ marginTop: "10px", fontSize: "0.9em" }}>
+            필터 ID: {filterId}
+          </div>
+        </div>
+      </SlideContainer>
+    );
+  }
 
   return (
     <SlideContainer $isOpen={isOpen}>
@@ -115,7 +163,6 @@ const FilterDetail = ({ isOpen, onClose, filterId }) => {
       </Header>
 
       {isLoading && <div>로딩 중...</div>}
-      {error && <div style={{ color: "red" }}>{error}</div>}
 
       {detailData && detailData.responseFilterSetListDTO && (
         <div>
@@ -124,26 +171,21 @@ const FilterDetail = ({ isOpen, onClose, filterId }) => {
             {detailData.responseFilterSetListDTO.searchFilterSetDTOs.map(
               (set, index) => (
                 <FilterItem key={index}>
-                  <FilterItemHeader>
-                    {index > 0 && <Badge>{set.andor || "AND"}</Badge>}
-                    <Badge>{set.operation.operation}</Badge>
-                    <Badge>{set.item_alias}</Badge>
-                  </FilterItemHeader>
-                  <FilterValue>조건 값: {set.filtervalue.value}</FilterValue>
+                  <BadgeContainer>
+                    {index > 0 && (
+                      <Badge $type="andor">{set.andor || "AND"}</Badge>
+                    )}
+                    <Badge $type="alias">{set.item_alias}</Badge>
+                    <Badge $type="operation">
+                      {getOperationSymbol(set.operation.operation)}
+                    </Badge>
+                    <Badge $type="value">{set.filtervalue.value}</Badge>
+                  </BadgeContainer>
                 </FilterItem>
               )
             )}
           </DetailSection>
         </div>
-      )}
-
-      {/* 디버깅용 데이터 표시 */}
-      {detailData && (
-        <pre
-          style={{ fontSize: "12px", padding: "10px", background: "#f8f9fa" }}
-        >
-          {JSON.stringify(detailData, null, 2)}
-        </pre>
       )}
     </SlideContainer>
   );
