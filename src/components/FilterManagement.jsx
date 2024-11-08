@@ -136,7 +136,7 @@ export function FilterManagement() {
       <FilterDetail
         isOpen={isDetailOpen}
         onClose={() => setIsDetailOpen(false)}
-        filterId={selectedFilter?.filterManageId}
+        filterId={selectedFilter?.id}
       />
     </>
   );
