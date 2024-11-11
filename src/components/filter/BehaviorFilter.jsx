@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Plus, X, ChevronDown } from "lucide-react";
-import * as S from "../styles/filter/behaviorFilterStyle";
+import * as S from "../../styles/filter/behaviorFilterStyle";
 
 const BehaviorFilter = ({
   filters = [],

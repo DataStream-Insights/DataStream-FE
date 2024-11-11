@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
-import * as S from "../styles/format/formatListStyle";
-import { Layout } from "../components/Layout";
+import * as S from "../../styles/format/formatListStyle";
+import { Layout } from "../Layout";
 
 const LogFormatList = ({
   onSelect,

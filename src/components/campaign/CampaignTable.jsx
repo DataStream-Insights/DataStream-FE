@@ -1,27 +1,17 @@
 import React from "react";
-import { useState } from "react";
 import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import useFilterData from "../hooks/filter/useFilterData";
-import * as S from "../styles/main/tableStyle";
-import FilterDetail from "./FilterDetail";
-import { Layout } from "../components/Layout";
+import useCampaignData from "../../hooks/campaign/useCampaginData";
+import * as S from "../../styles/main/tableStyle";
 
-export function FilterManagement() {
-  const [selectedFilter, setSelectedFilter] = useState(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
+export function CampaignTable() {
   const navigate = useNavigate();
-  const { data, isLoading } = useFilterData(); // useFilter hook 사용
-
-  const handleRowClick = (row) => {
-    console.log("Selected filter:", row.original);
-    setSelectedFilter(row.original);
-    setIsDetailOpen(true);
-  };
+  const { data, isLoading } = useCampaignData();
 
   const handleCreateClick = () => {
-    navigate("/filter");
+    // /campaignform으로 이동
+    navigate("/campaignform");
   };
 
   //Header
@@ -47,10 +37,18 @@ export function FilterManagement() {
           return <S.Checkbox {...props} />;
         },
       },
-      { Header: "No", accessor: "id" }, // API에서 추가한 no 필드
-      { Header: "필터 ID", accessor: "filterManageId" }, // 백엔드 응답의 filterId
-      { Header: "필터링명", accessor: "filterName" }, // 필터링명 필드
-      //{ Header: "기안일자", accessor: "createdDate" },
+      { Header: "No", accessor: "no" },
+      { Header: "캠페인 ID", accessor: "campaignId" },
+      { Header: "분류1", accessor: "campaignClassification1" },
+      { Header: "분류2", accessor: "campaignClassification2" },
+      { Header: "캠페인명", accessor: "campaignName" },
+      { Header: "상태", accessor: "status" },
+      { Header: "시작 일자", accessor: "startDate" },
+      { Header: "종료 일자", accessor: "endDate" },
+      { Header: "공개 여부", accessor: "visibility" },
+      { Header: "기안 부서", accessor: "department" },
+      { Header: "기안자", accessor: "author" },
+      { Header: "기안일자", accessor: "createdDate" },
     ],
     []
   );
@@ -59,7 +57,7 @@ export function FilterManagement() {
     useTable(
       {
         columns,
-        data: data || [], // 초기값이 undefined일 때를 대비해 빈 배열 할당
+        data: data || [],
       },
       useRowSelect
     );
@@ -69,15 +67,28 @@ export function FilterManagement() {
   }
 
   return (
-    <Layout title="필터 관리">
+    <>
       <S.HeaderContainer>
         <S.FilterRow>
-          <S.SearchInput placeholder="필터링명 검색" />
+          <S.StateDropdown>
+            <option value="">전체</option>
+            <option value="plan">계획</option>
+            <option value="progress">진행중</option>
+            <option value="complete">완료</option>
+          </S.StateDropdown>
+
+          <S.SearchInput placeholder="캠페인 정보" />
+
+          <S.CheckboxContainer>
+            <input type="checkbox" id="myRegistration" />
+            <label htmlFor="myRegistration">내가 등록한 캠페인</label>
+          </S.CheckboxContainer>
 
           <S.ButtonGroup>
             <S.SearchButton>
               <Search size={16} />
             </S.SearchButton>
+            {/* 생성하기 버튼 클릭 시 /campaignform 으로 이동 */}
             <S.CreateButton onClick={handleCreateClick}>
               <Plus size={16} />
               Create
@@ -89,7 +100,7 @@ export function FilterManagement() {
         </S.FilterRow>
       </S.HeaderContainer>
       <S.TableContainer>
-        <S.StyledTable {...getTableProps()}>
+        <S.StyledTable>
           <S.THead>
             {headerGroups.map((headerGroup) => {
               const { key, ...headerGroupProps } =
@@ -108,17 +119,12 @@ export function FilterManagement() {
               );
             })}
           </S.THead>
-          <tbody {...getTableBodyProps()}>
+          <tbody>
             {rows.map((row) => {
               prepareRow(row);
               const { key, ...rowProps } = row.getRowProps();
               return (
-                <S.Tr
-                  key={key}
-                  {...rowProps}
-                  onClick={() => handleRowClick(row)}
-                  style={{ cursor: "pointer" }}
-                >
+                <S.Tr key={key} {...rowProps}>
                   {row.cells.map((cell) => {
                     const { key, ...cellProps } = cell.getCellProps();
                     return (
@@ -133,14 +139,8 @@ export function FilterManagement() {
           </tbody>
         </S.StyledTable>
       </S.TableContainer>
-
-      <FilterDetail
-        isOpen={isDetailOpen}
-        onClose={() => setIsDetailOpen(false)}
-        filterId={selectedFilter?.id}
-      />
-    </Layout>
+    </>
   );
 }
 
-export default FilterManagement;
+export default CampaignTable;
