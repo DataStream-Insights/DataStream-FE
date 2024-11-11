@@ -7,8 +7,10 @@ import {
   analyzeSubFields,
   fetchFormatDetail,
 } from "../../api/FormatApi";
+import { useParams } from "react-router-dom";
 
 const useLogFormat = () => {
+  const { campaignId } = useParams(); //url에서 campaignId 가져오기
   const [logFiles, setLogFiles] = useState([]); // 서버의 로그 파일 목록
   const [selectedFileName, setSelectedFileName] = useState(null); // 선택된 로그 파일 ID
   const [fields, setFields] = useState([]); // 선택된 파일의 필드 정보
@@ -19,11 +21,12 @@ const useLogFormat = () => {
 
   // 포맷 목록 조회 함수
   const loadFormats = useCallback(async () => {
+    if (!campaignId) return;
     setIsLoading(true);
     setError(null);
     try {
-      console.log("Fetching formats...");
-      const formatList = await fetchLogFormats();
+      console.log("Fetching formats...", campaignId);
+      const formatList = await fetchLogFormats(campaignId);
       console.log("Received format list:", formatList);
       setFormats(formatList);
     } catch (error) {
@@ -32,42 +35,51 @@ const useLogFormat = () => {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [campaignId]);
 
   //포맷 상세보기 조회
-  const loadFormatDetail = useCallback(async (id) => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      console.log("ID", id);
-      const detailData = await fetchFormatDetail(id);
-      console.log("받은 데이터", detailData);
+  const loadFormatDetail = useCallback(
+    async (formatId) => {
+      if (!campaignId || !formatId) return;
 
-      // 상세 데이터를 fields 형식에 맞게 변환
-      const formattedFields = detailData.formatSets.map((set) => ({
-        name: set.formatItemResponse.fieldName,
-        displayName: set.formatItemResponse.itemAlias,
-        description: set.formatItemResponse.itemExplain,
-        type: set.formatItemResponse.itemType,
-        value: set.formatItemResponse.itemContent,
-        path: set.formatItemResponse.path,
-        hasChild: false,
-      }));
+      setIsLoading(true);
+      setError(null);
 
-      console.log("저장되는 데이터", detailData);
-      setSelectedFormat(detailData);
-      setFields(formattedFields);
+      try {
+        const detailData = await fetchFormatDetail(campaignId, formatId);
+        console.log("Received format detail data:", detailData);
 
-      return detailData;
-      c;
-    } catch (error) {
-      console.error("Failed to fetch format detail:", error);
-      setError("포맷 상세 정보를 불러오는데 실패했습니다.");
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  });
+        // 응답 데이터 형식에 맞게 처리
+        const formattedFields = detailData.formatSets.map((set) => ({
+          name: set.formatItemResponse.fieldName,
+          displayName: set.formatItemResponse.itemAlias,
+          description: set.formatItemResponse.itemExplain,
+          type: set.formatItemResponse.itemType,
+          value: set.formatItemResponse.itemContent,
+          path: set.formatItemResponse.path,
+          hasChild: false,
+        }));
+
+        setSelectedFormat({
+          formatname: detailData.formatname,
+          formatID: detailData.formatID,
+          formatexplain: detailData.formatexplain,
+          start: detailData.start,
+          end: detailData.end,
+        });
+
+        setFields(formattedFields);
+        return detailData;
+      } catch (error) {
+        console.error("Failed to fetch format detail:", error);
+        setError("포맷 상세 정보를 불러오는데 실패했습니다.");
+        throw error;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [campaignId]
+  );
 
   // 서버의 로그 파일 목록 조회
   const loadLogFiles = useCallback(async () => {
@@ -139,6 +151,7 @@ const useLogFormat = () => {
 
   // 포맷 생성
   const createFormat = async (formatData) => {
+    if (!campaignId) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -170,7 +183,7 @@ const useLogFormat = () => {
       };
 
       console.log("Prepared format data:", dataWithFileName);
-      const result = await createLogFormat(dataWithFileName);
+      const result = await createLogFormat(campaignId, dataWithFileName);
       console.log("Format creation result:", result);
 
       // 성공 시 포맷 목록 새로고침
@@ -208,19 +221,25 @@ const useLogFormat = () => {
   };
 
   // 초기 로딩시 포맷 목록과 로그 파일 목록을 함께 가져오기
+  // useEffect(() => {
+  //   const loadInitialData = async () => {
+  //     console.log("Loading initial data...");
+  //     try {
+  //       // loadFormats와 loadLogFiles를 순차적으로 실행
+  //       await loadFormats();
+  //       await loadLogFiles();
+  //     } catch (error) {
+  //       console.error("Error loading initial data:", error);
+  //     }
+  //   };
+  //   loadInitialData();
+  // }, [loadFormats, loadLogFiles]);
   useEffect(() => {
-    const loadInitialData = async () => {
-      console.log("Loading initial data...");
-      try {
-        // loadFormats와 loadLogFiles를 순차적으로 실행
-        await loadFormats();
-        await loadLogFiles();
-      } catch (error) {
-        console.error("Error loading initial data:", error);
-      }
-    };
-    loadInitialData();
-  }, [loadFormats, loadLogFiles]);
+    if (campaignId) {
+      loadFormats();
+      loadLogFiles();
+    }
+  }, [campaignId, loadFormats, loadLogFiles]);
 
   return {
     logFiles,
@@ -241,6 +260,7 @@ const useLogFormat = () => {
     createFormat,
     updateField,
     addNewField,
+    campaignId,
   };
 };
 

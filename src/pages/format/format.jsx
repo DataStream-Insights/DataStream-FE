@@ -12,9 +12,14 @@ const LogFormatPage = () => {
 
   const isDetailVisible = selectedFormat || isCreating;
 
-  const handleFormatSelect = (format) => {
-    setSelectedFormat(format);
-    setIsCreating(false);
+  const handleFormatSelect = async (format) => {
+    try {
+      await formatHook.loadFormatDetail(format.id);
+      setSelectedFormat(format);
+      setIsCreating(false);
+    } catch (error) {
+      console.error("Failed to load format detail:", error);
+    }
   };
 
   const handleCreate = () => {
@@ -32,16 +37,13 @@ const LogFormatPage = () => {
   const handleSubmit = async (updatedData) => {
     try {
       if (isCreating) {
-        // 새로 생성하는 경우
         await formatHook.createFormat(updatedData);
       } else {
-        // 수정하는 경우
-        const formatId = selectedFormat.id; // 기존 format의 ID 사용
+        const formatId = selectedFormat.id;
         await updateLogFormat(formatId, {
           ...updatedData,
-          formatID: selectedFormat.formatID, // 기존 formatID 유지
+          formatID: selectedFormat.formatID,
         });
-        // 수정 후 목록 새로고침
         await formatHook.loadFormats();
       }
       handleClose();
@@ -54,11 +56,10 @@ const LogFormatPage = () => {
     <S.Container>
       <S.ListContainer className={!isDetailVisible ? "expanded" : ""}>
         <LogFormatList
+          formats={formatHook.formats}
           onSelect={handleFormatSelect}
           onCreate={handleCreate}
           isDetailVisible={isDetailVisible}
-          formats={formatHook.formats}
-          loadFormatDetail={formatHook.loadFormatDetail}
         />
       </S.ListContainer>
       {isDetailVisible && (
