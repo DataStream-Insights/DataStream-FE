@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import useFilterData from "../hooks/filter/useFilterData";
 import * as S from "../styles/main/tableStyle";
 import FilterDetail from "./FilterDetail";
+import { Layout } from "../components/Layout";
 
 export function FilterManagement() {
   const [selectedFilter, setSelectedFilter] = useState(null);
@@ -68,7 +69,7 @@ export function FilterManagement() {
   }
 
   return (
-    <>
+    <Layout title="필터 관리">
       <S.HeaderContainer>
         <S.FilterRow>
           <S.SearchInput placeholder="필터링명 검색" />
@@ -138,7 +139,7 @@ export function FilterManagement() {
         onClose={() => setIsDetailOpen(false)}
         filterId={selectedFilter?.id}
       />
-    </>
+    </Layout>
   );
 }
 
