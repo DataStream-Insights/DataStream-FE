@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, X } from "lucide-react";
-import * as S from "../styles/format/formatDetailStyle";
+import * as S from "../../styles/format/formatDetailStyle";
 
 const LogFormatDetail = ({
   onClose,

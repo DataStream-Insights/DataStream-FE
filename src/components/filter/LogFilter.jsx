@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Search, X } from "lucide-react";
 import { useTable } from "react-table";
 import { useNavigate } from "react-router-dom";
-import * as F from "../styles/filter/filterStyle";
-import { CustomTablePagination } from "../styles/filter/filterPagenationStyle";
+import * as F from "../../styles/filter/filterStyle";
+import { CustomTablePagination } from "../../styles/filter/filterPagenationStyle";
 import FirstPageRoundedIcon from "@mui/icons-material/FirstPageRounded";
 import LastPageRoundedIcon from "@mui/icons-material/LastPageRounded";
 import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
 import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import BehaviorFilter from "./BehaviorFilter";
-import useFilterCreate from "../hooks/filter/useFilterCreate";
-import { generateFilterId } from "../utils/idGenerator";
+import useFilterCreate from "../../hooks/filter/useFilterCreate";
+import { generateFilterId } from "../../utils/idGenerator";
 
 const LogFilter = () => {
   //hook에서 items 받아옴

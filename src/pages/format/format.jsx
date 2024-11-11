@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import LogFormatDetail from "../../components/LogFormatDetail";
-import LogFormatList from "../../components/LogFormatList";
+import LogFormatDetail from "../../components/format/LogFormatDetail";
+import LogFormatList from "../../components/format/LogFormatList";
 import * as S from "../../styles/format/formatPageStyle";
 import useLogFormat from "../../hooks/format/useFormatData";
 import { updateLogFormat } from "../../api/FormatApi";

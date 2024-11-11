@@ -1,7 +1,7 @@
 import React from "react";
 import { X } from "lucide-react";
 import styled from "styled-components";
-import useFilterDetail from "../hooks/filter/useFilterDetail";
+import useFilterDetail from "../../hooks/filter/useFilterDetail";
 
 const SlideContainer = styled.div`
   position: fixed;
