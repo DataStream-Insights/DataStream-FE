@@ -8,17 +8,11 @@ import FilterManagementPage from "./pages/filter/filterManagementPage";
 export function App() {
   const router = createBrowserRouter([
     { path: "/", element: <CampaignManagementPage /> },
-
-    // { path: "/campaignmanagement", element: <CampaignManagementPage /> },
-
-    { path: "/campaignform", element: <CreateCampaign /> }, //캠페인 생성하기
-
-    { path: "/format", element: <LogFormatPage /> }, //포맷팅
-
-    { path: "/filter", element: <LogFilter /> }, //필터링
-
-    { path: "/filtermanagement", element: <FilterManagementPage /> }, //필터링 관리 페이지
+    { path: "/campaignform", element: <CreateCampaign /> },
+    { path: "/format", element: <LogFormatPage /> },
+    { path: "/format/:campaignId/management", element: <LogFormatPage /> },
+    { path: "/filter", element: <LogFilter /> },
+    { path: "/filtermanagement", element: <FilterManagementPage /> },
   ]);
-
   return <RouterProvider router={router} />;
 }

@@ -10,11 +10,13 @@ export function CampaignTable() {
   const { data, isLoading } = useCampaignData();
 
   const handleCreateClick = () => {
-    // /campaignform으로 이동
     navigate("/campaignform");
   };
 
-  //Header
+  const handleRowClick = (campaignId) => {
+    navigate(`/format/${campaignId}/management`);
+  };
+
   const columns = React.useMemo(
     () => [
       {
@@ -29,12 +31,18 @@ export function CampaignTable() {
                   el.indeterminate = indeterminate;
                 }
               }}
+              onClick={(e) => e.stopPropagation()} // 체크박스 클릭 시 행 클릭 이벤트 전파 방지
             />
           );
         },
         Cell: ({ row }) => {
           const { indeterminate, ...props } = row.getToggleRowSelectedProps();
-          return <S.Checkbox {...props} />;
+          return (
+            <S.Checkbox
+              {...props}
+              onClick={(e) => e.stopPropagation()} // 체크박스 클릭 시 행 클릭 이벤트 전파 방지
+            />
+          );
         },
       },
       { Header: "No", accessor: "no" },
@@ -88,7 +96,6 @@ export function CampaignTable() {
             <S.SearchButton>
               <Search size={16} />
             </S.SearchButton>
-            {/* 생성하기 버튼 클릭 시 /campaignform 으로 이동 */}
             <S.CreateButton onClick={handleCreateClick}>
               <Plus size={16} />
               Create
@@ -119,12 +126,17 @@ export function CampaignTable() {
               );
             })}
           </S.THead>
-          <tbody>
+          <tbody {...getTableBodyProps()}>
             {rows.map((row) => {
               prepareRow(row);
               const { key, ...rowProps } = row.getRowProps();
               return (
-                <S.Tr key={key} {...rowProps}>
+                <S.Tr
+                  key={key}
+                  {...rowProps}
+                  onClick={() => handleRowClick(row.original.campaignId)}
+                  style={{ cursor: "pointer" }}
+                >
                   {row.cells.map((cell) => {
                     const { key, ...cellProps } = cell.getCellProps();
                     return (

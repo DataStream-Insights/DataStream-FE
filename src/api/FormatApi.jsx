@@ -7,10 +7,10 @@ const api = axios.create({
   },
 });
 
-// 포맷 목록 조회 API 추가
-export const fetchLogFormats = async () => {
+// 포맷 목록 조회
+export const fetchLogFormats = async (campaignId) => {
   try {
-    const response = await api.get("/format/management");
+    const response = await api.get(`/format/${campaignId}/management`);
     return response.data;
   } catch (error) {
     console.error("Error fetching log formats:", error);
@@ -19,10 +19,33 @@ export const fetchLogFormats = async () => {
 };
 
 //상세 정보 조회
-export const fetchFormatDetail = async (id) => {
+export const fetchFormatDetail = async (campaignId, formatId) => {
   try {
-    console.log("Fetching format detail for ID:", id);
-    const response = await api.get(`/format/management/${id}`);
+    console.log(
+      `Fetching format detail - Campaign: ${campaignId}, Format: ${formatId}`
+    );
+    const response = await api.get(
+      `/format/${campaignId}/management/${formatId}`
+    );
+
+    if (!response.data) {
+      throw new Error("No data received from server");
+    }
+
+    // 응답 데이터 구조 검증
+    const { start, end, formatname, formatID, formatexplain, formatSets } =
+      response.data;
+
+    // 데이터 구조 확인
+    console.log("Received format detail:", {
+      start,
+      end,
+      formatname,
+      formatID,
+      formatexplain,
+      formatSetsCount: formatSets?.length,
+    });
+
     return response.data;
   } catch (error) {
     console.error("Error fetching format detail:", error);
@@ -124,43 +147,37 @@ export const analyzeSubFields = async (analysisData) => {
 };
 
 // 로그 포맷 생성
-export const createLogFormat = async (formatData) => {
+export const createLogFormat = async (campaignId, formatData) => {
   try {
-    console.log("Received format data:", formatData);
+    console.log("Received format data:", campaignId, formatData);
 
     // 필수 필드 검증
     if (!formatData.name) {
       throw new Error("Format name is required");
     }
 
-    // 각 필드를 개별 formatSets 항목으로 변환
-    const formatSets = formatData.fields.map((field) => ({
-      formatItemResponse: {
-        fieldName: field.name || "",
-        itemAlias: field.displayName || field.name || "",
-        itemExplain: field.description || "",
-        itemType: field.type || "STRING",
-        itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
-        path: field.path || "",
-      },
-    }));
-
-    // 서버가 기대하는 정확한 형식으로 변경
     const logFormatDTO = {
       start: parseInt(formatData.startOffset) || 0,
       end: parseInt(formatData.endOffset) || 0,
       formatname: formatData.name,
-      formatID: formatData.formatId || generateFormatId(),
+      formatID: generateFormatId(),
       formatexplain: formatData.description || "",
-      formatSets: formatSets,
+      formatSets: formatData.fields.map((field) => ({
+        formatItemResponse: {
+          fieldName: field.name || "",
+          itemAlias: field.displayName || field.name || "",
+          itemExplain: field.description || "",
+          itemType: field.type || "STRING",
+          itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
+          path: field.path || "",
+        },
+      })),
     };
 
-    console.log(
-      "Final request payload:",
-      JSON.stringify(logFormatDTO, null, 2)
+    const response = await api.post(
+      `/format/${campaignId}/addformatfields`,
+      logFormatDTO
     );
-
-    const response = await api.post("/format/addformatfields", logFormatDTO);
     console.log("Server response:", response);
 
     return response.data;
