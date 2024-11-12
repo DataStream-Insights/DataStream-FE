@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import * as S from "../../styles/format/formatListStyle";
-import { Layout } from "../Layout";
 import { useParams } from "react-router-dom";
-import useLogFormat from "../../hooks/format/useFormatData";
-import LogFormatDetail from "./LogFormatDetail";
+import useFormatData from "../../hooks/format/useFormatData";
 
 const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
   const { campaignId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const { data, isLoading } = useFormatData();
   const itemsPerPage = 7;
 
   const filteredFormats = useMemo(() => {
@@ -36,6 +35,10 @@ const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
+
+  if (isLoading) {
+    return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
+  }
 
   return (
     <S.Container>

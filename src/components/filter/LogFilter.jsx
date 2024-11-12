@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Search, X } from "lucide-react";
 import { useTable } from "react-table";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import * as F from "../../styles/filter/filterStyle";
 import { CustomTablePagination } from "../../styles/filter/filterPagenationStyle";
 import FirstPageRoundedIcon from "@mui/icons-material/FirstPageRounded";
@@ -13,6 +13,7 @@ import useFilterCreate from "../../hooks/filter/useFilterCreate";
 import { generateFilterId } from "../../utils/idGenerator";
 
 const LogFilter = () => {
+  const { campaignId, formatId } = useParams();
   //hook에서 items 받아옴
   const {
     items,
@@ -91,8 +92,6 @@ const LogFilter = () => {
       }
 
       const filterId = generateFilterId();
-
-      // 새로운 형식으로 데이터 변환
       const requestData = {
         filtername: filterSettings.name.trim(),
         filtermanage_id: filterId,
@@ -105,28 +104,21 @@ const LogFilter = () => {
                 behavior.actionValue
             )
             .map((behavior) => ({
-              andor: behavior.logicalOperator || "AND", // 첫 번째 필터의 경우 null 대신 기본값 사용
+              andor: behavior.logicalOperator || "AND",
               filtervalue: {
                 value: behavior.actionValue,
               },
               operation: {
-                operation: behavior.operatorOption.value, // equals, not_equals 등
+                operation: behavior.operatorOption.value,
               },
-              responseItemid: behavior.idOption.id, // FormatItem의 ID
+              responseItemid: behavior.idOption.id,
             })),
         },
       };
 
-      // 데이터 확인을 위한 로그
-      console.log("변환 전 데이터:", filterSettings.behaviors);
-      console.log(
-        "서버로 전송될 필터 데이터:",
-        JSON.stringify(requestData, null, 2)
-      );
-
-      await saveFilter(requestData);
+      await saveFilter(campaignId, formatId, requestData); // campaignId와 formatId 전달
       alert("저장되었습니다.");
-      navigate("/filtermanagement");
+      navigate(`/filter/${campaignId}/${formatId}/filtermanagement`); // 저장 후 이동 경로도 수정
     } catch (error) {
       alert(error.message || "저장에 실패했습니다.");
     }

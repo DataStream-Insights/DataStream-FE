@@ -171,7 +171,7 @@ export const IconButton = styled.button`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: ${(props) => props.align || "flex-end"};
   gap: 0.5rem;
   margin-top: 1.5rem;
   margin-bottom: 1.5rem;
@@ -339,5 +339,25 @@ export const ToggleButton = styled.button`
 
   &:hover {
     color: #000;
+  }
+`;
+
+export const FilterButton = styled.button`
+  padding: 0.5rem 1rem;
+  border-radius: 0.375rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+  border: none;
+  background-color: #4f46e5; // 인디고 색상
+  color: white;
+  width: 20%; // 전체 너비 사용
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #4338ca; // 살짝 어두운 인디고
+  }
+
+  &:active {
+    background-color: #3730a3; // 더 어두운 인디고
   }
 `;
