@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import * as S from "../../styles/format/formatDetailStyle";
+import { useNavigate } from "react-router-dom";
 
 const LogFormatDetail = ({
   onClose,
@@ -17,7 +18,9 @@ const LogFormatDetail = ({
   analyzeSubFields,
   updateField,
   addNewField,
+  campaignId,
 }) => {
+  const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [substringType, setSubstringType] = useState("Substring");
   const [startType, setStartType] = useState("indexOf");
@@ -51,6 +54,22 @@ const LogFormatDetail = ({
       setFields([]); // 필드도 초기화
     }
   }, [selectedFormat, isNew, setFields]);
+
+  //필터링 클릭 시
+  const handleFilterClick = () => {
+    if (!selectedFormat?.formatID) {
+      alert("포맷 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    try {
+      navigate(
+        `/filter/${campaignId}/${selectedFormat.formatID}/filtermanagement`
+      );
+    } catch (error) {
+      console.error("Navigation error:", error); // 에러 발생시 로깅
+    }
+  };
 
   // 파일 선택 핸들러
   const handleLogFileSelect = (e) => {
@@ -498,6 +517,13 @@ const LogFormatDetail = ({
           <S.Button onClick={handleSubmit}>{isNew ? "생성" : "수정"}</S.Button>
           <S.Button onClick={onClose}>취소</S.Button>
         </S.ButtonContainer>
+        {!isNew && (
+          <S.ButtonContainer align="center">
+            <S.FilterButton onClick={() => handleFilterClick()}>
+              필터링
+            </S.FilterButton>
+          </S.ButtonContainer>
+        )}
       </S.Card>
     </S.Container>
   );

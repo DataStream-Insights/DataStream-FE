@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import { useParams } from "react-router-dom";
 import LogFormatDetail from "../../components/format/LogFormatDetail";
 import LogFormatList from "../../components/format/LogFormatList";
 import * as S from "../../styles/format/formatPageStyle";
 import useLogFormat from "../../hooks/format/useFormatData";
 import { updateLogFormat } from "../../api/FormatApi";
+import { Layout } from "../../components/Layout";
 
 const LogFormatPage = () => {
+  const { campaignId } = useParams();
   const [selectedFormat, setSelectedFormat] = useState(null);
   const [isCreating, setIsCreating] = useState(false);
   const formatHook = useLogFormat();
@@ -53,36 +56,39 @@ const LogFormatPage = () => {
   };
 
   return (
-    <S.Container>
-      <S.ListContainer className={!isDetailVisible ? "expanded" : ""}>
-        <LogFormatList
-          formats={formatHook.formats}
-          onSelect={handleFormatSelect}
-          onCreate={handleCreate}
-          isDetailVisible={isDetailVisible}
-        />
-      </S.ListContainer>
-      {isDetailVisible && (
-        <S.DetailContainer className="visible">
-          <LogFormatDetail
-            isNew={isCreating}
-            onClose={handleClose}
-            onSubmit={handleSubmit}
-            selectedFormat={formatHook.selectedFormat}
-            logFiles={formatHook.logFiles}
-            fields={formatHook.fields}
-            setFields={formatHook.setFields}
-            selectedFileName={formatHook.selectedFileName}
-            selectLogFile={formatHook.selectLogFile}
-            createFormat={formatHook.createFormat}
-            analyzeFormat={formatHook.analyzeFormat}
-            analyzeSubFields={formatHook.analyzeSubFields}
-            updateField={formatHook.updateField}
-            addNewField={formatHook.addNewField}
+    <Layout title="포맷 관리">
+      <S.Container>
+        <S.ListContainer className={!isDetailVisible ? "expanded" : ""}>
+          <LogFormatList
+            formats={formatHook.formats}
+            onSelect={handleFormatSelect}
+            onCreate={handleCreate}
+            isDetailVisible={isDetailVisible}
           />
-        </S.DetailContainer>
-      )}
-    </S.Container>
+        </S.ListContainer>
+        {isDetailVisible && (
+          <S.DetailContainer className="visible">
+            <LogFormatDetail
+              isNew={isCreating}
+              onClose={handleClose}
+              onSubmit={handleSubmit}
+              selectedFormat={formatHook.selectedFormat}
+              logFiles={formatHook.logFiles}
+              fields={formatHook.fields}
+              setFields={formatHook.setFields}
+              selectedFileName={formatHook.selectedFileName}
+              selectLogFile={formatHook.selectLogFile}
+              createFormat={formatHook.createFormat}
+              analyzeFormat={formatHook.analyzeFormat}
+              analyzeSubFields={formatHook.analyzeSubFields}
+              updateField={formatHook.updateField}
+              addNewField={formatHook.addNewField}
+              campaignId={campaignId}
+            />
+          </S.DetailContainer>
+        )}
+      </S.Container>
+    </Layout>
   );
 };
 

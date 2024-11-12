@@ -179,3 +179,9 @@ export const PageNumber = styled.button`
     background-color: ${(props) => (props.$isActive ? "#4263eb" : "#f8f9fa")};
   }
 `;
+
+export const LoadingMessage = styled.div`
+  text-align: center;
+  padding: 20px;
+  color: #495057;
+`;

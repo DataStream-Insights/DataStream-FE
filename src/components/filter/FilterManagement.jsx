@@ -2,13 +2,14 @@ import React from "react";
 import { useState } from "react";
 import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useFilterData from "../../hooks/filter/useFilterData";
 import * as S from "../../styles/main/tableStyle";
 import FilterDetail from "./FilterDetail";
 import { Layout } from "../Layout";
 
 export function FilterManagement() {
+  const { campaignId, formatId } = useParams();
   const [selectedFilter, setSelectedFilter] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const navigate = useNavigate();
@@ -21,7 +22,7 @@ export function FilterManagement() {
   };
 
   const handleCreateClick = () => {
-    navigate("/filter");
+    navigate(`/filter/${campaignId}/${formatId}`); // 수정된 경로
   };
 
   //Header

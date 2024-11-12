@@ -59,7 +59,7 @@ const useFilterCreate = () => {
     }
   }, []);
 
-  const saveFilter = async (requestData) => {
+  const saveFilter = async (campaignId, formatId, requestData) => {
     setIsLoading(true);
     setError(null);
     try {
@@ -67,7 +67,7 @@ const useFilterCreate = () => {
         throw new Error("필터 이름을 입력해주세요.");
       }
 
-      const result = await createLogFilter(requestData);
+      const result = await createLogFilter(campaignId, formatId, requestData); // API 호출 시 파라미터 전달
       return result;
     } catch (error) {
       console.error("Failed to save filter:", error);
