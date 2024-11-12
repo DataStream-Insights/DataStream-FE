@@ -70,7 +70,7 @@ export function FilterManagement() {
   }
 
   return (
-    <Layout title="필터 관리">
+    <>
       <S.HeaderContainer>
         <S.FilterRow>
           <S.SearchInput placeholder="필터링명 검색" />
@@ -140,7 +140,7 @@ export function FilterManagement() {
         onClose={() => setIsDetailOpen(false)}
         filterId={selectedFilter?.id}
       />
-    </Layout>
+    </>
   );
 }
 

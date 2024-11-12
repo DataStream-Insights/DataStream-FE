@@ -5,29 +5,38 @@ import * as S from "../styles/LayoutStyle";
 export function Layout({ title, children }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const params = useParams(); // URL 파라미터 가져오기
+  const params = useParams();
 
   useEffect(() => {
     console.log("Location changed:", location.pathname);
-    console.log("Params:", params); // 파라미터 로깅
+    console.log("Params:", params);
   }, [location.pathname, params]);
 
   const isActive = (path) => location.pathname === path;
 
   const renderNavigation = () => {
-    // format/:campaignId/management 패턴 체크
     const pathSegments = location.pathname.split("/");
+
+    // format/:campaignId/management 패턴 체크
     const isFormatManagement =
       pathSegments[1] === "format" && pathSegments[3] === "management";
 
-    console.log("Path segments:", pathSegments);
-    console.log("Is format management:", isFormatManagement);
+    // filter/:campaignId/:formatId/filtermanagement 패턴 체크
+    const isFilterManagement =
+      pathSegments[1] === "filter" && pathSegments[4] === "filtermanagement";
 
-    if (isFormatManagement) {
+    if (isFormatManagement || isFilterManagement) {
+      const { campaignId } = params;
       return (
         <S.MenuBar>
           <S.MenuItem active={isActive("/")} onClick={() => navigate("/")}>
             캠페인 목록
+          </S.MenuItem>
+          <S.MenuItem
+            active={isActive(`/format/${campaignId}/management`)}
+            onClick={() => navigate(`/format/${campaignId}/management`)}
+          >
+            포맷팅 목록
           </S.MenuItem>
         </S.MenuBar>
       );

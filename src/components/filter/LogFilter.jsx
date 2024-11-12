@@ -124,6 +124,10 @@ const LogFilter = () => {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   return (
     <F.Container>
       <F.LeftSection>
@@ -220,8 +224,8 @@ const LogFilter = () => {
             </F.FormGroup>
           </F.Section>
 
-          <F.RepeatSection>
-            {/* <F.InputGroup>
+          {/* <F.RepeatSection> */}
+          {/* <F.InputGroup>
               <F.NumberInput
                 type="number"
                 value={filterSettings.repeatCount}
@@ -235,7 +239,7 @@ const LogFilter = () => {
               <span>회 반복하여 조건 만족 시 통과</span>
             </F.InputGroup> */}
 
-            {/* <F.InputGroup>
+          {/* <F.InputGroup>
               <F.NumberInput
                 type="number"
                 value={filterSettings.timeLimit.value}
@@ -268,7 +272,7 @@ const LogFilter = () => {
               <span>행동 정의 충족시 통과</span>
             </F.InputGroup> */}
 
-            {/* <F.InputGroup>
+          {/* <F.InputGroup>
               <span>행동 정의 미충족 수집</span>
               <F.Switch>
                 <input
@@ -290,11 +294,11 @@ const LogFilter = () => {
                 <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
               </div>
             </F.InputGroup> */}
-            <F.InputGroup>
-              <div style={{ textAlign: "right" }}>
-                <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
-              </div>
-            </F.InputGroup>
+          <F.RepeatSection>
+            <F.ButtonContainer>
+              <F.BackButton onClick={handleBack}>뒤로 가기</F.BackButton>
+              <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
+            </F.ButtonContainer>
           </F.RepeatSection>
         </F.FilterSection>
       </F.RightSection>

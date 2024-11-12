@@ -88,6 +88,25 @@ export const CustomerTypeSelect = styled.select`
   min-width: 150px;
 `;
 
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+`;
+
+export const BackButton = styled.button`
+  padding: 8px 24px;
+  background: #ffffff;
+  color: #666666;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+`;
+
 export const RadioContainer = styled.div`
   display: flex;
   gap: 20px;
@@ -124,7 +143,6 @@ export const SubmitButton = styled.button`
   color: white;
   border: none;
   border-radius: 4px;
-  float: right;
   cursor: pointer;
 
   &:hover {

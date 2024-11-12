@@ -105,6 +105,8 @@ export const Tag = styled.span`
 
 export const RepeatSection = styled.div`
   margin-top: 24px;
+  padding-top: 16px; // 위 여백 추가
+  border-top: 1px solid #e9ecef; // 구분선 추가
 `;
 
 export const InputGroup = styled.div`
@@ -172,6 +174,26 @@ export const Switch = styled.label`
   }
 `;
 
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end; // 오른쪽 정렬
+  gap: 8px; // 버튼 사이 간격
+  margin-top: 20px;
+`;
+
+export const BackButton = styled.button`
+  padding: 8px 16px;
+  background: #ffffff;
+  color: #666666;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  cursor: pointer;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+`;
+
 export const SaveButton = styled.button`
   padding: 8px 16px;
   background: #228be6;
@@ -179,7 +201,6 @@ export const SaveButton = styled.button`
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  float: right;
 
   &:hover {
     background: #1c7ed6;
