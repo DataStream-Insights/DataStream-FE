@@ -81,6 +81,10 @@ export function CreateCampaign() {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1); // 이전 페이지로 이동
+  };
+
   return (
     <S.FormContainer>
       <S.FormCard>
@@ -221,9 +225,14 @@ export function CreateCampaign() {
             />
           </S.FormGroup>
 
-          <S.SubmitButton type="submit" disabled={isLoading}>
-            {isLoading ? "저장 중..." : "저장하기"}
-          </S.SubmitButton>
+          <S.ButtonContainer>
+            <S.BackButton type="button" onClick={handleBack}>
+              뒤로 가기
+            </S.BackButton>
+            <S.SubmitButton type="submit" disabled={isLoading}>
+              {isLoading ? "저장 중..." : "저장하기"}
+            </S.SubmitButton>
+          </S.ButtonContainer>
         </form>
       </S.FormCard>
     </S.FormContainer>
