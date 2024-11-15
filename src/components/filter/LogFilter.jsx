@@ -103,8 +103,9 @@ const LogFilter = () => {
                 behavior.operatorOption &&
                 behavior.actionValue
             )
-            .map((behavior) => ({
-              andor: behavior.logicalOperator || "AND",
+            .map((behavior, index) => ({
+              // index가 0이면 null, 아니면 logicalOperator 값 사용
+              andor: index === 0 ? null : behavior.logicalOperator,
               filtervalue: {
                 value: behavior.actionValue,
               },
