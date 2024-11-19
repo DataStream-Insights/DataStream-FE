@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import LogFormatDetail from "../../components/format/LogFormatDetail";
 import LogFormatList from "../../components/format/LogFormatList";
+import LogFormatView from "../../components/format/LogFormatView";
 import * as S from "../../styles/format/formatPageStyle";
 import useLogFormat from "../../hooks/format/useFormatData";
 import { updateLogFormat } from "../../api/FormatApi";
@@ -68,23 +69,31 @@ const LogFormatPage = () => {
         </S.ListContainer>
         {isDetailVisible && (
           <S.DetailContainer className="visible">
-            <LogFormatDetail
-              isNew={isCreating}
-              onClose={handleClose}
-              onSubmit={handleSubmit}
-              selectedFormat={formatHook.selectedFormat}
-              logFiles={formatHook.logFiles}
-              fields={formatHook.fields}
-              setFields={formatHook.setFields}
-              selectedFileName={formatHook.selectedFileName}
-              selectLogFile={formatHook.selectLogFile}
-              createFormat={formatHook.createFormat}
-              analyzeFormat={formatHook.analyzeFormat}
-              analyzeSubFields={formatHook.analyzeSubFields}
-              updateField={formatHook.updateField}
-              addNewField={formatHook.addNewField}
-              campaignId={campaignId}
-            />
+            {isCreating ? (
+              <LogFormatDetail
+                isNew={true}
+                onClose={handleClose}
+                onSubmit={handleSubmit}
+                logFiles={formatHook.logFiles}
+                fields={formatHook.fields}
+                setFields={formatHook.setFields}
+                selectedFileName={formatHook.selectedFileName}
+                selectLogFile={formatHook.selectLogFile}
+                createFormat={formatHook.createFormat}
+                analyzeFormat={formatHook.analyzeFormat}
+                analyzeSubFields={formatHook.analyzeSubFields}
+                updateField={formatHook.updateField}
+                addNewField={formatHook.addNewField}
+                campaignId={campaignId}
+              />
+            ) : (
+              <LogFormatView
+                selectedFormat={formatHook.selectedFormat}
+                fields={formatHook.fields}
+                onClose={handleClose}
+                campaignId={campaignId}
+              />
+            )}
           </S.DetailContainer>
         )}
       </S.Container>
