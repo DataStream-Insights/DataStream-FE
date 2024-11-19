@@ -4,6 +4,7 @@ import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useCampaignData from "../../hooks/campaign/useCampaginData";
 import * as S from "../../styles/main/tableStyle";
+import Loading from "../Loading";
 
 export function CampaignTable() {
   const navigate = useNavigate();
@@ -71,7 +72,7 @@ export function CampaignTable() {
     );
 
   if (isLoading) {
-    return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
+    return <Loading />;
   }
 
   return (

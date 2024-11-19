@@ -70,3 +70,22 @@ export const Description = styled.p`
   margin: 0;
   line-height: 1.5;
 `;
+
+export const LayoutWrapper = styled.div`
+  display: flex;
+  height: 100vh;
+`;
+
+export const MainContentWrapper = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;
+
+export const MainContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+`;

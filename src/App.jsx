@@ -9,9 +9,13 @@ export function App() {
   const router = createBrowserRouter([
     { path: "/", element: <CampaignManagementPage /> },
     { path: "/campaignform", element: <CreateCampaign /> },
-    // { path: "/format", element: <LogFormatPage /> },
+    { path: "/format", element: <LogFormatPage /> },
     { path: "/format/:campaignId/management", element: <LogFormatPage /> },
     { path: "/filter/:campaignId/:formatId", element: <LogFilter /> },
+    {
+      path: "/filter",
+      element: <FilterManagementPage />,
+    },
     {
       path: "/filter/:campaignId/:formatId/filtermanagement",
       element: <FilterManagementPage />,

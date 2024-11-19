@@ -19,9 +19,9 @@ const useLogFormat = () => {
   const [formats, setFormats] = useState([]); // 포맷 목록을 위한 상태 추가
   const [selectedFormat, setSelectedFormat] = useState(null); //상세보기
 
-  // 포맷 목록 조회 함수
+  //포맷 목록 조회
   const loadFormats = useCallback(async () => {
-    if (!campaignId) return;
+    // if (!campaignId) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -37,10 +37,28 @@ const useLogFormat = () => {
     }
   }, [campaignId]);
 
+  // 포맷 목록 조회 함수
+  // const loadFormats = useCallback(async () => {
+  //   if (!campaignId) return;
+  //   setIsLoading(true);
+  //   setError(null);
+  //   try {
+  //     console.log("Fetching formats...", campaignId);
+  //     const formatList = await fetchLogFormats(campaignId);
+  //     console.log("Received format list:", formatList);
+  //     setFormats(formatList);
+  //   } catch (error) {
+  //     console.error("Failed to fetch formats:", error);
+  //     setError("포맷 목록을 불러오는데 실패했습니다.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // }, [campaignId]);
+
   //포맷 상세보기 조회
   const loadFormatDetail = useCallback(
     async (formatId) => {
-      if (!campaignId || !formatId) return;
+      if (!formatId) return;
 
       setIsLoading(true);
       setError(null);
@@ -151,7 +169,7 @@ const useLogFormat = () => {
 
   // 포맷 생성
   const createFormat = async (formatData) => {
-    if (!campaignId) return;
+    // if (!campaignId) return;
     setIsLoading(true);
     setError(null);
     try {
@@ -234,12 +252,18 @@ const useLogFormat = () => {
   //   };
   //   loadInitialData();
   // }, [loadFormats, loadLogFiles]);
+
+  // useEffect(() => {
+  //   if (campaignId) {
+  //     loadFormats();
+  //     loadLogFiles();
+  //   }
+  // }, [campaignId, loadFormats, loadLogFiles]);
+
   useEffect(() => {
-    if (campaignId) {
-      loadFormats();
-      loadLogFiles();
-    }
-  }, [campaignId, loadFormats, loadLogFiles]);
+    loadFormats();
+    loadLogFiles();
+  }, [loadFormats, loadLogFiles]);
 
   return {
     logFiles,
