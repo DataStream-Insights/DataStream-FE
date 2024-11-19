@@ -10,7 +10,8 @@ const Navbar = () => {
   const tabs = [
     { id: "campaign", label: "Campaign", path: "/" },
     { id: "format", label: "Format", path: "/format" },
-    { id: "filter", label: "Filter", path: "/filter" },
+    { id: "filter", label: "Filter", path: "/filter/filtermanagement" },
+    { id: "process", label: "Process", path: "/process" },
   ];
 
   const isActive = (path) => {

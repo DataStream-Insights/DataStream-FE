@@ -11,6 +11,7 @@ import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
 import BehaviorFilter from "./BehaviorFilter";
 import useFilterCreate from "../../hooks/filter/useFilterCreate";
 import { generateFilterId } from "../../utils/idGenerator";
+import Loading from "../../components/Loading";
 
 const LogFilter = () => {
   const { campaignId, formatId } = useParams();
@@ -119,7 +120,7 @@ const LogFilter = () => {
 
       await saveFilter(campaignId, formatId, requestData);
       alert("저장되었습니다.");
-      navigate(`/filter/${campaignId}/${formatId}/filtermanagement`);
+      navigate(`/filter/filtermanagement`);
     } catch (error) {
       alert(error.message || "저장에 실패했습니다.");
     }
@@ -130,7 +131,7 @@ const LogFilter = () => {
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   return (
