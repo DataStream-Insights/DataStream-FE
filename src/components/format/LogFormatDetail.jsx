@@ -89,10 +89,6 @@ const LogFormatDetail = ({
       );
     } else {
       try {
-        console.log("토글 클릭 시 전송 데이터: ", {
-          title: selectedFileName,
-          path: field.path,
-        });
         const response = await analyzeSubFields({
           title: selectedFileName,
           path: field.path,
@@ -102,15 +98,18 @@ const LogFormatDetail = ({
           const insertIndex =
             currentFields.findIndex((f) => f.path === field.path) + 1;
           const newSubFields = response.map((subField) => ({
-            value: subField.value,
+            name: subField.name,
             path: subField.path,
             hasChild: subField.hasChild,
-            name: subField.name,
+            value: subField.value,
+            // 중요: 기존 데이터의 속성명을 itemAlias 등으로 저장
             displayName: subField.item_alias || "",
             description: subField.item_explain || "",
             type: subField.item_type || "STRING",
-            // item_alias가 있을 때만 readonly
-            isUserInput: !subField.item_alias,
+            itemAlias: subField.item_alias,
+            itemExplain: subField.item_explain,
+            itemType: subField.item_type,
+            isUserCreated: false, // 토글로 열린 항목은 기본적으로 false
           }));
 
           return [
@@ -374,7 +373,13 @@ const LogFormatDetail = ({
             <tbody>
               {fields.map((field, index) => {
                 const level = field.path ? field.path.split(".").length - 1 : 0;
-                const isReadOnly = !field.isUserInput;
+                const isNewField = field.isUserCreated; // 새로 추가된 필드인지 확인
+                const hasPresetData = !!(
+                  field.itemAlias ||
+                  field.itemExplain ||
+                  field.itemType
+                );
+                const isReadOnly = !isNewField && hasPresetData;
 
                 return (
                   <tr key={index}>
@@ -395,13 +400,25 @@ const LogFormatDetail = ({
                               : "▶"}
                           </S.ToggleButton>
                         )}
-                        <S.TableText>{field.name}</S.TableText>
+                        {isNewField ? (
+                          <S.TableInput
+                            value={field.name}
+                            onChange={(e) =>
+                              handleFieldInputChange(
+                                index,
+                                "name",
+                                e.target.value
+                              )
+                            }
+                            placeholder="필드명 입력"
+                          />
+                        ) : (
+                          <S.TableText>{field.name}</S.TableText>
+                        )}
                       </div>
                     </S.Td>
                     <S.Td>
-                      {isReadOnly ? (
-                        <S.TableText>{field.displayName}</S.TableText>
-                      ) : (
+                      {isNewField || !hasPresetData ? (
                         <S.TableInput
                           value={field.displayName || ""}
                           onChange={(e) =>
@@ -412,12 +429,12 @@ const LogFormatDetail = ({
                             )
                           }
                         />
+                      ) : (
+                        <S.TableText>{field.displayName}</S.TableText>
                       )}
                     </S.Td>
                     <S.Td>
-                      {isReadOnly ? (
-                        <S.TableText>{field.description}</S.TableText>
-                      ) : (
+                      {isNewField || !hasPresetData ? (
                         <S.TableInput
                           value={field.description || ""}
                           onChange={(e) =>
@@ -428,12 +445,12 @@ const LogFormatDetail = ({
                             )
                           }
                         />
+                      ) : (
+                        <S.TableText>{field.description}</S.TableText>
                       )}
                     </S.Td>
                     <S.Td>
-                      {isReadOnly ? (
-                        <S.TableText>{field.type}</S.TableText>
-                      ) : (
+                      {isNewField || !hasPresetData ? (
                         <S.TableSelect
                           value={field.type}
                           onChange={(e) =>
@@ -448,10 +465,26 @@ const LogFormatDetail = ({
                           <option>FLOAT</option>
                           <option>INTEGER</option>
                         </S.TableSelect>
+                      ) : (
+                        <S.TableText>{field.type}</S.TableText>
                       )}
                     </S.Td>
                     <S.Td>
-                      <S.TableText>{field.value}</S.TableText>
+                      {isNewField ? (
+                        <S.TableInput
+                          value={field.value || ""}
+                          onChange={(e) =>
+                            handleFieldInputChange(
+                              index,
+                              "value",
+                              e.target.value
+                            )
+                          }
+                          placeholder="컨텐츠 예시 입력"
+                        />
+                      ) : (
+                        <S.TableText>{field.value}</S.TableText>
+                      )}
                     </S.Td>
                     <S.Td>
                       <div
@@ -461,19 +494,19 @@ const LogFormatDetail = ({
                           justifyContent: "center",
                         }}
                       >
-                        {!isReadOnly && (
-                          <>
-                            <S.ActionButton
-                              onClick={() => handleAddField(index, field.path)}
-                            >
-                              <Plus size={16} />
-                            </S.ActionButton>
-                            <S.ActionButton
-                              onClick={() => updateField(index, null)}
-                            >
-                              <Trash2 size={16} />
-                            </S.ActionButton>
-                          </>
+                        {!isNewField && (
+                          <S.ActionButton
+                            onClick={() => handleAddField(index, field.path)}
+                          >
+                            <Plus size={16} />
+                          </S.ActionButton>
+                        )}
+                        {(isNewField || !hasPresetData) && (
+                          <S.ActionButton
+                            onClick={() => updateField(index, null)}
+                          >
+                            <Trash2 size={16} />
+                          </S.ActionButton>
                         )}
                       </div>
                     </S.Td>

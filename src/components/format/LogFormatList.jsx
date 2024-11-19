@@ -3,6 +3,7 @@ import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import * as S from "../../styles/format/formatListStyle";
 import { useParams } from "react-router-dom";
 import useFormatData from "../../hooks/format/useFormatData";
+import Loading from "../../components/Loading";
 
 const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
   const { campaignId } = useParams();
@@ -37,7 +38,7 @@ const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
   };
 
   if (isLoading) {
-    return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
+    return <Loading />;
   }
 
   return (

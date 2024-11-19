@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   padding: 1rem;
   height: 100%;
-  background-color: #f3f4f6;
+  // background-color: #f3f4f6;
 `;
 
 export const Card = styled.div`
@@ -360,4 +360,30 @@ export const FilterButton = styled.button`
   &:active {
     background-color: #3730a3; // 더 어두운 인디고
   }
+`;
+
+export const InfoGroup = styled.div`
+  margin-bottom: 1.5rem;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`;
+
+export const InfoLabel = styled.div`
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+`;
+
+export const InfoText = styled.div`
+  font-size: 1rem;
+  color: #1f2937;
+  padding: 0.5rem;
+  background-color: #f9fafb;
+  border-radius: 0.375rem;
+  min-height: 2.5rem;
+  display: flex;
+  align-items: center;
 `;

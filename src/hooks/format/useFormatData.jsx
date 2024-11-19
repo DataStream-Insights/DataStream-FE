@@ -134,8 +134,10 @@ const useLogFormat = () => {
         displayName: field.item_alias || "",
         description: field.item_explain || "",
         type: field.item_type || "STRING",
-        // item_alias가 있을 때만 readonly
-        isUserInput: !field.item_alias,
+        // 중요: 기존 데이터의 속성명을 itemAlias 등으로 저장
+        itemAlias: field.item_alias,
+        itemExplain: field.item_explain,
+        itemType: field.item_type,
       }));
 
       setFields(initializedFields);
