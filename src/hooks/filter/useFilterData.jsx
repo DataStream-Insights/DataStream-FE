@@ -4,17 +4,16 @@ import { useParams } from "react-router-dom";
 
 // FilterManagement 화면에서 사용할 Hook
 const useFilterData = () => {
-  const { campaignId } = useParams();
-  const { formatId } = useParams();
+  const { campaignId, formatId } = useParams();
   const [data, setData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const loadFilters = useCallback(async () => {
-    if (!campaignId || !formatId) return;
     setIsLoading(true);
     setError(null);
     try {
+      console.log("Loading filters with params:", { campaignId, formatId });
       const filterData = await fetchFilters(campaignId, formatId);
       setData(filterData);
     } catch (error) {
@@ -23,7 +22,7 @@ const useFilterData = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [campaignId]);
+  }, [campaignId, formatId]);
 
   useEffect(() => {
     loadFilters();
@@ -33,6 +32,7 @@ const useFilterData = () => {
     data,
     isLoading,
     error,
+    loadFilters, // 필요한 경우 수동으로 새로고침할 수 있도록 함수 노출
   };
 };
 

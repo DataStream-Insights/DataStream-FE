@@ -106,9 +106,11 @@ const LogFormatDetail = ({
             path: subField.path,
             hasChild: subField.hasChild,
             name: subField.name,
-            displayName: "",
-            description: "",
-            type: "STRING",
+            displayName: subField.item_alias || "",
+            description: subField.item_explain || "",
+            type: subField.item_type || "STRING",
+            // item_alias가 있을 때만 readonly
+            isUserInput: !subField.item_alias,
           }));
 
           return [
@@ -191,7 +193,7 @@ const LogFormatDetail = ({
     const currentField = fields[index];
     const currentLevel = parentPath ? parentPath.split(".").length : 0;
 
-    // 새로운 필드 생성
+    // 새로운 필드 생성 - isUserInput 플래그 추가
     const newField = {
       name: "",
       value: "",
@@ -199,6 +201,7 @@ const LogFormatDetail = ({
       description: "",
       type: "STRING",
       isUserCreated: true,
+      isUserInput: true, // 이 플래그를 추가하여 입력 가능하도록 설정
       path: parentPath || "",
       hasChild: false,
     };
@@ -371,6 +374,8 @@ const LogFormatDetail = ({
             <tbody>
               {fields.map((field, index) => {
                 const level = field.path ? field.path.split(".").length - 1 : 0;
+                const isReadOnly = !field.isUserInput;
+
                 return (
                   <tr key={index}>
                     <S.Td>
@@ -390,75 +395,63 @@ const LogFormatDetail = ({
                               : "▶"}
                           </S.ToggleButton>
                         )}
-                        {field.isUserCreated ? (
-                          <S.TableInput
-                            value={field.name}
-                            onChange={(e) =>
-                              handleFieldInputChange(
-                                index,
-                                "name",
-                                e.target.value
-                              )
-                            }
-                            placeholder="필드명 입력"
-                          />
-                        ) : (
-                          <S.TableText>{field.name}</S.TableText>
-                        )}
+                        <S.TableText>{field.name}</S.TableText>
                       </div>
                     </S.Td>
                     <S.Td>
-                      <S.TableInput
-                        value={field.displayName || ""}
-                        onChange={(e) =>
-                          handleFieldInputChange(
-                            index,
-                            "displayName",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </S.Td>
-                    <S.Td>
-                      <S.TableInput
-                        value={field.description || ""}
-                        onChange={(e) =>
-                          handleFieldInputChange(
-                            index,
-                            "description",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </S.Td>
-                    <S.Td>
-                      <S.TableSelect
-                        value={field.type}
-                        onChange={(e) =>
-                          handleFieldInputChange(index, "type", e.target.value)
-                        }
-                      >
-                        <option>STRING</option>
-                        <option>FLOAT</option>
-                        <option>INTEGER</option>
-                      </S.TableSelect>
-                    </S.Td>
-                    <S.Td>
-                      {field.isUserCreated ? (
+                      {isReadOnly ? (
+                        <S.TableText>{field.displayName}</S.TableText>
+                      ) : (
                         <S.TableInput
-                          value={field.value || ""}
+                          value={field.displayName || ""}
                           onChange={(e) =>
                             handleFieldInputChange(
                               index,
-                              "value",
+                              "displayName",
                               e.target.value
                             )
                           }
-                          placeholder="예시값 입력"
                         />
-                      ) : (
-                        <S.TableText>{field.value}</S.TableText>
                       )}
+                    </S.Td>
+                    <S.Td>
+                      {isReadOnly ? (
+                        <S.TableText>{field.description}</S.TableText>
+                      ) : (
+                        <S.TableInput
+                          value={field.description || ""}
+                          onChange={(e) =>
+                            handleFieldInputChange(
+                              index,
+                              "description",
+                              e.target.value
+                            )
+                          }
+                        />
+                      )}
+                    </S.Td>
+                    <S.Td>
+                      {isReadOnly ? (
+                        <S.TableText>{field.type}</S.TableText>
+                      ) : (
+                        <S.TableSelect
+                          value={field.type}
+                          onChange={(e) =>
+                            handleFieldInputChange(
+                              index,
+                              "type",
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option>STRING</option>
+                          <option>FLOAT</option>
+                          <option>INTEGER</option>
+                        </S.TableSelect>
+                      )}
+                    </S.Td>
+                    <S.Td>
+                      <S.TableText>{field.value}</S.TableText>
                     </S.Td>
                     <S.Td>
                       <div
@@ -468,16 +461,20 @@ const LogFormatDetail = ({
                           justifyContent: "center",
                         }}
                       >
-                        <S.ActionButton
-                          onClick={() => handleAddField(index, field.path)}
-                        >
-                          <Plus size={16} />
-                        </S.ActionButton>
-                        <S.ActionButton
-                          onClick={() => updateField(index, null)}
-                        >
-                          <Trash2 size={16} />
-                        </S.ActionButton>
+                        {!isReadOnly && (
+                          <>
+                            <S.ActionButton
+                              onClick={() => handleAddField(index, field.path)}
+                            >
+                              <Plus size={16} />
+                            </S.ActionButton>
+                            <S.ActionButton
+                              onClick={() => updateField(index, null)}
+                            >
+                              <Trash2 size={16} />
+                            </S.ActionButton>
+                          </>
+                        )}
                       </div>
                     </S.Td>
                   </tr>

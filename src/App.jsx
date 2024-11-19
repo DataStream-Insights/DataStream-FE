@@ -11,7 +11,8 @@ export function App() {
     { path: "/campaignform", element: <CreateCampaign /> },
     { path: "/format", element: <LogFormatPage /> },
     { path: "/format/:campaignId/management", element: <LogFormatPage /> },
-    { path: "/filter/:campaignId/:formatId", element: <LogFilter /> },
+    { path: "/filter/create", element: <LogFilter /> },
+    { path: "/filter/create/:campaignId/:formatId", element: <LogFilter /> },
     {
       path: "/filter",
       element: <FilterManagementPage />,
