@@ -6,7 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import useFilterData from "../../hooks/filter/useFilterData";
 import * as S from "../../styles/main/tableStyle";
 import FilterDetail from "./FilterDetail";
-import { Layout } from "../Layout";
+import Loading from "../../components/Loading";
 
 export function FilterManagement() {
   const { campaignId, formatId } = useParams();
@@ -66,7 +66,7 @@ export function FilterManagement() {
     );
 
   if (isLoading) {
-    return <S.LoadingMessage>데이터를 불러오는 중...</S.LoadingMessage>;
+    return <Loading />;
   }
 
   return (

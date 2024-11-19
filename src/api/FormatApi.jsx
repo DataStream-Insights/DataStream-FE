@@ -7,10 +7,14 @@ const api = axios.create({
   },
 });
 
-// 포맷 목록 조회
-export const fetchLogFormats = async (campaignId) => {
+// 포맷 목록 조회 - 통합 버전
+export const fetchLogFormats = async (campaignId = null) => {
   try {
-    const response = await api.get(`/format/${campaignId}/management`);
+    const endpoint = campaignId
+      ? `/format/${campaignId}/management`
+      : `/format/management`;
+    const response = await api.get(endpoint);
+    console.log("Fetched formats:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching log formats:", error);
@@ -18,15 +22,42 @@ export const fetchLogFormats = async (campaignId) => {
   }
 };
 
+// 포맷 목록 조회
+// export const fetchLogFormats = async () => {
+//   try {
+//     const response = await api.get(`/format/management`);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching log formats:", error);
+//     throw error;
+//   }
+// };
+
+// 포맷 목록 조회 - campaignID
+// export const fetchLogFormats = async (campaignId) => {
+//   try {
+//     const response = await api.get(`/format/${campaignId}/management`);
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error fetching log formats:", error);
+//     throw error;
+//   }
+// };
+
 //상세 정보 조회
 export const fetchFormatDetail = async (campaignId, formatId) => {
   try {
+    // campaignId 유무에 따라 엔드포인트 결정
+    const endpoint = campaignId
+      ? `/format/${campaignId}/management/${formatId}`
+      : `/format/management/${formatId}`;
+
+    console.log(`Fetching format detail - Endpoint: ${endpoint}`);
     console.log(
-      `Fetching format detail - Campaign: ${campaignId}, Format: ${formatId}`
+      `Parameters - Campaign: ${campaignId || "None"}, Format: ${formatId}`
     );
-    const response = await api.get(
-      `/format/${campaignId}/management/${formatId}`
-    );
+
+    const response = await api.get(endpoint);
 
     if (!response.data) {
       throw new Error("No data received from server");
@@ -49,6 +80,12 @@ export const fetchFormatDetail = async (campaignId, formatId) => {
     return response.data;
   } catch (error) {
     console.error("Error fetching format detail:", error);
+    if (error.response) {
+      console.error("Server response error:", {
+        status: error.response.status,
+        data: error.response.data,
+      });
+    }
     throw error;
   }
 };
@@ -146,15 +183,10 @@ export const analyzeSubFields = async (analysisData) => {
   }
 };
 
-// 로그 포맷 생성
-export const createLogFormat = async (campaignId, formatData) => {
+// 포맷 생성 - 통합 버전
+export const createLogFormat = async (campaignId = null, formatData) => {
   try {
-    console.log("Received format data:", campaignId, formatData);
-
-    // 필수 필드 검증
-    if (!formatData.name) {
-      throw new Error("Format name is required");
-    }
+    console.log("Creating format with data:", formatData);
 
     const logFormatDTO = {
       start: parseInt(formatData.startOffset) || 0,
@@ -174,25 +206,110 @@ export const createLogFormat = async (campaignId, formatData) => {
       })),
     };
 
-    const response = await api.post(
-      `/format/${campaignId}/addformatfields`,
-      logFormatDTO
-    );
-    console.log("Server response:", response);
+    const endpoint = campaignId
+      ? `/format/${campaignId}/addformatfields`
+      : `/format/addformatfields`;
 
+    const response = await api.post(endpoint, logFormatDTO);
+    console.log("Format creation response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error creating log format:", error);
-    if (error.response) {
-      console.error("Server error response:", {
-        status: error.response.status,
-        data: error.response.data,
-        headers: error.response.headers,
-      });
-    }
     throw error;
   }
 };
+
+// 로그 포맷 생성
+// export const createLogFormat = async (formatData) => {
+//   try {
+//     console.log("Received format data:", formatData);
+
+//     // 필수 필드 검증
+//     if (!formatData.name) {
+//       throw new Error("Format name is required");
+//     }
+
+//     const logFormatDTO = {
+//       start: parseInt(formatData.startOffset) || 0,
+//       end: parseInt(formatData.endOffset) || 0,
+//       formatname: formatData.name,
+//       formatID: generateFormatId(),
+//       formatexplain: formatData.description || "",
+//       formatSets: formatData.fields.map((field) => ({
+//         formatItemResponse: {
+//           fieldName: field.name || "",
+//           itemAlias: field.displayName || field.name || "",
+//           itemExplain: field.description || "",
+//           itemType: field.type || "STRING",
+//           itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
+//           path: field.path || "",
+//         },
+//       })),
+//     };
+
+//     const response = await api.post(`/format/addformatfields`, logFormatDTO);
+//     console.log("Server response:", response);
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error creating log format:", error);
+//     if (error.response) {
+//       console.error("Server error response:", {
+//         status: error.response.status,
+//         data: error.response.data,
+//         headers: error.response.headers,
+//       });
+//     }
+//     throw error;
+//   }
+// };
+
+// export const createLogFormat = async (campaignId, formatData) => {
+//   try {
+//     console.log("Received format data:", campaignId, formatData);
+
+//     // 필수 필드 검증
+//     if (!formatData.name) {
+//       throw new Error("Format name is required");
+//     }
+
+//     const logFormatDTO = {
+//       start: parseInt(formatData.startOffset) || 0,
+//       end: parseInt(formatData.endOffset) || 0,
+//       formatname: formatData.name,
+//       formatID: generateFormatId(),
+//       formatexplain: formatData.description || "",
+//       formatSets: formatData.fields.map((field) => ({
+//         formatItemResponse: {
+//           fieldName: field.name || "",
+//           itemAlias: field.displayName || field.name || "",
+//           itemExplain: field.description || "",
+//           itemType: field.type || "STRING",
+//           itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
+//           path: field.path || "",
+//         },
+//       })),
+//     };
+
+//     const response = await api.post(
+//       `/format/${campaignId}/addformatfields`,
+//       logFormatDTO
+//     );
+//     console.log("Server response:", response);
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("Error creating log format:", error);
+//     if (error.response) {
+//       console.error("Server error response:", {
+//         status: error.response.status,
+//         data: error.response.data,
+//         headers: error.response.headers,
+//       });
+//     }
+//     throw error;
+//   }
+// };
 
 // formatSets 배열을 올바른 형식으로 생성하는 헬퍼 함수
 export const createFormatSets = (fields) => {
