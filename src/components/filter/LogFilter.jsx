@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Search, X } from "lucide-react";
+import React, { useState, useMemo } from "react";
+import { Search } from "lucide-react";
 import { useTable } from "react-table";
 import { useParams, useNavigate } from "react-router-dom";
 import * as F from "../../styles/filter/filterStyle";
@@ -14,23 +14,22 @@ import { generateFilterId } from "../../utils/idGenerator";
 
 const LogFilter = () => {
   const { campaignId, formatId } = useParams();
-  //hook에서 items 받아옴
   const {
     items,
     filterSettings,
     filterOptions,
     updateFilterSettings,
     saveFilter,
+    isLoading,
   } = useFilterCreate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
 
-  const data = items;
-
-  const columns = React.useMemo(
+  // 컬럼 정의
+  const columns = useMemo(
     () => [
       { Header: "아이템 명", accessor: "name" },
       { Header: "아이템 별명", accessor: "namealias" },
@@ -39,41 +38,43 @@ const LogFilter = () => {
     []
   );
 
-  const filteredData = React.useMemo(
-    () =>
-      // data.filter(
-      //   (item) =>
-      //     item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      //     item.namealias.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      //     item.type.toLowerCase().includes(searchTerm.toLowerCase())
-      // ),
+  // 필터링된 데이터
+  const filteredData = useMemo(() => {
+    if (!Array.isArray(items)) return [];
+    if (!searchTerm.trim()) {
+      // 빈 값이거나 null인 항목 제외
+      return items.filter(
+        (item) => item && item.name && item.namealias && item.type
+      );
+    }
 
-      data.filter((item) => {
-        // id를 문자열로 변환
-        // const idStr = String(item.id);
-        // const nameStr = String(item.name);
-        // const typeStr = String(item.type);
+    const searchTermLower = searchTerm.toLowerCase().trim();
 
-        return (
-          item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.namealias.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.type.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      }),
+    return items.filter((item) => {
+      // 유효한 데이터만 포함
+      if (!item || !item.name || !item.namealias || !item.type) {
+        return false;
+      }
 
-    [data, searchTerm]
-  );
+      return (
+        item.name.toLowerCase().includes(searchTermLower) ||
+        item.namealias.toLowerCase().includes(searchTermLower) ||
+        item.type.toLowerCase().includes(searchTermLower)
+      );
+    });
+  }, [items, searchTerm]);
 
+  // useTable 훅을 컴포넌트 최상위 레벨에서 호출
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
     useTable({
       columns,
       data: filteredData,
     });
 
-  const paginatedRows = rows.slice(
-    page * rowsPerPage,
-    page * rowsPerPage + rowsPerPage
-  );
+  // 페이지네이션된 데이터
+  const paginatedRows = useMemo(() => {
+    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
+  }, [rows, page, rowsPerPage]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -97,14 +98,13 @@ const LogFilter = () => {
         filtermanage_id: filterId,
         filterSetList: {
           filterSets: filterSettings.behaviors
-            .filter(
+            ?.filter(
               (behavior) =>
                 behavior.idOption &&
                 behavior.operatorOption &&
                 behavior.actionValue
             )
             .map((behavior, index) => ({
-              // index가 0이면 null, 아니면 logicalOperator 값 사용
               andor: index === 0 ? null : behavior.logicalOperator,
               filtervalue: {
                 value: behavior.actionValue,
@@ -117,17 +117,21 @@ const LogFilter = () => {
         },
       };
 
-      await saveFilter(campaignId, formatId, requestData); // campaignId와 formatId 전달
+      await saveFilter(campaignId, formatId, requestData);
       alert("저장되었습니다.");
-      navigate(`/filter/${campaignId}/${formatId}/filtermanagement`); // 저장 후 이동 경로도 수정
+      navigate(`/filter/${campaignId}/${formatId}/filtermanagement`);
     } catch (error) {
       alert(error.message || "저장에 실패했습니다.");
     }
   };
 
   const handleBack = () => {
-    navigate(-1); // 이전 페이지로 이동
+    navigate(-1);
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <F.Container>
@@ -144,9 +148,15 @@ const LogFilter = () => {
           <F.StyledTable {...getTableProps()}>
             <F.THead>
               {headerGroups.map((headerGroup, groupIndex) => (
-                <F.Tr key={`header-group-${groupIndex}`}>
+                <F.Tr
+                  key={`header-group-${groupIndex}`}
+                  {...headerGroup.getHeaderGroupProps()}
+                >
                   {headerGroup.headers.map((column, columnIndex) => (
-                    <F.Th key={`header-${groupIndex}-${columnIndex}`}>
+                    <F.Th
+                      key={`header-${groupIndex}-${columnIndex}`}
+                      {...column.getHeaderProps()}
+                    >
                       {column.render("Header")}
                     </F.Th>
                   ))}
@@ -157,9 +167,12 @@ const LogFilter = () => {
               {paginatedRows.map((row, rowIndex) => {
                 prepareRow(row);
                 return (
-                  <F.Tr key={`row-${rowIndex}`}>
+                  <F.Tr key={`row-${rowIndex}`} {...row.getRowProps()}>
                     {row.cells.map((cell, cellIndex) => (
-                      <F.Td key={`cell-${rowIndex}-${cellIndex}`}>
+                      <F.Td
+                        key={`cell-${rowIndex}-${cellIndex}`}
+                        {...cell.getCellProps()}
+                      >
                         {cell.render("Cell")}
                       </F.Td>
                     ))}
@@ -168,7 +181,7 @@ const LogFilter = () => {
               })}
             </tbody>
             <tfoot>
-              <tr key="pagination-row">
+              <tr>
                 <CustomTablePagination
                   rowsPerPageOptions={[
                     5,
@@ -208,7 +221,7 @@ const LogFilter = () => {
         <F.FilterSection>
           <F.FilterTitle>행동 정의 설정</F.FilterTitle>
           <BehaviorFilter
-            filters={filterSettings.behaviors}
+            filters={filterSettings.behaviors || []}
             options={filterOptions}
             onChange={(behaviors) => updateFilterSettings({ behaviors })}
           />
@@ -218,83 +231,13 @@ const LogFilter = () => {
             <F.FormGroup>
               <F.Label>이름</F.Label>
               <F.Input
-                value={filterSettings.name}
+                value={filterSettings.name || ""}
                 onChange={(e) => updateFilterSettings({ name: e.target.value })}
-                placeholder="Log Format A"
+                placeholder="필터 이름을 입력하세요"
               />
             </F.FormGroup>
           </F.Section>
 
-          {/* <F.RepeatSection> */}
-          {/* <F.InputGroup>
-              <F.NumberInput
-                type="number"
-                value={filterSettings.repeatCount}
-                onChange={(e) =>
-                  updateFilterSettings({
-                    repeatCount: parseInt(e.target.value),
-                  })
-                }
-                min="1"
-              />
-              <span>회 반복하여 조건 만족 시 통과</span>
-            </F.InputGroup> */}
-
-          {/* <F.InputGroup>
-              <F.NumberInput
-                type="number"
-                value={filterSettings.timeLimit.value}
-                onChange={(e) =>
-                  updateFilterSettings({
-                    timeLimit: {
-                      ...filterSettings.timeLimit,
-                      value: parseInt(e.target.value),
-                    },
-                  })
-                }
-                min="1"
-              />
-              <F.Select
-                value={filterSettings.timeLimit.unit}
-                onChange={(e) =>
-                  updateFilterSettings({
-                    timeLimit: {
-                      ...filterSettings.timeLimit,
-                      unit: e.target.value,
-                    },
-                  })
-                }
-              >
-                <option value="분">분</option>
-                <option value="시간">시간</option>
-                <option value="일">일</option>
-              </F.Select>
-              <span>이내</span>
-              <span>행동 정의 충족시 통과</span>
-            </F.InputGroup> */}
-
-          {/* <F.InputGroup>
-              <span>행동 정의 미충족 수집</span>
-              <F.Switch>
-                <input
-                  type="checkbox"
-                  checked={filterSettings.collectUnmatched}
-                  onChange={(e) =>
-                    updateFilterSettings({
-                      collectUnmatched: e.target.checked,
-                    })
-                  }
-                />
-                <span></span>
-              </F.Switch>
-              <span style={{ fontSize: "12px", color: "#868e96" }}>
-                * 설정시 시간 제약 설정이 필수로 필요하지 않습니다.
-              </span>
-
-              <div style={{ textAlign: "right" }}>
-                <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
-              </div>
-            </F.InputGroup> */}
           <F.RepeatSection>
             <F.ButtonContainer>
               <F.BackButton onClick={handleBack}>뒤로 가기</F.BackButton>

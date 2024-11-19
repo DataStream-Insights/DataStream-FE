@@ -22,7 +22,13 @@ export function FilterManagement() {
   };
 
   const handleCreateClick = () => {
-    navigate(`/filter/${campaignId}/${formatId}`); // 수정된 경로
+    const createPath =
+      campaignId && formatId
+        ? `/filter/create/${campaignId}/${formatId}`
+        : `/filter/create`;
+
+    console.log("Navigating to:", createPath);
+    navigate(createPath);
   };
 
   //Header

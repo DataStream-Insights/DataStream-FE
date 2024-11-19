@@ -10,7 +10,7 @@ const useFilterDetail = (filterId, isOpen) => {
 
   useEffect(() => {
     const loadDetail = async () => {
-      if (!filterId || !isOpen || !campaignId || !formatId) {
+      if (!filterId || !isOpen) {
         return;
       }
 

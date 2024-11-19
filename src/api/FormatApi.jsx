@@ -47,45 +47,46 @@ export const fetchLogFormats = async (campaignId = null) => {
 //상세 정보 조회
 export const fetchFormatDetail = async (campaignId, formatId) => {
   try {
-    // campaignId 유무에 따라 엔드포인트 결정
     const endpoint = campaignId
       ? `/format/${campaignId}/management/${formatId}`
       : `/format/management/${formatId}`;
 
     console.log(`Fetching format detail - Endpoint: ${endpoint}`);
-    console.log(
-      `Parameters - Campaign: ${campaignId || "None"}, Format: ${formatId}`
-    );
-
     const response = await api.get(endpoint);
 
     if (!response.data) {
       throw new Error("No data received from server");
     }
 
-    // 응답 데이터 구조 검증
     const { start, end, formatname, formatID, formatexplain, formatSets } =
       response.data;
 
-    // 데이터 구조 확인
-    console.log("Received format detail:", {
+    // 빈 값이나 null 체크를 추가하여 데이터 정제
+    const validFormatSets = formatSets.filter((set) => {
+      const itemResponse = set.formatItemResponse;
+      return (
+        itemResponse &&
+        (itemResponse.fieldName ||
+          itemResponse.itemAlias ||
+          itemResponse.itemExplain ||
+          itemResponse.itemContent)
+      );
+    });
+
+    // 정제된 데이터로 response 객체 재구성
+    const cleanedResponse = {
       start,
       end,
       formatname,
       formatID,
       formatexplain,
-      formatSetsCount: formatSets?.length,
-    });
+      formatSets: validFormatSets,
+    };
 
-    return response.data;
+    console.log("Cleaned format detail:", cleanedResponse);
+    return cleanedResponse;
   } catch (error) {
     console.error("Error fetching format detail:", error);
-    if (error.response) {
-      console.error("Server response error:", {
-        status: error.response.status,
-        data: error.response.data,
-      });
-    }
     throw error;
   }
 };
@@ -196,12 +197,12 @@ export const createLogFormat = async (campaignId = null, formatData) => {
       formatexplain: formatData.description || "",
       formatSets: formatData.fields.map((field) => ({
         formatItemResponse: {
-          fieldName: field.name || "",
-          itemAlias: field.displayName || field.name || "",
+          fieldName: field.name,
+          itemAlias: field.displayName || field.name,
           itemExplain: field.description || "",
           itemType: field.type || "STRING",
-          itemContent: field.value ? field.value.replace(/^"|"$/g, "") : "",
-          path: field.path || "",
+          itemContent: field.value,
+          path: field.path,
         },
       })),
     };

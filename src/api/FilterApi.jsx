@@ -7,12 +7,19 @@ const api = axios.create({
   },
 });
 
-// 필터 목록 조회 (FilterManagement 화면용)
-export const fetchFilters = async (campaignId, formatId) => {
+// 필터 목록 조회 (통합 버전)
+export const fetchFilters = async (campaignId = null, formatId = null) => {
   try {
-    const response = await api.get(
-      `/filter/${campaignId}/${formatId}/filtermanagement`
-    );
+    let endpoint;
+    if (campaignId && formatId) {
+      endpoint = `/filter/${campaignId}/${formatId}/filtermanagement`;
+    } else {
+      endpoint = `/filter/filtermanagement`;
+    }
+
+    console.log("Fetching filters from endpoint:", endpoint);
+    const response = await api.get(endpoint);
+    console.log("Filter response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching filters:", error);
@@ -20,13 +27,29 @@ export const fetchFilters = async (campaignId, formatId) => {
   }
 };
 
-//상세보기
-export const fetchFilterDetail = async (campaignId, formatId, id) => {
+//상세보기 (통합 버전)
+export const fetchFilterDetail = async (
+  campaignId = null,
+  formatId = null,
+  id
+) => {
   try {
-    console.log("Calling API for filter detail:", { campaignId, formatId, id });
-    const response = await api.get(
-      `/filter/${campaignId}/${formatId}/filtermanagement/${id}`
-    );
+    if (!id) throw new Error("Filter ID is required");
+
+    let endpoint;
+    if (campaignId && formatId) {
+      endpoint = `/filter/${campaignId}/${formatId}/filtermanagement/${id}`;
+    } else {
+      endpoint = `/filter/filtermanagement/${id}`;
+    }
+
+    console.log("Calling API for filter detail:", {
+      campaignId,
+      formatId,
+      id,
+      endpoint,
+    });
+    const response = await api.get(endpoint);
     console.log("API Response:", response.data);
     return response.data;
   } catch (error) {
@@ -81,17 +104,25 @@ export const fetchFilterOptions = async () => {
   }
 };
 
-// 필터 생성 (LogFilter 화면용)
-export const createLogFilter = async (campaignId, formatId, filterData) => {
+// 로그 필터 생성 (통합 버전)
+export const createLogFilter = async (
+  campaignId = null,
+  formatId = null,
+  filterData
+) => {
   try {
     if (!filterData.filtername?.trim()) {
       throw new Error("필터 이름은 필수입니다.");
     }
 
-    const response = await api.post(
-      `/filter/${campaignId}/${formatId}/savefilter`,
-      filterData
-    );
+    let endpoint;
+    if (campaignId && formatId) {
+      endpoint = `/filter/${campaignId}/${formatId}/savefilter`;
+    } else {
+      endpoint = `/filter/savefilter`;
+    }
+
+    const response = await api.post(endpoint, filterData);
     return response.data;
   } catch (error) {
     console.error("Error creating filter:", error);

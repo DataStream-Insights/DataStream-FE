@@ -65,9 +65,8 @@ const useLogFormat = () => {
 
       try {
         const detailData = await fetchFormatDetail(campaignId, formatId);
-        console.log("Received format detail data:", detailData);
 
-        // 응답 데이터 형식에 맞게 처리
+        // 모든 필드를 변환하여 포함
         const formattedFields = detailData.formatSets.map((set) => ({
           name: set.formatItemResponse.fieldName,
           displayName: set.formatItemResponse.itemAlias,
@@ -127,20 +126,19 @@ const useLogFormat = () => {
     try {
       const fieldData = await analyzeLogFile(analysisData);
 
-      // 백엔드에서 받은 필드 데이터를 테이블에 표시할 형태로 변환
       const initializedFields = fieldData.map((field) => ({
         value: field.value,
         path: field.path,
         hasChild: field.hasChild,
         name: field.name,
-        displayName: "",
-        description: "",
-        type: "STRING",
-        // decode: false,
-        // split: false,
+        displayName: field.item_alias || "",
+        description: field.item_explain || "",
+        type: field.item_type || "STRING",
+        // item_alias가 있을 때만 readonly
+        isUserInput: !field.item_alias,
       }));
 
-      setFields(initializedFields); // 상태 업데이트하여 테이블에 표시
+      setFields(initializedFields);
       return initializedFields;
     } catch (error) {
       console.error("Failed to analyze log file:", error);
@@ -157,7 +155,20 @@ const useLogFormat = () => {
     setError(null);
     try {
       const response = await analyzeSubFields({ title, path });
-      return response;
+
+      // 응답 데이터 변환
+      const convertedFields = response.map((field) => ({
+        value: field.value,
+        path: field.path,
+        hasChild: field.hasChild,
+        name: field.name,
+        displayName: field.item_alias || "",
+        description: field.item_explain || "",
+        type: field.item_type || "STRING",
+        isUserInput: !field.item_alias, // item_alias가 없으면 사용자 입력 가능
+      }));
+
+      return convertedFields;
     } catch (error) {
       console.error("Failed to analyze child fields:", error);
       setError("하위 필드 분석에 실패했습니다.");
@@ -169,42 +180,36 @@ const useLogFormat = () => {
 
   // 포맷 생성
   const createFormat = async (formatData) => {
-    // if (!campaignId) return;
     setIsLoading(true);
     setError(null);
     try {
       console.log("Original format data:", formatData);
-      console.log("Current fields:", fields);
 
-      // 필수 필드 검증
       if (!formatData.name) {
         throw new Error("포맷 이름은 필수입니다.");
       }
 
+      // 현재 화면에 표시된 모든 필드 데이터를 포함
+      const allFieldsData = fields.map((field) => ({
+        ...field,
+        name: field.name || "",
+        displayName: field.displayName || field.name || "",
+        description: field.description || "",
+        type: field.type || "STRING",
+        value: field.value || "",
+        path: field.path || "",
+      }));
+
       const dataWithFileName = {
         ...formatData,
         fileName: selectedFileName,
-        fields: fields.map((field) => {
-          if (!field.name) {
-            console.warn("Field missing name:", field);
-          }
-          return {
-            ...field,
-            name: field.name || "",
-            displayName: field.displayName || field.name || "",
-            description: field.description || "",
-            type: field.type || "STRING",
-            value: field.value || "",
-            path: field.path || "",
-          };
-        }),
+        fields: allFieldsData, // 모든 필드 데이터 포함
       };
 
       console.log("Prepared format data:", dataWithFileName);
       const result = await createLogFormat(campaignId, dataWithFileName);
       console.log("Format creation result:", result);
 
-      // 성공 시 포맷 목록 새로고침
       await loadFormats();
       return result;
     } catch (error) {
