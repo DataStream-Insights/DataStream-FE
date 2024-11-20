@@ -16,14 +16,24 @@ const Sidebar = () => {
 
   const menuItems = [
     {
-      title: "데이트세트",
+      title: "Campaign",
       icon: <Database size={20} />,
-      subItems: ["내 데이트세트"],
+      subItems: ["캠페인 관리"],
     },
     {
-      title: "세그먼트",
+      title: "Format",
+      icon: <Layout size={20} />,
+      subItems: ["포맷 관리"],
+    },
+    {
+      title: "Filter",
+      icon: <ClipboardList size={20} />,
+      subItems: ["필터 관리"],
+    },
+    {
+      title: "Process",
       icon: <PieChart size={20} />,
-      subItems: ["세그먼트 분석", "세그먼트 관리"],
+      subItems: ["프로세스 관리", "프로세스 생성"],
     },
     {
       title: "어트리뷰션",
@@ -40,16 +50,6 @@ const Sidebar = () => {
         "컨텐츠분석",
         "매출분석",
       ],
-    },
-    {
-      title: "고급분석",
-      icon: <Layout size={20} />,
-      subItems: ["고급분석"],
-    },
-    {
-      title: "AI 분석",
-      icon: <ClipboardList size={20} />,
-      subItems: ["예측모델 관리"],
     },
   ];
 

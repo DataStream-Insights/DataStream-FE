@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import React from "react";
 import * as S from "../styles/LayoutStyle";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
