@@ -73,7 +73,7 @@ export const Description = styled.p`
 
 export const LayoutWrapper = styled.div`
   display: flex;
-  height: 100vh;
+  height: 100%;
 `;
 
 export const MainContentWrapper = styled.div`
