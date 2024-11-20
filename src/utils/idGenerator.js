@@ -32,3 +32,14 @@ export const generateFilterId = () => {
   // ID가 Long 범위를 넘지 않도록 적절히 자름
   return id.slice(0, 18);
 };
+
+export const generatePipelineId = () => {
+  const date = new Date();
+  const year = date.getFullYear().toString().slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const random = Math.floor(Math.random() * 1000)
+    .toString()
+    .padStart(3, "0");
+  return `PPL${year}${month}${day}${random}`; // Pipeline ID prefix
+};

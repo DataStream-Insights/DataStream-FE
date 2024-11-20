@@ -2,24 +2,25 @@ import React, { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import * as S from "../../styles/process/processListStyle.js";
-import Loading from "../../components/Loading";
+import useProcess from "../../hooks/process/useProcess";
+import Loading from "../Loading.jsx";
 
-const ProcessList = ({ processes, onSelect, isDetailVisible }) => {
-  // onCreate prop 제거
-  const navigate = useNavigate(); // useNavigate 훅 사용
+const ProcessList = ({ isDetailVisible }) => {
+  const navigate = useNavigate();
+  const { data, loading, error } = useProcess(); // hook 사용
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
 
   const filteredProcesses = useMemo(() => {
-    return (processes || []).filter(
+    return (data.pipelines || []).filter(
       (process) =>
         process.pipelineName
           ?.toLowerCase()
           .includes(searchTerm.toLowerCase()) ||
         process.pipelineId?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  }, [processes, searchTerm]);
+  }, [data.pipelines, searchTerm]);
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -37,9 +38,30 @@ const ProcessList = ({ processes, onSelect, isDetailVisible }) => {
     setCurrentPage(pageNumber);
   };
 
+  //생성
   const handleCreate = () => {
     navigate("/process/create");
   };
+
+  // 상세보기
+  const handleRowClick = (process) => {
+    console.log("Clicked process data:", process); // 데이터 확인용
+    if (process.id !== undefined) {
+      navigate(`/process/${process.id}`);
+    } else {
+      console.error("Process id is undefined:", process);
+    }
+  };
+
+  // loading 처리
+  if (loading.pipelines) {
+    return <Loading />;
+  }
+
+  // error 처리
+  if (error.pipelines) {
+    return <div>에러 발생: {error.pipelines}</div>;
+  }
 
   return (
     <S.Container>
@@ -78,7 +100,8 @@ const ProcessList = ({ processes, onSelect, isDetailVisible }) => {
           {paginatedData.map((process) => (
             <S.TableRow
               key={process.pipelineId}
-              onClick={() => onSelect(process)}
+              onClick={() => handleRowClick(process)}
+              style={{ cursor: "pointer" }}
             >
               <S.TableCell>{process.pipelineName}</S.TableCell>
               <S.TableCell>{process.pipelineId}</S.TableCell>

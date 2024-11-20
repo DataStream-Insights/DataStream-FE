@@ -6,6 +6,7 @@ import LogFilter from "./components/filter/LogFilter";
 import FilterManagementPage from "./pages/filter/filterManagementPage";
 import ProcessManagementPage from "./pages/process/processManagementPage";
 import ProcessCreate from "./components/process/processCreate";
+import ProcessDetail from "./components/process/processDetail";
 
 export function App() {
   const router = createBrowserRouter([
@@ -30,6 +31,10 @@ export function App() {
     {
       path: "/process/create",
       element: <ProcessCreate />,
+    },
+    {
+      path: "/process/:id",
+      element: <ProcessDetail />,
     },
   ]);
   return <RouterProvider router={router} />;

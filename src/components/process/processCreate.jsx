@@ -1,11 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import * as S from "../../styles/process/processCreateStyle";
 import useProcess from "../../hooks/process/useProcess";
 import Loading from "../../components/Loading";
 import { Layout } from "../../components/Layout";
+import { generatePipelineId } from "../../utils/idGenerator";
 
 const ProcessCreate = () => {
-  const { data, loading, error } = useProcess();
+  const navigate = useNavigate();
+  const { data, loading, error, createPipeline } = useProcess();
   const [pipelineName, setPipelineName] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState("");
   const [formatSelections, setFormatSelections] = useState([
@@ -57,21 +60,53 @@ const ProcessCreate = () => {
     setFormatSelections(newSelections);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    // 입력 데이터 유효성 검사
+    if (!pipelineName.trim()) {
+      alert("파이프라인 이름을 입력해주세요.");
+      return;
+    }
+    if (!selectedCampaign) {
+      alert("캠페인을 선택해주세요.");
+      return;
+    }
+    if (!formatSelections.some((format) => format.formatId)) {
+      alert("최소 하나의 포맷을 선택해주세요.");
+      return;
+    }
+
+    // 유효한 포맷과 필터만 필터링
+    const validFormats = formatSelections
+      .filter((format) => format.formatId)
+      .map((format) => ({
+        formatId: format.formatId,
+        addFilterTopics: format.filters
+          .filter((filter) => filter)
+          .map((filter) => ({ filterId: filter })),
+      }));
+
     const processData = {
       pipelineName,
-      pipelineId: "auto-generated",
+      pipelineId: generatePipelineId(),
       addcampaignTopic: {
         campaignId: selectedCampaign,
-        addFormatTopics: formatSelections.map((format) => ({
-          formatId: format.formatId,
-          addFilterTopics: format.filters.map((filter) => ({
-            filterId: filter,
-          })),
-        })),
+        addFormatTopics: validFormats,
       },
     };
-    console.log("Process Data:", processData);
+
+    console.log(
+      "Sending data to server:",
+      JSON.stringify(processData, null, 2)
+    );
+
+    try {
+      await createPipeline(processData);
+      alert("파이프라인이 성공적으로 생성되었습니다.");
+      navigate("/process"); // 목록 페이지로 이동
+    } catch (err) {
+      console.error("Server response error:", err.response?.data);
+      alert("파이프라인 생성에 실패했습니다. 다시 시도해주세요.");
+    }
   };
 
   if (loading.campaigns || loading.formats || loading.filters) {

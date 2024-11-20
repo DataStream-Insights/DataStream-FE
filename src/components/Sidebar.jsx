@@ -36,21 +36,21 @@ const Sidebar = () => {
       subItems: ["프로세스 관리", "프로세스 생성"],
     },
     {
-      title: "어트리뷰션",
+      title: "대시보드",
       icon: <BarChart2 size={20} />,
       subItems: ["사용자분석", "이용자분석"],
     },
-    {
-      title: "원본분석",
-      icon: <FileText size={20} />,
-      subItems: [
-        "방문분석",
-        "페이지분석",
-        "유입분석",
-        "컨텐츠분석",
-        "매출분석",
-      ],
-    },
+    // {
+    //   title: "원본분석",
+    //   icon: <FileText size={20} />,
+    //   subItems: [
+    //     "방문분석",
+    //     "페이지분석",
+    //     "유입분석",
+    //     "컨텐츠분석",
+    //     "매출분석",
+    //   ],
+    // },
   ];
 
   return (
