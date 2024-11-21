@@ -165,11 +165,20 @@ const ProcessCreate = () => {
                   }
                 >
                   <option value="">포맷 선택</option>
-                  {data.formats.map((format) => (
-                    <option key={format.id} value={format.id}>
-                      {format.name}
-                    </option>
-                  ))}
+                  {data.formats
+                    .filter(
+                      (format) =>
+                        // 현재 선택된 포맷이거나, 다른 위치에서 선택되지 않은 포맷만 보여줌
+                        format.id === formatSelection.formatId ||
+                        !formatSelections.some(
+                          (selection) => selection.formatId === format.id
+                        )
+                    )
+                    .map((format) => (
+                      <option key={format.id} value={format.id}>
+                        {format.name}
+                      </option>
+                    ))}
                 </S.Select>
                 <S.RemoveButton
                   onClick={() => removeFormatSelection(formatIndex)}
@@ -208,11 +217,20 @@ const ProcessCreate = () => {
                       }
                     >
                       <option value="">필터 선택</option>
-                      {data.filters.map((filter) => (
-                        <option key={filter.id} value={filter.id}>
-                          {filter.name}
-                        </option>
-                      ))}
+                      {data.filters
+                        .filter(
+                          (f) =>
+                            // 현재 선택된 필터이거나, 같은 포맷 내에서 선택되지 않은 필터만 보여줌
+                            f.id === filter ||
+                            !formatSelection.filters.some(
+                              (selectedFilter) => selectedFilter === f.id
+                            )
+                        )
+                        .map((filter) => (
+                          <option key={filter.id} value={filter.id}>
+                            {filter.name}
+                          </option>
+                        ))}
                     </S.Select>
                     <S.RemoveButton
                       onClick={() => removeFilter(formatIndex, filterIndex)}
@@ -235,13 +253,21 @@ const ProcessCreate = () => {
                 </S.FilterBox>
               ))}
 
-              <S.AddButton onClick={() => addFilter(formatIndex)}>
+              <S.AddButton
+                onClick={() => addFilter(formatIndex)}
+                disabled={formatSelection.filters.length >= data.filters.length}
+              >
                 필터 추가
               </S.AddButton>
             </S.FormatBox>
           ))}
 
-          <S.AddButton onClick={addFormatSelection}>포맷 추가</S.AddButton>
+          <S.AddButton
+            onClick={addFormatSelection}
+            disabled={formatSelections.length >= data.formats.length}
+          >
+            포맷 추가
+          </S.AddButton>
         </S.FormatsContainer>
 
         <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
