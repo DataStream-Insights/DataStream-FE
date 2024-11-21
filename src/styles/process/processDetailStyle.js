@@ -13,7 +13,7 @@ export const Header = styled.div`
 export const Title = styled.h2`
   font-size: 24px;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
 `;
 
 export const IdText = styled.p`
@@ -99,7 +99,9 @@ export const HeaderWrapper = styled.div`
 `;
 
 export const HeaderContent = styled.div`
-  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
 `;
 
 export const ExecuteButton = styled.button`
@@ -147,4 +149,13 @@ export const NodeItem = styled.div`
     color: #555;
     margin-right: 8px;
   }
+`;
+
+export const StatusBadge = styled.span`
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: ${(props) => (props.$status ? "#4CAF50" : "#F44336")};
+  color: white;
 `;

@@ -45,6 +45,9 @@ const ProcessDetail = () => {
         <S.HeaderWrapper>
           <S.HeaderContent>
             <S.Title>{pipelineDetail.pipelineName}</S.Title>
+            <S.StatusBadge $status={pipelineDetail.status}>
+              {pipelineDetail.status ? "활성" : "비활성"}
+            </S.StatusBadge>
             <S.IdText>파이프라인 ID: {pipelineDetail.pipelineId}</S.IdText>
           </S.HeaderContent>
           <S.ExecuteButton

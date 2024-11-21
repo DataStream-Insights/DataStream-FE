@@ -135,11 +135,17 @@ const ProcessCreate = () => {
             onChange={(e) => setSelectedCampaign(e.target.value)}
           >
             <option value="">선택하세요</option>
-            {data.campaigns.map((campaign) => (
-              <option key={campaign.id} value={campaign.id}>
-                {campaign.name}
+            {data.campaigns.length > 0 ? (
+              data.campaigns.map((campaign) => (
+                <option key={campaign.id} value={campaign.id}>
+                  {campaign.name}
+                </option>
+              ))
+            ) : (
+              <option value="" disabled>
+                사용 가능한 캠페인이 없습니다
               </option>
-            ))}
+            )}
           </S.Select>
           {selectedCampaign && (
             <S.SelectionInfo>

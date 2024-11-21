@@ -5,6 +5,7 @@ import {
   fetchFilters,
   fetchPipelines,
   createPipeline,
+  fetchPipelineDetail,
 } from "../../api/ProcessApi";
 
 const useProcess = () => {
@@ -26,13 +27,30 @@ const useProcess = () => {
   });
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState(null);
+  const [unavailableCampaigns, setUnavailableCampaigns] = useState(new Set());
 
   //프로세스(파이프라인) 목록
+  // 파이프라인 목록 로드할 때 사용된 캠페인 ID들 수집
   const loadPipelines = async () => {
     setLoading((prev) => ({ ...prev, pipelines: true }));
     try {
-      const data = await fetchPipelines();
-      setPipelines(data);
+      const pipelinesData = await fetchPipelines();
+      setPipelines(pipelinesData);
+
+      // 각 파이프라인의 상세 정보를 가져옵니다
+      const detailsPromises = pipelinesData.map((pipeline) =>
+        fetchPipelineDetail(pipeline.id)
+      );
+      const detailsResponses = await Promise.all(detailsPromises);
+
+      // 사용 중인 캠페인 ID 수집
+      const usedCampaignIds = new Set(
+        detailsResponses
+          .map((response) => response?.searchCampaignTopic?.campaignId)
+          .filter(Boolean)
+      );
+
+      setUnavailableCampaigns(usedCampaignIds);
     } catch (err) {
       console.error("Failed to load pipelines:", err);
       setError((prev) => ({
@@ -48,8 +66,14 @@ const useProcess = () => {
   const loadCampaigns = async () => {
     setLoading((prev) => ({ ...prev, campaigns: true }));
     try {
-      const data = await fetchCampaigns();
-      setCampaigns(data);
+      const campaignsData = await fetchCampaigns();
+
+      // unavailableCampaigns를 사용하여 사용 가능한 캠페인만 필터링
+      const availableCampaigns = campaignsData.filter(
+        (campaign) => !unavailableCampaigns.has(campaign.id)
+      );
+
+      setCampaigns(availableCampaigns);
     } catch (err) {
       console.error("Failed to load campaigns:", err);
       setError((prev) => ({
@@ -131,7 +155,9 @@ const useProcess = () => {
   return {
     data: {
       pipelines,
-      campaigns,
+      campaigns: campaigns.filter(
+        (campaign) => !unavailableCampaigns.has(campaign.id)
+      ),
       formats,
       filters,
     },

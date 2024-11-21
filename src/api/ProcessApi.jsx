@@ -14,7 +14,12 @@ export const fetchPipelines = async () => {
       id: pipeline.id,
       pipelineName: pipeline.pipelinename,
       pipelineId: pipeline.pipelineId,
-      status: pipeline.status ? "활성" : "비활성", // boolean을 문자열로 변환
+      status: pipeline.status ? "활성" : "비활성",
+      searchCampaignTopic: {
+        // 이 부분 추가
+        campaignId: pipeline.searchCampaignTopic?.campaignId,
+        campaignName: pipeline.searchCampaignTopic?.campaignName,
+      },
     }));
   } catch (error) {
     console.error("Error fetching pipelines:", error);
