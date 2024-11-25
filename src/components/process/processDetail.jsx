@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { Play, Square } from "lucide-react";
 import { Layout } from "../Layout";
@@ -9,35 +9,47 @@ import * as S from "../../styles/process/processDetailStyle";
 
 const ProcessDetail = () => {
   const { id } = useParams();
-  const { pipelineDetail, loading, error } = useProcessDetail(id);
-  const [isExecuting, setIsExecuting] = useState(false);
+  const { pipelineDetail, loading, error, refetch } = useProcessDetail(id);
   const [executeLoading, setExecuteLoading] = useState(false);
 
   const handleExecuteClick = async () => {
-    // 요청 데이터 로깅
-    const requestData = {
-      id: Number(id),
-      executable: !isExecuting,
-    };
-    console.log("Sending request data:", requestData);
-
     try {
       setExecuteLoading(true);
-      const response = await executePipeline(Number(id), !isExecuting);
-      console.log("Server response:", response); // 서버 응답 로깅
-      setIsExecuting(!isExecuting);
+      console.log("Current status before execute:", pipelineDetail.status);
+      console.log(
+        "Sending execute request with status:",
+        !pipelineDetail.status
+      );
+
+      // 실행/중지 요청 보내기
+      await executePipeline(Number(id), !pipelineDetail.status);
+
+      // 데이터 다시 불러오기 전에 잠시 대기
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // 상세 정보 다시 불러오기
+      const updatedData = await refetch();
+      console.log("Updated pipeline data:", updatedData);
     } catch (err) {
       console.error("Execute pipeline error:", err);
-      console.error("Error details:", err.response?.data); // 에러 상세 정보 로깅
       alert("실행 상태 변경에 실패했습니다.");
     } finally {
       setExecuteLoading(false);
     }
   };
 
+  // status 값의 변경을 추적하기 위한 useEffect
+  useEffect(() => {
+    if (pipelineDetail) {
+      console.log("Pipeline Detail Status:", pipelineDetail.status);
+    }
+  }, [pipelineDetail]);
+
   if (loading) return <Loading />;
   if (error) return <S.ErrorText>{error}</S.ErrorText>;
   if (!pipelineDetail) return null;
+
+  console.log("Pipeline Detail Status:", pipelineDetail.status);
 
   return (
     <Layout title="프로세스 상세">
@@ -53,9 +65,9 @@ const ProcessDetail = () => {
           <S.ExecuteButton
             onClick={handleExecuteClick}
             disabled={executeLoading}
-            $isExecuting={isExecuting}
+            $isExecuting={pipelineDetail.status}
           >
-            {isExecuting ? (
+            {pipelineDetail.status ? (
               <>
                 <Square size={20} />
                 중지

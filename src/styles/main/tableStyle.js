@@ -1,11 +1,16 @@
 import styled from "styled-components";
 
+export const TableContainer = styled.div`
+  background: white;
+  height: calc(100% - 80px); // 헤더 높이 제외
+  overflow: auto;
+`;
+
 export const HeaderContainer = styled.div`
   padding: 20px;
   background: #fff;
-  margin-bottom: 20px;
+  border-bottom: 1px solid #e9ecef;
 `;
-
 export const FilterRow = styled.div`
   display: flex;
   align-items: center;
@@ -72,13 +77,6 @@ export const ButtonGroup = styled.div`
   margin-left: auto;
 `;
 
-export const TableContainer = styled.div`
-  background: white;
-  padding: 20px;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-`;
-
 export const StyledTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -135,4 +133,48 @@ export const LoadingContainer = styled.div`
   height: 200px;
   font-size: 1.2rem;
   color: #666;
+`;
+
+export const SlideContainer = styled.div`
+  position: fixed;
+  right: 0;
+  top: 0;
+  width: 70%;
+  height: 100vh;
+  background: white;
+  box-shadow: -4px 0 8px rgba(0, 0, 0, 0.1);
+  transform: translateX(${(props) => (props.$isOpen ? "0" : "100%")});
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+`;
+
+export const Header = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e9ecef;
+  height: 60px;
+`;
+
+export const Title = styled.h2`
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #212529;
+`;
+
+export const CloseButton = styled.button`
+  background: none;
+  border: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #495057;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    color: #212529;
+  }
 `;

@@ -4,8 +4,9 @@ import Loading from "../../components/Loading";
 import useFilterDetail from "../../hooks/filter/useFilterDetail";
 import * as S from "../../styles/filter/filterdetailStyle";
 
-const FilterDetail = ({ isOpen, onClose, filterId }) => {
-  const { detailData, isLoading, error } = useFilterDetail(filterId, isOpen);
+const FilterDetail = ({ onClose, filterId }) => {
+  // isOpen prop 제거
+  const { detailData, isLoading, error } = useFilterDetail(filterId, true);
 
   const getOperationSymbol = (operation) => {
     switch (operation) {
@@ -28,7 +29,9 @@ const FilterDetail = ({ isOpen, onClose, filterId }) => {
 
   if (error) {
     return (
-      <S.SlideContainer $isOpen={isOpen}>
+      <div>
+        {" "}
+        {/* SlideContainer를 일반 div로 변경 */}
         <S.Header>
           <S.Title>필터 상세 정보</S.Title>
           <S.CloseButton onClick={onClose}>
@@ -49,23 +52,25 @@ const FilterDetail = ({ isOpen, onClose, filterId }) => {
             필터 ID: {filterId}
           </div>
         </div>
-      </S.SlideContainer>
+      </div>
     );
   }
 
   return (
-    <S.SlideContainer $isOpen={isOpen}>
+    <div>
+      {" "}
+      {/* SlideContainer를 일반 div로 변경 */}
       <S.Header>
         <S.Title>필터 상세 정보</S.Title>
         <S.CloseButton onClick={onClose}>
           <X size={24} />
         </S.CloseButton>
       </S.Header>
-
       {isLoading && <Loading />}
-
       {detailData && detailData.responseFilterSetListDTO && (
-        <div>
+        <div style={{ padding: "20px" }}>
+          {" "}
+          {/* 내용에 패딩 추가 */}
           <S.DetailSection>
             <S.DetailTitle>필터 조건</S.DetailTitle>
             {detailData.responseFilterSetListDTO.searchFilterSetDTOs.map(
@@ -87,7 +92,7 @@ const FilterDetail = ({ isOpen, onClose, filterId }) => {
           </S.DetailSection>
         </div>
       )}
-    </S.SlideContainer>
+    </div>
   );
 };
 

@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from "react";
-import { Search } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
 import { useTable } from "react-table";
 import { useParams, useNavigate } from "react-router-dom";
+import { X } from "lucide-react";
 import * as F from "../../styles/filter/filterStyle";
+import * as S from "../../styles/filter/filterdetailStyle"; // 헤더 스타일
 import { CustomTablePagination } from "../../styles/filter/filterPagenationStyle";
 import FirstPageRoundedIcon from "@mui/icons-material/FirstPageRounded";
 import LastPageRoundedIcon from "@mui/icons-material/LastPageRounded";
@@ -13,7 +14,13 @@ import useFilterCreate from "../../hooks/filter/useFilterCreate";
 import { generateFilterId } from "../../utils/idGenerator";
 import Loading from "../../components/Loading";
 
-const LogFilter = () => {
+const LogFilter = ({
+  onClose,
+  campaignIdProp,
+  formatIdProp,
+  onSuccess,
+  setGlobalLoading,
+}) => {
   const { campaignId, formatId } = useParams();
   const {
     items,
@@ -28,6 +35,8 @@ const LogFilter = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const navigate = useNavigate();
+
+  const { campaignId: urlCampaignId, formatId: urlFormatId } = useParams();
 
   // 컬럼 정의
   const columns = useMemo(
@@ -120,134 +129,172 @@ const LogFilter = () => {
 
       await saveFilter(campaignId, formatId, requestData);
       alert("저장되었습니다.");
-      navigate(`/filter/filtermanagement`);
+
+      if (onSuccess) {
+        await onSuccess(); // filterHook.loadFilters 호출
+      }
+
+      if (onClose) {
+        onClose(); // handleClose 호출
+      }
     } catch (error) {
       alert(error.message || "저장에 실패했습니다.");
     }
   };
 
   const handleBack = () => {
-    navigate(-1);
+    if (isSlideMode && onClose) {
+      onClose();
+    } else {
+      navigate(-1);
+    }
   };
 
+  useEffect(() => {
+    if (setGlobalLoading) {
+      setGlobalLoading(isLoading);
+    }
+  }, [isLoading, setGlobalLoading]);
+
   if (isLoading) {
-    return <Loading />;
+    return (
+      <div
+        style={{
+          height: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Loading />
+      </div>
+    );
   }
 
   return (
-    <F.Container>
-      <F.LeftSection>
-        <div style={{ marginBottom: "16px" }}>
-          <F.SearchInput
-            placeholder="아이템 검색"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
+    <>
+      <S.Header>
+        <S.Title>필터 생성</S.Title>
+        <S.CloseButton onClick={onClose}>
+          <X size={24} />
+        </S.CloseButton>
+      </S.Header>
+      <F.Container>
+        <F.LeftSection>
+          <div style={{ marginBottom: "16px" }}>
+            <F.SearchInput
+              placeholder="아이템 검색"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
 
-        <F.TableContainer>
-          <F.StyledTable {...getTableProps()}>
-            <F.THead>
-              {headerGroups.map((headerGroup, groupIndex) => (
-                <F.Tr
-                  key={`header-group-${groupIndex}`}
-                  {...headerGroup.getHeaderGroupProps()}
-                >
-                  {headerGroup.headers.map((column, columnIndex) => (
-                    <F.Th
-                      key={`header-${groupIndex}-${columnIndex}`}
-                      {...column.getHeaderProps()}
-                    >
-                      {column.render("Header")}
-                    </F.Th>
-                  ))}
-                </F.Tr>
-              ))}
-            </F.THead>
-            <tbody {...getTableBodyProps()}>
-              {paginatedRows.map((row, rowIndex) => {
-                prepareRow(row);
-                return (
-                  <F.Tr key={`row-${rowIndex}`} {...row.getRowProps()}>
-                    {row.cells.map((cell, cellIndex) => (
-                      <F.Td
-                        key={`cell-${rowIndex}-${cellIndex}`}
-                        {...cell.getCellProps()}
+          <F.TableContainer>
+            <F.StyledTable {...getTableProps()}>
+              <F.THead>
+                {headerGroups.map((headerGroup, groupIndex) => (
+                  <F.Tr
+                    key={`header-group-${groupIndex}`}
+                    {...headerGroup.getHeaderGroupProps()}
+                  >
+                    {headerGroup.headers.map((column, columnIndex) => (
+                      <F.Th
+                        key={`header-${groupIndex}-${columnIndex}`}
+                        {...column.getHeaderProps()}
                       >
-                        {cell.render("Cell")}
-                      </F.Td>
+                        {column.render("Header")}
+                      </F.Th>
                     ))}
                   </F.Tr>
-                );
-              })}
-            </tbody>
-            <tfoot>
-              <tr>
-                <CustomTablePagination
-                  rowsPerPageOptions={[
-                    5,
-                    10,
-                    20,
-                    { label: "All", value: filteredData.length },
-                  ]}
-                  colSpan={3}
-                  count={rows.length}
-                  rowsPerPage={rowsPerPage}
-                  page={page}
-                  slotProps={{
-                    select: {
-                      "aria-label": "rows per page",
-                    },
-                    actions: {
-                      showFirstButton: true,
-                      showLastButton: true,
-                      slots: {
-                        firstPageIcon: FirstPageRoundedIcon,
-                        lastPageIcon: LastPageRoundedIcon,
-                        nextPageIcon: ChevronRightRoundedIcon,
-                        backPageIcon: ChevronLeftRoundedIcon,
+                ))}
+              </F.THead>
+              <tbody {...getTableBodyProps()}>
+                {paginatedRows.map((row, rowIndex) => {
+                  prepareRow(row);
+                  return (
+                    <F.Tr key={`row-${rowIndex}`} {...row.getRowProps()}>
+                      {row.cells.map((cell, cellIndex) => (
+                        <F.Td
+                          key={`cell-${rowIndex}-${cellIndex}`}
+                          {...cell.getCellProps()}
+                        >
+                          {cell.render("Cell")}
+                        </F.Td>
+                      ))}
+                    </F.Tr>
+                  );
+                })}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <CustomTablePagination
+                    rowsPerPageOptions={[
+                      5,
+                      10,
+                      20,
+                      { label: "All", value: filteredData.length },
+                    ]}
+                    colSpan={3}
+                    count={rows.length}
+                    rowsPerPage={rowsPerPage}
+                    page={page}
+                    slotProps={{
+                      select: {
+                        "aria-label": "rows per page",
                       },
-                    },
-                  }}
-                  onPageChange={handleChangePage}
-                  onRowsPerPageChange={handleChangeRowsPerPage}
+                      actions: {
+                        showFirstButton: true,
+                        showLastButton: true,
+                        slots: {
+                          firstPageIcon: FirstPageRoundedIcon,
+                          lastPageIcon: LastPageRoundedIcon,
+                          nextPageIcon: ChevronRightRoundedIcon,
+                          backPageIcon: ChevronLeftRoundedIcon,
+                        },
+                      },
+                    }}
+                    onPageChange={handleChangePage}
+                    onRowsPerPageChange={handleChangeRowsPerPage}
+                  />
+                </tr>
+              </tfoot>
+            </F.StyledTable>
+          </F.TableContainer>
+        </F.LeftSection>
+
+        <F.RightSection>
+          <F.FilterSection>
+            <F.FilterTitle>행동 정의 설정</F.FilterTitle>
+            <BehaviorFilter
+              filters={filterSettings.behaviors || []}
+              options={filterOptions}
+              onChange={(behaviors) => updateFilterSettings({ behaviors })}
+            />
+
+            <div style={{ height: "50px" }} />
+            <F.Section>
+              <F.FormGroup>
+                <F.Label>이름</F.Label>
+                <F.Input
+                  value={filterSettings.name || ""}
+                  onChange={(e) =>
+                    updateFilterSettings({ name: e.target.value })
+                  }
+                  placeholder="필터 이름을 입력하세요"
                 />
-              </tr>
-            </tfoot>
-          </F.StyledTable>
-        </F.TableContainer>
-      </F.LeftSection>
+              </F.FormGroup>
+            </F.Section>
 
-      <F.RightSection>
-        <F.FilterSection>
-          <F.FilterTitle>행동 정의 설정</F.FilterTitle>
-          <BehaviorFilter
-            filters={filterSettings.behaviors || []}
-            options={filterOptions}
-            onChange={(behaviors) => updateFilterSettings({ behaviors })}
-          />
-
-          <div style={{ height: "50px" }} />
-          <F.Section>
-            <F.FormGroup>
-              <F.Label>이름</F.Label>
-              <F.Input
-                value={filterSettings.name || ""}
-                onChange={(e) => updateFilterSettings({ name: e.target.value })}
-                placeholder="필터 이름을 입력하세요"
-              />
-            </F.FormGroup>
-          </F.Section>
-
-          <F.RepeatSection>
-            <F.ButtonContainer>
-              <F.BackButton onClick={handleBack}>뒤로 가기</F.BackButton>
-              <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
-            </F.ButtonContainer>
-          </F.RepeatSection>
-        </F.FilterSection>
-      </F.RightSection>
-    </F.Container>
+            <F.RepeatSection>
+              <F.ButtonContainer>
+                <F.BackButton onClick={handleBack}>뒤로 가기</F.BackButton>
+                <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
+              </F.ButtonContainer>
+            </F.RepeatSection>
+          </F.FilterSection>
+        </F.RightSection>
+      </F.Container>
+    </>
   );
 };
 

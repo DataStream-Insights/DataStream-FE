@@ -7,7 +7,7 @@ import Loading from "../Loading.jsx";
 
 const ProcessList = ({ isDetailVisible }) => {
   const navigate = useNavigate();
-  const { data, loading, error } = useProcess(); // hook 사용
+  const { data, loading, error } = useProcess();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;
