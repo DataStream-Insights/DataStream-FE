@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
-import { fetchFilters } from "../../api/FilterApi";
+import { fetchFilters, createLogFilter } from "../../api/FilterApi";
 import { useParams } from "react-router-dom";
 
-// FilterManagement 화면에서 사용할 Hook
 const useFilterData = () => {
   const { campaignId, formatId } = useParams();
   const [data, setData] = useState([]);
@@ -13,7 +12,6 @@ const useFilterData = () => {
     setIsLoading(true);
     setError(null);
     try {
-      console.log("Loading filters with params:", { campaignId, formatId });
       const filterData = await fetchFilters(campaignId, formatId);
       setData(filterData);
     } catch (error) {
@@ -24,6 +22,20 @@ const useFilterData = () => {
     }
   }, [campaignId, formatId]);
 
+  const createNewFilter = async (filterData) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      await createLogFilter(campaignId, formatId, filterData); // createFilter -> createLogFilter로 변경
+      await loadFilters(); // 목록 새로고침
+    } catch (error) {
+      console.error("Failed to create filter:", error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadFilters();
   }, [loadFilters]);
@@ -31,8 +43,10 @@ const useFilterData = () => {
   return {
     data,
     isLoading,
+    setIsLoading,
     error,
-    loadFilters, // 필요한 경우 수동으로 새로고침할 수 있도록 함수 노출
+    loadFilters,
+    createNewFilter,
   };
 };
 

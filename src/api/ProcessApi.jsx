@@ -16,7 +16,6 @@ export const fetchPipelines = async () => {
       pipelineId: pipeline.pipelineId,
       status: pipeline.status ? "활성" : "비활성",
       searchCampaignTopic: {
-        // 이 부분 추가
         campaignId: pipeline.searchCampaignTopic?.campaignId,
         campaignName: pipeline.searchCampaignTopic?.campaignName,
       },
@@ -88,6 +87,7 @@ export const createPipeline = async (pipelineData) => {
 export const fetchPipelineDetail = async (id) => {
   try {
     const response = await api.get(`/pipeline/getpipeline/${id}`);
+    console.log("Fetched pipeline detail:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching pipeline detail:", error);
@@ -98,10 +98,12 @@ export const fetchPipelineDetail = async (id) => {
 //실행
 export const executePipeline = async (id, executable) => {
   try {
+    console.log("Executing pipeline with params:", { id, executable });
     const response = await api.post("/pipeline/processExecutable", {
       id,
       executable,
     });
+    console.log("Execute pipeline response:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error executing pipeline:", error);

@@ -1,37 +1,27 @@
+// FilterManagement.jsx
 import React from "react";
-import { useState } from "react";
+
 import { useTable, useRowSelect } from "react-table";
-import { Search, Plus, MoreVertical } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Search, Plus, MoreVertical, X } from "lucide-react";
+import { useParams } from "react-router-dom";
 import useFilterData from "../../hooks/filter/useFilterData";
 import * as S from "../../styles/main/tableStyle";
-import FilterDetail from "./FilterDetail";
-import Loading from "../../components/Loading";
 
-export function FilterManagement() {
+import Loading from "../../components/Loading";
+export function FilterManagement({ onSelect, onCreate, isDetailVisible }) {
   const { campaignId, formatId } = useParams();
-  const [selectedFilter, setSelectedFilter] = useState(null);
-  const [isDetailOpen, setIsDetailOpen] = useState(false);
-  const navigate = useNavigate();
-  const { data, isLoading } = useFilterData(); // useFilter hook 사용
+  const { data, isLoading } = useFilterData();
 
   const handleRowClick = (row) => {
-    console.log("Selected filter:", row.original);
-    setSelectedFilter(row.original);
-    setIsDetailOpen(true);
+    onSelect(row.original);
   };
 
-  const handleCreateClick = () => {
-    const createPath =
-      campaignId && formatId
-        ? `/filter/create/${campaignId}/${formatId}`
-        : `/filter/create`;
-
-    console.log("Navigating to:", createPath);
-    navigate(createPath);
+  const handleCreateClick = async () => {
+    if (onCreate) {
+      await onCreate(); // 새로고침 처리
+    }
   };
 
-  //Header
   const columns = React.useMemo(
     () => [
       {
@@ -54,10 +44,9 @@ export function FilterManagement() {
           return <S.Checkbox {...props} />;
         },
       },
-      { Header: "No", accessor: "id" }, // API에서 추가한 no 필드
-      { Header: "필터 ID", accessor: "filterManageId" }, // 백엔드 응답의 filterId
-      { Header: "필터링명", accessor: "filterName" }, // 필터링명 필드
-      //{ Header: "기안일자", accessor: "createdDate" },
+      { Header: "No", accessor: "id" },
+      { Header: "필터 ID", accessor: "filterManageId" },
+      { Header: "필터링명", accessor: "filterName" },
     ],
     []
   );
@@ -66,7 +55,7 @@ export function FilterManagement() {
     useTable(
       {
         columns,
-        data: data || [], // 초기값이 undefined일 때를 대비해 빈 배열 할당
+        data: data || [],
       },
       useRowSelect
     );
@@ -140,12 +129,6 @@ export function FilterManagement() {
           </tbody>
         </S.StyledTable>
       </S.TableContainer>
-
-      <FilterDetail
-        isOpen={isDetailOpen}
-        onClose={() => setIsDetailOpen(false)}
-        filterId={selectedFilter?.id}
-      />
     </>
   );
 }

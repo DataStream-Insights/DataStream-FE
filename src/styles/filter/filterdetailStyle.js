@@ -1,18 +1,18 @@
 import styled from "styled-components";
 
-export const SlideContainer = styled.div`
-  position: fixed;
-  top: 0;
-  right: ${(props) => (props.$isOpen ? "0" : "-100%")};
-  width: 50%;
-  height: 100vh;
-  background-color: white;
-  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
-  transition: right 0.3s ease-in-out;
-  z-index: 1000;
-  padding: 20px;
-  overflow-y: auto;
-`;
+// export const SlideContainer = styled.div`
+//   position: fixed;
+//   top: 0;
+//   right: ${(props) => (props.$isOpen ? "0" : "-100%")};
+//   width: 100%;
+//   height: 100vh;
+//   background-color: white;
+//   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.15);
+//   transition: right 0.3s ease-in-out;
+//   z-index: 1000;
+//   padding: 20px;
+//   overflow-y: auto;
+// `;
 
 export const Header = styled.div`
   display: flex;
