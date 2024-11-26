@@ -5,12 +5,14 @@ import useProcess from "../../hooks/process/useProcess";
 import Loading from "../../components/Loading";
 import { Layout } from "../../components/Layout";
 import { generatePipelineId } from "../../utils/idGenerator";
+import { Switch } from "../../components/ui/switch";
 
 const ProcessCreate = () => {
   const navigate = useNavigate();
   const { data, loading, error, createPipeline } = useProcess();
   const [pipelineName, setPipelineName] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [isDistinct, setIsDistinct] = useState(false);
   const [formatSelections, setFormatSelections] = useState([
     {
       formatId: "",
@@ -88,6 +90,7 @@ const ProcessCreate = () => {
     const processData = {
       pipelineName,
       pipelineId: generatePipelineId(),
+      distinctCode: isDistinct ? 3 : 0, // 토글 상태에 따라 distinctCode 설정
       addcampaignTopic: {
         campaignId: selectedCampaign,
         addFormatTopics: validFormats,
@@ -102,7 +105,7 @@ const ProcessCreate = () => {
     try {
       await createPipeline(processData);
       alert("파이프라인이 성공적으로 생성되었습니다.");
-      navigate("/process"); // 목록 페이지로 이동
+      navigate("/process");
     } catch (err) {
       console.error("Server response error:", err.response?.data);
       alert("파이프라인 생성에 실패했습니다. 다시 시도해주세요.");
@@ -122,6 +125,7 @@ const ProcessCreate = () => {
   return (
     <Layout title="프로세스 생성">
       <S.ProcessContainer>
+        <S.SectionTitle>파이프라인</S.SectionTitle>
         <S.ProcessNameInput
           placeholder="파이프라인 이름을 입력하세요"
           value={pipelineName}
@@ -276,7 +280,17 @@ const ProcessCreate = () => {
           </S.AddButton>
         </S.FormatsContainer>
 
-        <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
+        <S.ButtonContainer>
+          <S.ToggleWrapper>
+            <span>중복제거</span>
+            <Switch
+              checked={isDistinct}
+              onCheckedChange={setIsDistinct}
+              className="ml-2"
+            />
+          </S.ToggleWrapper>
+          <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
+        </S.ButtonContainer>
       </S.ProcessContainer>
     </Layout>
   );
