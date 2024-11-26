@@ -116,3 +116,22 @@ export const InfoItem = styled.span`
     margin-right: 0.5rem;
   }
 `;
+
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+`;
+
+export const ToggleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  span {
+    font-size: 0.9rem;
+    color: #666;
+  }
+`;
