@@ -8,9 +8,10 @@ export const FormContainer = styled.div`
 `;
 
 export const FormCard = styled.div`
-  width: 100%;
   background: white;
+  height: 100%;
   padding: 20px;
+  overflow-y: auto;
 `;
 
 export const SectionTitle = styled.h2`

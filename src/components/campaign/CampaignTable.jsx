@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTable, useRowSelect } from "react-table";
 import { Search, Plus, MoreVertical } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -6,17 +6,31 @@ import useCampaignData from "../../hooks/campaign/useCampaginData";
 import * as S from "../../styles/main/tableStyle";
 import Loading from "../Loading";
 
-export function CampaignTable() {
+export function CampaignTable({ onCreate, isDetailVisible }) {
   const navigate = useNavigate();
-  const { data, isLoading } = useCampaignData();
+  const { data, isLoading, refreshCampaigns } = useCampaignData();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const handleCreateClick = () => {
-    navigate("/campaignform");
+    if (onCreate) {
+      onCreate();
+    }
+  };
+
+  const handleClose = () => {
+    setIsCreateOpen(false);
   };
 
   const handleRowClick = (campaignId) => {
     navigate(`/format/${campaignId}/management`);
   };
+
+  useEffect(() => {
+    if (!isDetailVisible) {
+      // 슬라이드가 닫힐 때
+      refreshCampaigns();
+    }
+  }, [isDetailVisible, refreshCampaigns]);
 
   const columns = React.useMemo(
     () => [

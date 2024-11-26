@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { X } from "lucide-react";
 import useCampaignData from "../../hooks/campaign/useCampaginData";
-import * as S from "../../styles/campaign/createCampaignStyle";
+import * as CS from "../../styles/filter/filterdetailStyle"; // 슬라이드 관련 스타일
+import * as S from "../../styles/campaign/createCampaignStyle"; // 기존 캠페인 스타일
 import useCategoryData from "../../hooks/campaign/useCategoryData";
 
-export function CreateCampaign() {
+export function CreateCampaign({ onClose }) {
   const { categories1, categories2, loadCategory2Data } = useCategoryData();
-  const navigate = useNavigate();
   const { createCampaign, isLoading, error } = useCampaignData();
 
   const [formData, setFormData] = useState({
@@ -68,7 +68,7 @@ export function CreateCampaign() {
 
       // 성공적으로 저장되었을 때만 알림과 페이지 이동
       alert("캠페인이 성공적으로 생성되었습니다.");
-      navigate("/");
+      onClose();
     } catch (err) {
       console.error("Failed to create campaign:", err);
 
@@ -81,16 +81,17 @@ export function CreateCampaign() {
     }
   };
 
-  const handleBack = () => {
-    navigate(-1); // 이전 페이지로 이동
-  };
-
   return (
-    <S.FormContainer>
+    <div style={{ height: "100%", overflow: "auto", padding: "10px" }}>
       <S.FormCard>
         {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
         <form onSubmit={handleSubmit}>
-          <S.SectionTitle>캠페인 기초 정보</S.SectionTitle>
+          <CS.Header>
+            <S.SectionTitle>캠페인 기초 정보</S.SectionTitle>
+            <CS.CloseButton onClick={onClose}>
+              <X size={24} />
+            </CS.CloseButton>
+          </CS.Header>
 
           <S.FormGroup>
             <S.Label>캠페인 분류</S.Label>
@@ -226,16 +227,13 @@ export function CreateCampaign() {
           </S.FormGroup>
 
           <S.ButtonContainer>
-            <S.BackButton type="button" onClick={handleBack}>
-              뒤로 가기
-            </S.BackButton>
             <S.SubmitButton type="submit" disabled={isLoading}>
               {isLoading ? "저장 중..." : "저장하기"}
             </S.SubmitButton>
           </S.ButtonContainer>
         </form>
       </S.FormCard>
-    </S.FormContainer>
+    </div>
   );
 }
 
