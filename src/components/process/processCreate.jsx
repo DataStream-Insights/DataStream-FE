@@ -6,9 +6,11 @@ import Loading from "../../components/Loading";
 import { Layout } from "../../components/Layout";
 import { generatePipelineId } from "../../utils/idGenerator";
 import { Switch } from "../../components/ui/switch";
+import { useAlert } from "../../context/AlertContext";
 
 const ProcessCreate = () => {
   const navigate = useNavigate();
+  const { showAlert } = useAlert();
   const { data, loading, error, createPipeline } = useProcess();
   const [pipelineName, setPipelineName] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState("");
@@ -65,35 +67,65 @@ const ProcessCreate = () => {
   const handleSave = async () => {
     // 입력 데이터 유효성 검사
     if (!pipelineName.trim()) {
-      alert("파이프라인 이름을 입력해주세요.");
+      showAlert("파이프라인 이름을 입력해주세요.");
       return;
     }
     if (!selectedCampaign) {
-      alert("캠페인을 선택해주세요.");
+      showAlert("캠페인을 선택해주세요.");
       return;
     }
-    if (!formatSelections.some((format) => format.formatId)) {
-      alert("최소 하나의 포맷을 선택해주세요.");
+    // 포맷 선택 검사
+    const validFormats = formatSelections.filter((format) => format.formatId);
+    if (validFormats.length === 0) {
+      showAlert("최소 하나의 포맷을 선택해주세요.");
       return;
     }
 
-    // 유효한 포맷과 필터만 필터링
-    const validFormats = formatSelections
-      .filter((format) => format.formatId)
-      .map((format) => ({
-        formatId: format.formatId,
-        addFilterTopics: format.filters
-          .filter((filter) => filter)
-          .map((filter) => ({ filterId: filter })),
-      }));
+    // 각 포맷별 필터 선택 검사
+    const hasFormatWithoutFilter = formatSelections.some(
+      (format) =>
+        format.formatId &&
+        (!format.filters || format.filters.filter((f) => f).length === 0)
+    );
 
+    if (hasFormatWithoutFilter) {
+      showAlert("각 포맷에 대해 최소 하나의 필터를 선택해주세요.");
+      return;
+    }
+
+    // // 유효한 포맷과 필터만 필터링
+    // const validFormats = formatSelections
+    //   .filter((format) => format.formatId)
+    //   .map((format) => ({
+    //     formatId: format.formatId,
+    //     addFilterTopics: format.filters
+    //       .filter((filter) => filter)
+    //       .map((filter) => ({ filterId: filter })),
+    //   }));
+
+    // const processData = {
+    //   pipelineName,
+    //   pipelineId: generatePipelineId(),
+    //   distinctCode: isDistinct ? 3 : 0, // 토글 상태에 따라 distinctCode 설정
+    //   addcampaignTopic: {
+    //     campaignId: selectedCampaign,
+    //     addFormatTopics: validFormats,
+    //   },
+    // };
+
+    // 유효한 포맷과 필터만 필터링하여 데이터 구성
     const processData = {
       pipelineName,
       pipelineId: generatePipelineId(),
-      distinctCode: isDistinct ? 3 : 0, // 토글 상태에 따라 distinctCode 설정
+      distinctCode: isDistinct ? 3 : 0,
       addcampaignTopic: {
         campaignId: selectedCampaign,
-        addFormatTopics: validFormats,
+        addFormatTopics: validFormats.map((format) => ({
+          formatId: format.formatId,
+          addFilterTopics: format.filters
+            .filter((filter) => filter)
+            .map((filter) => ({ filterId: filter })),
+        })),
       },
     };
 
@@ -104,11 +136,11 @@ const ProcessCreate = () => {
 
     try {
       await createPipeline(processData);
-      alert("파이프라인이 성공적으로 생성되었습니다.");
+      showAlert("파이프라인이 성공적으로 생성되었습니다.");
       navigate("/process");
     } catch (err) {
       console.error("Server response error:", err.response?.data);
-      alert("파이프라인 생성에 실패했습니다. 다시 시도해주세요.");
+      showAlert("파이프라인 생성에 실패했습니다. 다시 시도해주세요.");
     }
   };
 

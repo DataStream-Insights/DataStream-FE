@@ -2,13 +2,15 @@ import React from "react";
 import { X } from "lucide-react";
 import * as S from "../../styles/format/formatDetailStyle";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../../context/AlertContext";
 
 const LogFormatView = ({ onClose, selectedFormat, fields, campaignId }) => {
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   const handleFilterClick = () => {
     if (!selectedFormat?.formatID) {
-      alert("포맷 정보를 찾을 수 없습니다.");
+      showAlert("포맷 정보를 찾을 수 없습니다.");
       return;
     }
 

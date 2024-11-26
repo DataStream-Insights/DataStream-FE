@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import * as S from "../../styles/format/formatDetailStyle";
 import { useNavigate } from "react-router-dom";
+import { useAlert } from "../../context/AlertContext";
 
 const LogFormatDetail = ({
   onClose,
@@ -20,6 +21,7 @@ const LogFormatDetail = ({
   addNewField,
   campaignId,
 }) => {
+  const { showAlert } = useAlert();
   const navigate = useNavigate();
   const [expandedRows, setExpandedRows] = useState(new Set());
   const [substringType, setSubstringType] = useState("Substring");
@@ -58,7 +60,7 @@ const LogFormatDetail = ({
   //필터링 클릭 시
   const handleFilterClick = () => {
     if (!selectedFormat?.formatID) {
-      alert("포맷 정보를 찾을 수 없습니다.");
+      showAlert("포맷 정보를 찾을 수 없습니다.");
       return;
     }
 
@@ -131,7 +133,7 @@ const LogFormatDetail = ({
   // 포맷 적용 핸들러
   const handleFormatApply = async () => {
     if (!selectedFileName) {
-      alert("파일을 선택해주세요.");
+      showAlert("파일을 선택해주세요.");
       return;
     }
 
@@ -232,6 +234,36 @@ const LogFormatDetail = ({
   // 저장/수정 버튼 클릭 시
   const handleSubmit = async () => {
     try {
+      // 필수 입력값 검증
+      if (!formData.name?.trim()) {
+        showAlert("포맷 이름을 입력해주세요.");
+        return;
+      }
+
+      if (!formData.description?.trim()) {
+        showAlert("포맷 설명을 입력해주세요.");
+        return;
+      }
+
+      // 필드가 하나도 없는 경우 검증
+      if (!fields || fields.length === 0) {
+        showAlert("최소 하나 이상의 필드가 필요합니다.");
+        return;
+      }
+
+      // 모든 필드의 필수 값 검증
+      const invalidFields = fields.filter(
+        (field) =>
+          !field.name?.trim() ||
+          !field.displayName?.trim() ||
+          !field.description?.trim()
+      );
+
+      if (invalidFields.length > 0) {
+        showAlert("모든 필드의 이름, 표시명, 설명을 입력해주세요.");
+        return;
+      }
+
       const formatData = {
         name: formData.name,
         description: formData.description,
@@ -256,10 +288,12 @@ const LogFormatDetail = ({
       } else {
         // 새로 생성할 때는 createFormat 사용
         await createFormat(formatData);
+        showAlert("포맷이 성공적으로 생성되었습니다.", onClose);
       }
       onClose();
     } catch (error) {
       console.error("Failed to submit format:", error);
+      showAlert(error.message || "포맷 저장에 실패했습니다.");
     }
   };
 

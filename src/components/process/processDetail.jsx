@@ -6,9 +6,11 @@ import Loading from "../Loading";
 import { executePipeline } from "../../api/ProcessApi";
 import useProcessDetail from "../../hooks/process/useProcessDetail";
 import * as S from "../../styles/process/processDetailStyle";
+import { useAlert } from "../../context/AlertContext";
 
 const ProcessDetail = () => {
   const { id } = useParams();
+  const { showAlert } = useAlert();
   const { pipelineDetail, loading, error, refetch } = useProcessDetail(id);
   const [executeLoading, setExecuteLoading] = useState(false);
 
@@ -32,7 +34,7 @@ const ProcessDetail = () => {
       console.log("Updated pipeline data:", updatedData);
     } catch (err) {
       console.error("Execute pipeline error:", err);
-      alert("실행 상태 변경에 실패했습니다.");
+      showAlert("실행 상태 변경에 실패했습니다.");
     } finally {
       setExecuteLoading(false);
     }
