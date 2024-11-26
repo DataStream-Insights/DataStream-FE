@@ -102,28 +102,35 @@ const LogFilter = ({
         return;
       }
 
+      // 유효한 필터 체크 (모든 옵션이 선택된 필터만)
+      const validFilters = filterSettings.behaviors?.filter(
+        (behavior) =>
+          behavior.idOption && behavior.operatorOption && behavior.actionValue
+      );
+
+      // 유효한 필터가 하나도 없는 경우
+      if (!validFilters || validFilters.length === 0) {
+        alert(
+          "최소 하나의 필터를 생성하고 모든 옵션(ID, 연산자, 값)을 선택해주세요."
+        );
+        return;
+      }
+
       const filterId = generateFilterId();
       const requestData = {
         filtername: filterSettings.name.trim(),
         filtermanage_id: filterId,
         filterSetList: {
-          filterSets: filterSettings.behaviors
-            ?.filter(
-              (behavior) =>
-                behavior.idOption &&
-                behavior.operatorOption &&
-                behavior.actionValue
-            )
-            .map((behavior, index) => ({
-              andor: index === 0 ? null : behavior.logicalOperator,
-              filtervalue: {
-                value: behavior.actionValue,
-              },
-              operation: {
-                operation: behavior.operatorOption.value,
-              },
-              responseItemid: behavior.idOption.id,
-            })),
+          filterSets: validFilters.map((behavior, index) => ({
+            andor: index === 0 ? null : behavior.logicalOperator,
+            filtervalue: {
+              value: behavior.actionValue,
+            },
+            operation: {
+              operation: behavior.operatorOption.value,
+            },
+            responseItemid: behavior.idOption.id,
+          })),
         },
       };
 
@@ -139,14 +146,6 @@ const LogFilter = ({
       }
     } catch (error) {
       alert(error.message || "저장에 실패했습니다.");
-    }
-  };
-
-  const handleBack = () => {
-    if (isSlideMode && onClose) {
-      onClose();
-    } else {
-      navigate(-1);
     }
   };
 
@@ -287,7 +286,6 @@ const LogFilter = ({
 
             <F.RepeatSection>
               <F.ButtonContainer>
-                <F.BackButton onClick={handleBack}>뒤로 가기</F.BackButton>
                 <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
               </F.ButtonContainer>
             </F.RepeatSection>

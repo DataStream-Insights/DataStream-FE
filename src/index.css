@@ -1,7 +1,19 @@
+/* src/index.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* 기존 스타일 유지 */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tailwind CSS 변수 */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -12,4 +24,10 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
   }
+}
+
+/* styled-components와 Tailwind가 함께 작동하도록 보장 */
+#root {
+  width: 100%;
+  height: 100%;
 }
