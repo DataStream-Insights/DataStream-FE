@@ -4,8 +4,10 @@ import useCampaignData from "../../hooks/campaign/useCampaginData";
 import * as CS from "../../styles/filter/filterdetailStyle"; // 슬라이드 관련 스타일
 import * as S from "../../styles/campaign/createCampaignStyle"; // 기존 캠페인 스타일
 import useCategoryData from "../../hooks/campaign/useCategoryData";
+import { useAlert } from "../../context/AlertContext";
 
 export function CreateCampaign({ onClose }) {
+  const { showAlert } = useAlert();
   const { categories1, categories2, loadCategory2Data } = useCategoryData();
   const { createCampaign, isLoading, error } = useCampaignData();
 
@@ -62,13 +64,41 @@ export function CreateCampaign({ onClose }) {
   // 폼 제출 처리
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // 필수 필드 검사
+    if (!formData.campaignClassification1) {
+      showAlert("캠페인 분류(대분류)를 선택해주세요.");
+      return;
+    }
+
+    if (!formData.campaignClassification2) {
+      showAlert("캠페인 분류(소분류)를 선택해주세요.");
+      return;
+    }
+
+    if (!formData.campaignName.trim()) {
+      showAlert("캠페인명을 입력해주세요.");
+      return;
+    }
+
+    if (!formData.campaignDescription.trim()) {
+      showAlert("캠페인 설명을 입력해주세요.");
+      return;
+    }
+
+    if (!formData.tags.trim()) {
+      showAlert("태그를 입력해주세요.");
+      return;
+    }
+
     try {
       const result = await createCampaign(formData);
       console.log("Campaign created successfully:", result);
 
       // 성공적으로 저장되었을 때만 알림과 페이지 이동
-      alert("캠페인이 성공적으로 생성되었습니다.");
-      onClose();
+      showAlert("캠페인이 성공적으로 생성되었습니다.", () => {
+        onClose(); // Alert 닫힌 후에 onClose 실행
+      });
     } catch (err) {
       console.error("Failed to create campaign:", err);
 
@@ -77,7 +107,7 @@ export function CreateCampaign({ onClose }) {
       if (err.message) {
         errorMessage += ` (${err.message})`;
       }
-      alert(errorMessage);
+      showAlert(errorMessage);
     }
   };
 

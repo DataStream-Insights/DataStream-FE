@@ -13,6 +13,7 @@ import BehaviorFilter from "./BehaviorFilter";
 import useFilterCreate from "../../hooks/filter/useFilterCreate";
 import { generateFilterId } from "../../utils/idGenerator";
 import Loading from "../../components/Loading";
+import { useAlert } from "../../context/AlertContext";
 
 const LogFilter = ({
   onClose,
@@ -21,6 +22,7 @@ const LogFilter = ({
   onSuccess,
   setGlobalLoading,
 }) => {
+  const { showAlert } = useAlert();
   const { campaignId, formatId } = useParams();
   const {
     items,
@@ -98,7 +100,7 @@ const LogFilter = ({
   const handleSave = async () => {
     try {
       if (!filterSettings.name?.trim()) {
-        alert("필터 이름을 입력해주세요.");
+        showAlert("필터 이름을 입력해주세요.");
         return;
       }
 
@@ -110,7 +112,7 @@ const LogFilter = ({
 
       // 유효한 필터가 하나도 없는 경우
       if (!validFilters || validFilters.length === 0) {
-        alert(
+        showAlert(
           "최소 하나의 필터를 생성하고 모든 옵션(ID, 연산자, 값)을 선택해주세요."
         );
         return;
@@ -135,17 +137,16 @@ const LogFilter = ({
       };
 
       await saveFilter(campaignId, formatId, requestData);
-      alert("저장되었습니다.");
-
-      if (onSuccess) {
-        await onSuccess(); // filterHook.loadFilters 호출
-      }
-
-      if (onClose) {
-        onClose(); // handleClose 호출
-      }
+      showAlert("저장되었습니다.", async () => {
+        if (onSuccess) {
+          await onSuccess();
+        }
+        if (onClose) {
+          onClose();
+        }
+      });
     } catch (error) {
-      alert(error.message || "저장에 실패했습니다.");
+      showAlert(error.message || "저장에 실패했습니다.");
     }
   };
 
