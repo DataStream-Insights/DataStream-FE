@@ -3,19 +3,14 @@ import * as S from "../styles/LayoutStyle";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
-export function Layout({ title, children }) {
+export function Layout({ children }) {
   return (
     <S.LayoutWrapper>
       <Sidebar />
       <S.MainContentWrapper>
         <Navbar />
         <S.MainContainer>
-          <S.PageContainer>
-            <S.Header>
-              <S.Title>{title}</S.Title>
-            </S.Header>
-            {children}
-          </S.PageContainer>
+          <S.PageContainer>{children}</S.PageContainer>
         </S.MainContainer>
       </S.MainContentWrapper>
     </S.LayoutWrapper>

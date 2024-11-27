@@ -12,6 +12,7 @@ const Navbar = () => {
     { id: "format", label: "Format", path: "/format" },
     { id: "filter", label: "Filter", path: "/filter/filtermanagement" },
     { id: "process", label: "Process", path: "/process" },
+    { id: "DataAnalytics", label: "DataAnalytics", path: "/analytics" },
   ];
 
   const isActive = (path) => {

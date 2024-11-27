@@ -7,6 +7,7 @@ import FilterManagementPage from "./pages/filter/filterManagementPage";
 import ProcessManagementPage from "./pages/process/processManagementPage";
 import ProcessCreate from "./components/process/processCreate";
 import ProcessDetail from "./components/process/processDetail";
+import DataManagementPage from "./pages/analytics/dataManagement";
 
 export function App() {
   const router = createBrowserRouter([
@@ -35,6 +36,10 @@ export function App() {
     {
       path: "/process/:id",
       element: <ProcessDetail />,
+    },
+    {
+      path: "/analytics",
+      element: <DataManagementPage />,
     },
   ]);
   return <RouterProvider router={router} />;
