@@ -104,6 +104,38 @@ export const HeaderContent = styled.div`
   gap: 16px;
 `;
 
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const DeleteButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  color: #666;
+
+  &:hover {
+    color: #dc3545;
+  }
+
+  &:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  svg {
+    stroke-width: 2.5;
+  }
+`;
+
 export const ExecuteButton = styled.button`
   display: flex;
   align-items: center;

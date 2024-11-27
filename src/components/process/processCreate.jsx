@@ -93,26 +93,6 @@ const ProcessCreate = () => {
       return;
     }
 
-    // // 유효한 포맷과 필터만 필터링
-    // const validFormats = formatSelections
-    //   .filter((format) => format.formatId)
-    //   .map((format) => ({
-    //     formatId: format.formatId,
-    //     addFilterTopics: format.filters
-    //       .filter((filter) => filter)
-    //       .map((filter) => ({ filterId: filter })),
-    //   }));
-
-    // const processData = {
-    //   pipelineName,
-    //   pipelineId: generatePipelineId(),
-    //   distinctCode: isDistinct ? 3 : 0, // 토글 상태에 따라 distinctCode 설정
-    //   addcampaignTopic: {
-    //     campaignId: selectedCampaign,
-    //     addFormatTopics: validFormats,
-    //   },
-    // };
-
     // 유효한 포맷과 필터만 필터링하여 데이터 구성
     const processData = {
       pipelineName,
@@ -157,12 +137,24 @@ const ProcessCreate = () => {
   return (
     <Layout title="프로세스 생성">
       <S.ProcessContainer>
-        <S.SectionTitle>파이프라인</S.SectionTitle>
-        <S.ProcessNameInput
-          placeholder="파이프라인 이름을 입력하세요"
-          value={pipelineName}
-          onChange={(e) => setPipelineName(e.target.value)}
-        />
+        <S.HeaderContainer>
+          <div>
+            <S.SectionTitle>파이프라인</S.SectionTitle>
+            <S.ProcessNameInput
+              placeholder="파이프라인 이름을 입력하세요"
+              value={pipelineName}
+              onChange={(e) => setPipelineName(e.target.value)}
+            />
+          </div>
+          <S.ToggleWrapper>
+            <span>중복제거</span>
+            <Switch
+              checked={isDistinct}
+              onCheckedChange={setIsDistinct}
+              className="ml-2"
+            />
+          </S.ToggleWrapper>
+        </S.HeaderContainer>
 
         <S.Section>
           <S.SectionTitle>캠페인 선택</S.SectionTitle>
@@ -222,11 +214,19 @@ const ProcessCreate = () => {
                       </option>
                     ))}
                 </S.Select>
-                <S.RemoveButton
+                <S.IconButton
                   onClick={() => removeFormatSelection(formatIndex)}
+                  aria-label="Delete format"
                 >
-                  삭제
-                </S.RemoveButton>
+                  <span
+                    style={{
+                      display: "block",
+                      width: "12px",
+                      height: "2px",
+                      backgroundColor: "currentColor",
+                    }}
+                  />
+                </S.IconButton>
               </div>
               {formatSelection.formatId && (
                 <S.SelectionInfo>
@@ -274,11 +274,19 @@ const ProcessCreate = () => {
                           </option>
                         ))}
                     </S.Select>
-                    <S.RemoveButton
+                    <S.IconButton
                       onClick={() => removeFilter(formatIndex, filterIndex)}
+                      aria-label="Delete filter"
                     >
-                      삭제
-                    </S.RemoveButton>
+                      <span
+                        style={{
+                          display: "block",
+                          width: "12px",
+                          height: "2px",
+                          backgroundColor: "currentColor",
+                        }}
+                      />
+                    </S.IconButton>
                   </div>
                   {filter && (
                     <S.SelectionInfo>
@@ -295,32 +303,24 @@ const ProcessCreate = () => {
                 </S.FilterBox>
               ))}
 
-              <S.AddButton
+              <S.AddIconButton
                 onClick={() => addFilter(formatIndex)}
                 disabled={formatSelection.filters.length >= data.filters.length}
               >
                 필터 추가
-              </S.AddButton>
+              </S.AddIconButton>
             </S.FormatBox>
           ))}
 
-          <S.AddButton
+          <S.AddIconButton
             onClick={addFormatSelection}
             disabled={formatSelections.length >= data.formats.length}
           >
             포맷 추가
-          </S.AddButton>
+          </S.AddIconButton>
         </S.FormatsContainer>
 
         <S.ButtonContainer>
-          <S.ToggleWrapper>
-            <span>중복제거</span>
-            <Switch
-              checked={isDistinct}
-              onCheckedChange={setIsDistinct}
-              className="ml-2"
-            />
-          </S.ToggleWrapper>
           <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
         </S.ButtonContainer>
       </S.ProcessContainer>
