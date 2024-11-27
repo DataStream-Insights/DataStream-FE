@@ -8,10 +8,12 @@ import ProcessManagementPage from "./pages/process/processManagementPage";
 import ProcessCreate from "./components/process/processCreate";
 import ProcessDetail from "./components/process/processDetail";
 import DataManagementPage from "./pages/analytics/dataManagement";
+import HomePage from "./pages/Home";
 
 export function App() {
   const router = createBrowserRouter([
-    { path: "/", element: <CampaignManagementPage /> },
+    { path: "/", element: <HomePage /> },
+    { path: "/campaign", element: <CampaignManagementPage /> },
     { path: "/campaignform", element: <CreateCampaign /> },
     { path: "/format", element: <LogFormatPage /> },
     { path: "/format/:campaignId/management", element: <LogFormatPage /> },

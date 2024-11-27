@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-
+import { useNavigate } from "react-router-dom";
 import {
   ChevronLeft,
   Database,
@@ -10,53 +10,52 @@ import {
   ClipboardList,
 } from "lucide-react";
 import * as S from "../styles/sidebarStyle";
+import Logo from "../assets/logo.svg";
 
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
+  const navigate = useNavigate();
 
   const menuItems = [
     {
       title: "Campaign",
       icon: <Database size={20} />,
-      subItems: ["캠페인 관리"],
+      subItems: [{ name: "캠페인 관리", path: "/campaign" }],
     },
     {
       title: "Format",
       icon: <Layout size={20} />,
-      subItems: ["포맷 관리"],
+      subItems: [{ name: "포맷 관리", path: "/format" }],
     },
     {
       title: "Filter",
       icon: <ClipboardList size={20} />,
-      subItems: ["필터 관리"],
+      subItems: [{ name: "필터 관리", path: "/filter/filtermanagement" }],
     },
     {
       title: "Process",
       icon: <PieChart size={20} />,
-      subItems: ["프로세스 관리", "프로세스 생성"],
+      subItems: [
+        { name: "프로세스 관리", path: "/process" },
+        { name: "프로세스 생성", path: "/process/create" },
+      ],
     },
     {
       title: "대시보드",
       icon: <BarChart2 size={20} />,
-      subItems: ["사용자분석", "이용자분석"],
+      subItems: [{ name: "사용자분석", path: "/analytics" }],
     },
-    // {
-    //   title: "원본분석",
-    //   icon: <FileText size={20} />,
-    //   subItems: [
-    //     "방문분석",
-    //     "페이지분석",
-    //     "유입분석",
-    //     "컨텐츠분석",
-    //     "매출분석",
-    //   ],
-    // },
   ];
 
   return (
     <S.SidebarContainer collapsed={collapsed}>
       <S.SidebarHeader>
-        <S.LogoText collapsed={collapsed}>Logify</S.LogoText>
+        <S.LogoContainer
+          onClick={() => navigate("/")}
+          style={{ cursor: "pointer" }}
+        >
+          <img src={Logo} alt="Logify" />
+        </S.LogoContainer>
         <S.CollapseButton onClick={() => setCollapsed(!collapsed)}>
           <ChevronLeft
             style={{
@@ -77,7 +76,12 @@ const Sidebar = () => {
             {!collapsed && (
               <S.SubMenuContainer>
                 {item.subItems.map((subItem, subIndex) => (
-                  <S.SubMenuItem key={subIndex}>{subItem}</S.SubMenuItem>
+                  <S.SubMenuItem
+                    key={subIndex}
+                    onClick={() => navigate(subItem.path)}
+                  >
+                    {subItem.name}
+                  </S.SubMenuItem>
                 ))}
               </S.SubMenuContainer>
             )}

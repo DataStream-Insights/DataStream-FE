@@ -8,7 +8,7 @@ const Navbar = () => {
   const location = useLocation();
 
   const tabs = [
-    { id: "campaign", label: "Campaign", path: "/" },
+    { id: "campaign", label: "Campaign", path: "/campaign" },
     { id: "format", label: "Format", path: "/format" },
     { id: "filter", label: "Filter", path: "/filter/filtermanagement" },
     { id: "process", label: "Process", path: "/process" },
