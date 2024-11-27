@@ -4,7 +4,7 @@ export const SidebarContainer = styled.div`
   height: 100vh;
   background-color: white;
   border-right: 1px solid #e5e7eb;
-  width: ${(props) => (props.collapsed ? "4rem" : "13rem")};
+  width: ${(props) => (props.collapsed ? "4rem" : "14rem")};
   transition: all 0.3s;
 `;
 
@@ -14,6 +14,19 @@ export const SidebarHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   // border-bottom: 1px solid #e5e7eb;
+`;
+
+export const LogoContainer = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  // padding: 0.5rem;
+
+  img {
+    height: 5rem; // 더 크게 설정 (약 64px)
+    min-height: 60px; // 최소 높이 보장
+    width: auto;
+  }
 `;
 
 export const LogoText = styled.span`
