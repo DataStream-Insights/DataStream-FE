@@ -16,7 +16,7 @@ export function CampaignManagementPage() {
   };
 
   return (
-    <Layout title="캠페인 관리">
+    <Layout>
       <S.Container>
         <S.ListContainer className={!isCreating ? "expanded" : ""}>
           <CampaignTable onCreate={handleCreate} isDetailVisible={isCreating} />

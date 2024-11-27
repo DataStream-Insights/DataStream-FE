@@ -6,24 +6,23 @@ export const NavbarContainer = styled.div`
   border-bottom: 1px solid #e5e7eb;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   padding: 0 1rem;
+  justify-content: center; // 중앙 정렬
+`;
+
+export const TabList = styled.div`
+  display: flex;
+  gap: 5rem;
+  margin: 0 auto; // 가운데 정렬
 `;
 
 export const NavLeft = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 3rem;
+  // 빈 공간
 `;
 
 export const NavTitle = styled.span`
   color: #374151;
   font-weight: 500;
-`;
-
-export const TabList = styled.div`
-  display: flex;
-  gap: 2rem;
 `;
 
 export const TabItem = styled.button`
@@ -38,7 +37,7 @@ export const TabItem = styled.button`
   &::after {
     content: "";
     position: absolute;
-    bottom: -1rem; // 밑줄 위치 조정
+    bottom: -1rem;
     left: 0;
     right: 0;
     height: 2px;
@@ -56,6 +55,8 @@ export const NavButtons = styled.div`
   display: flex;
   align-items: center;
   gap: 1rem;
+  position: fixed;
+  right: 1rem;
 `;
 
 export const IconButton = styled.button`

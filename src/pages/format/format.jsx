@@ -57,7 +57,7 @@ const LogFormatPage = () => {
   };
 
   return (
-    <Layout title="포맷 관리">
+    <Layout>
       <S.Container>
         <S.ListContainer className={!isDetailVisible ? "expanded" : ""}>
           <LogFormatList

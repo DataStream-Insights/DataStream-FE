@@ -4,18 +4,6 @@ export const PageContainer = styled.div`
   padding: 20px;
 `;
 
-export const Header = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-`;
-
-export const Title = styled.h1`
-  color: #1a1a1a;
-  margin: 0;
-`;
-
 export const MenuBar = styled.div`
   display: flex;
   background: #ffffff;

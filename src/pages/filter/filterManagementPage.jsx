@@ -36,7 +36,7 @@ const FilterManagementPage = () => {
   const isLoading = filterHook.isLoading;
 
   return (
-    <Layout title="필터 관리">
+    <Layout>
       {isLoading && (
         <div
           style={{
