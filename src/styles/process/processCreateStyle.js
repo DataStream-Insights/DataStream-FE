@@ -6,12 +6,59 @@ export const ProcessContainer = styled.div`
   border-radius: 8px;
 `;
 
+export const HeaderContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 2rem;
+
+  > div:first-child {
+    flex: 1;
+  }
+`;
+
 export const ProcessNameInput = styled.input`
   width: 100%;
   padding: 0.5rem;
   border: 1px solid #e1e1e1;
   border-radius: 4px;
-  margin-bottom: 2rem;
+`;
+
+export const IconButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  color: #666;
+  border: 2px solid #666;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-bottom: 0.7rem;
+  margin-left: 0.8rem;
+  padding: 0;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #dc3545;
+    border-color: #dc3545;
+    color: white;
+  }
+`;
+
+export const ToggleWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding-top: 2rem;
+
+  span {
+    font-size: 0.9rem;
+    color: #666;
+  }
 `;
 
 export const Section = styled.div`
@@ -47,20 +94,6 @@ export const FormatBox = styled.div`
 export const FilterBox = styled.div`
   margin-left: 1rem;
   margin-top: 0.5rem;
-`;
-
-export const AddButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #4263eb;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin: 0.5rem 0;
-
-  &:hover {
-    background-color: #374bd8;
-  }
 `;
 
 export const RemoveButton = styled.button`
@@ -125,13 +158,31 @@ export const ButtonContainer = styled.div`
   margin-top: 2rem;
 `;
 
-export const ToggleWrapper = styled.div`
+export const AddIconButton = styled.button`
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.5rem;
+  background-color: transparent;
+  color: #666;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
 
-  span {
-    font-size: 0.9rem;
-    color: #666;
+  &:hover {
+    color: #4263eb;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &::before {
+    content: "+";
+    display: inline-block;
+    font-size: 1.2rem;
+    line-height: 1;
+    font-weight: bold;
   }
 `;

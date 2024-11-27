@@ -1,18 +1,37 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Play, Square } from "lucide-react";
+import { Play, Square, Trash2 } from "lucide-react";
 import { Layout } from "../Layout";
 import Loading from "../Loading";
 import { executePipeline } from "../../api/ProcessApi";
 import useProcessDetail from "../../hooks/process/useProcessDetail";
 import * as S from "../../styles/process/processDetailStyle";
 import { useAlert } from "../../context/AlertContext";
+import { useConfirm } from "../../context/ConfirmContext";
 
 const ProcessDetail = () => {
   const { id } = useParams();
   const { showAlert } = useAlert();
+  const { showConfirm } = useConfirm();
   const { pipelineDetail, loading, error, refetch } = useProcessDetail(id);
   const [executeLoading, setExecuteLoading] = useState(false);
+
+  const handleDelete = async () => {
+    const isConfirmed = await showConfirm("정말 삭제하시겠습니까?");
+
+    if (isConfirmed) {
+      try {
+        // 여기에 삭제 API 호출
+        console.log("Deleting pipeline...");
+        // await deletePipeline(id);
+        showAlert("파이프라인이 성공적으로 삭제되었습니다.");
+        navigate("/process");
+      } catch (error) {
+        console.error("Delete pipeline error:", error);
+        showAlert("파이프라인 삭제에 실패했습니다.");
+      }
+    }
+  };
 
   const handleExecuteClick = async () => {
     try {
@@ -64,23 +83,29 @@ const ProcessDetail = () => {
             </S.StatusBadge>
             <S.IdText>파이프라인 ID: {pipelineDetail.pipelineId}</S.IdText>
           </S.HeaderContent>
-          <S.ExecuteButton
-            onClick={handleExecuteClick}
-            disabled={executeLoading}
-            $isExecuting={pipelineDetail.status}
-          >
-            {pipelineDetail.status ? (
-              <>
-                <Square size={20} />
-                중지
-              </>
-            ) : (
-              <>
-                <Play size={20} />
-                실행
-              </>
-            )}
-          </S.ExecuteButton>
+          <S.ButtonGroup>
+            <S.ExecuteButton
+              onClick={handleExecuteClick}
+              disabled={executeLoading}
+              $isExecuting={pipelineDetail.status}
+            >
+              {pipelineDetail.status ? (
+                <>
+                  <Square size={20} />
+                  중지
+                </>
+              ) : (
+                <>
+                  <Play size={20} />
+                  실행
+                </>
+              )}
+            </S.ExecuteButton>
+            <S.DeleteButton onClick={handleDelete} title="파이프라인 삭제">
+              <Trash2 size={20} />
+              삭제
+            </S.DeleteButton>
+          </S.ButtonGroup>
         </S.HeaderWrapper>
 
         <S.HierarchyContainer>
