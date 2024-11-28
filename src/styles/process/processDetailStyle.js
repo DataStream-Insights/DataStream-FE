@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const DetailContainer = styled.div`
-  padding: 20px;
+  padding: 10px;
   max-width: 1200px;
   margin: 0 auto;
 `;
@@ -136,6 +136,33 @@ export const DeleteButton = styled.button`
   }
 `;
 
+export const BackButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+`;
+
+export const BackButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  color: #666;
+
+  &:hover {
+    color: #333;
+  }
+
+  svg {
+    stroke-width: 2.5;
+  }
+`;
 export const ExecuteButton = styled.button`
   display: flex;
   align-items: center;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Play, Square, Trash2 } from "lucide-react";
+import { Play, Square, Trash2, ArrowLeft } from "lucide-react";
 import { Layout } from "../Layout";
 import Loading from "../Loading";
 import { executePipeline, deletePipeline } from "../../api/ProcessApi";
@@ -17,8 +17,27 @@ const ProcessDetail = () => {
   const { pipelineDetail, loading, error, refetch } = useProcessDetail(id);
   const [executeLoading, setExecuteLoading] = useState(false);
 
+  // const handleDelete = async () => {
+  //   const isConfirmed = await showConfirm("정말 삭제하시겠습니까?");
+
+  //   if (isConfirmed) {
+  //     try {
+  //       await deletePipeline(Number(id));
+  //       showAlert("파이프라인이 성공적으로 삭제되었습니다.");
+  //       navigate("/process");
+  //     } catch (error) {
+  //       console.error("Delete pipeline error:", error);
+  //       showAlert("파이프라인 삭제에 실패했습니다.");
+  //     }
+  //   }
+  // };
   const handleDelete = async () => {
-    const isConfirmed = await showConfirm("정말 삭제하시겠습니까?");
+    // 실행 상태에 따라 다른 메시지 표시
+    const confirmMessage = pipelineDetail.status
+      ? "프로세스 관련 모든 리소스가 삭제됩니다. 정말 삭제하시겠습니까?"
+      : "정말 삭제하시겠습니까?";
+
+    const isConfirmed = await showConfirm(confirmMessage);
 
     if (isConfirmed) {
       try {
@@ -72,8 +91,13 @@ const ProcessDetail = () => {
   console.log("Pipeline Detail Status:", pipelineDetail.status);
 
   return (
-    <Layout title="프로세스 상세">
+    <Layout>
       <S.DetailContainer>
+        <S.BackButtonWrapper>
+          <S.BackButton onClick={() => navigate(-1)}>
+            <ArrowLeft size={20} />
+          </S.BackButton>
+        </S.BackButtonWrapper>
         <S.HeaderWrapper>
           <S.HeaderContent>
             <S.Title>{pipelineDetail.pipelineName}</S.Title>

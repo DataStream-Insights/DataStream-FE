@@ -140,7 +140,7 @@ const LogFilter = ({
               placeholder="아이템 검색"
             />
             <F.SearchButton>
-              <Search size={20} />
+              <Search size={18} />
             </F.SearchButton>
           </F.SearchContainer>
 

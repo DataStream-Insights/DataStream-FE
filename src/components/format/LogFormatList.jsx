@@ -62,7 +62,7 @@ const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
             placeholder="Format 명"
           />
           <S.SearchButton>
-            <Search size={20} />
+            <Search size={18} />
           </S.SearchButton>
         </S.SearchContainer>
       </S.Header>

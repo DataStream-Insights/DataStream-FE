@@ -16,17 +16,17 @@ export function App() {
     { path: "/campaign", element: <CampaignManagementPage /> },
     { path: "/campaignform", element: <CreateCampaign /> },
     { path: "/format", element: <LogFormatPage /> },
-    { path: "/format/:campaignId/management", element: <LogFormatPage /> },
+    // { path: "/format/:campaignId/management", element: <LogFormatPage /> },
     { path: "/filter/create", element: <LogFilter /> },
-    { path: "/filter/create/:campaignId/:formatId", element: <LogFilter /> },
+    // { path: "/filter/create/:campaignId/:formatId", element: <LogFilter /> },
     {
       path: "/filter/filtermanagement",
       element: <FilterManagementPage />,
     },
-    {
-      path: "/filter/:campaignId/:formatId/filtermanagement",
-      element: <FilterManagementPage />,
-    },
+    // {
+    //   path: "/filter/:campaignId/:formatId/filtermanagement",
+    //   element: <FilterManagementPage />,
+    // },
     {
       path: "/process",
       element: <ProcessManagementPage />,

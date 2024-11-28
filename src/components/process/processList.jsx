@@ -83,7 +83,7 @@ const ProcessList = ({ isDetailVisible }) => {
             placeholder="파이프라인 이름 검색"
           />
           <S.SearchButton>
-            <Search size={20} />
+            <Search size={18} />
           </S.SearchButton>
         </S.SearchContainer>
       </S.Header>

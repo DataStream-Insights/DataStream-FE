@@ -23,34 +23,45 @@ export const SubTitle = styled.h3`
 `;
 
 export const SearchContainer = styled.div`
-  display: flex;
-  gap: 0.5rem;
+  position: relative;
+  width: 300px; // 검색창 너비 제한
 `;
 
 export const SearchInput = styled.input`
-  flex: 1;
-  padding: 0.5rem 0.75rem;
+  width: 100%;
+  padding: 0.5rem 2.5rem 0.5rem 1rem; // 오른쪽 패딩을 늘려서 아이콘 공간 확보
   border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
+  border-radius: 20px; // 둥글게 변경
+  font-size: 0.875rem;
 
   &:focus {
     outline: none;
-    border-color: #3b82f6;
+    border-color: #4285f4;
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.1);
+  }
+
+  &::placeholder {
+    color: #94a3b8;
   }
 `;
 
 export const SearchButton = styled.button`
-  padding: 0.5rem;
-  background-color: white;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  color: #6b7280;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 0.25rem;
+  background: none;
+  border: none;
+  color: #4285f4; // Google 블루 컬러로 변경
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: color 0.2s;
 
   &:hover {
-    background-color: #f9fafb;
+    color: #1a73e8; // 호버시 진한 파란색
   }
 `;
 
