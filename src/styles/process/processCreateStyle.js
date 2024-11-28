@@ -118,16 +118,26 @@ export const PreviewSection = styled.div`
 `;
 
 export const SubmitButton = styled.button`
-  padding: 0.75rem 1.5rem;
-  background-color: #4263eb;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 20px;
+  background: transparent;
+  border: 1.5px solid #10b981; // Green
+  color: #10b981;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: #374bd8;
+    background: rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 

@@ -21,7 +21,7 @@ export const NavLeft = styled.div`
 `;
 
 export const NavTitle = styled.span`
-  color: #374151;
+  color: #4285f4;
   font-weight: 500;
 `;
 
@@ -30,7 +30,7 @@ export const TabItem = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  color: ${(props) => (props.active ? "#7DB8D9" : "#6B7280")};
+  color: ${(props) => (props.active ? "#2196F3" : "#6B7280")};
   font-weight: ${(props) => (props.active ? "600" : "400")};
   position: relative;
 
@@ -41,13 +41,13 @@ export const TabItem = styled.button`
     left: 0;
     right: 0;
     height: 2px;
-    background-color: #7db8d9;
+    background-color: ${(props) => (props.active ? "#1DA1F2" : "transparent")};
     transform: scaleX(${(props) => (props.active ? 1 : 0)});
     transition: transform 0.2s ease;
   }
 
   &:hover {
-    color: #7db8d9;
+    color: #1877f2;
   }
 `;
 

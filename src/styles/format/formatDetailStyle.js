@@ -177,17 +177,51 @@ export const ButtonContainer = styled.div`
   margin-bottom: 1.5rem;
 `;
 
-export const Button = styled.button`
+export const FormatButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
-  font-weight: 500;
   font-size: 0.875rem;
-  border: none;
-  background-color: #ccdeeb;
-  color: #374151;
+  font-weight: 500;
+  border-radius: 20px;
+  background: transparent;
+  border: 1.5px solid #0ea5e9; // Sky blue
+  color: #0ea5e9;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: #e5e7eb;
+    background: rgba(14, 165, 233, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`;
+
+export const Button = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 20px;
+  background: transparent;
+  border: 1.5px solid #10b981; // Green
+  color: #10b981;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -206,11 +240,20 @@ export const SubmitButton = styled.button`
 `;
 
 export const ActionButton = styled.button`
-  padding: 0.15rem;
+  padding: 0.25rem;
   color: #6b7280;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 
   &:hover {
-    color: #ef4444; // 빨간색으로 변경
+    background: ${(props) =>
+      props.danger ? "rgba(239, 68, 68, 0.1)" : "rgba(99, 102, 241, 0.1)"};
+    color: ${(props) => (props.danger ? "#ef4444" : "#6366f1")};
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 
@@ -343,22 +386,26 @@ export const ToggleButton = styled.button`
 `;
 
 export const FilterButton = styled.button`
-  padding: 0.5rem 1rem;
-  border-radius: 0.375rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem 2rem;
+  background: transparent;
+  border: 1.5px solid #6366f1;
+  color: #6366f1;
   font-weight: 500;
   font-size: 0.875rem;
-  border: none;
-  background-color: #4f46e5; // 인디고 색상
-  color: white;
-  width: 20%; // 전체 너비 사용
-  transition: background-color 0.2s;
+  border-radius: 20px;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: #4338ca; // 살짝 어두운 인디고
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
   }
 
   &:active {
-    background-color: #3730a3; // 더 어두운 인디고
+    transform: translateY(0);
   }
 `;
 

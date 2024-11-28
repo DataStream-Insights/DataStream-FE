@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Plus, Trash2, X } from "lucide-react";
+import { Plus, Trash2, X, Play, Save, Filter } from "lucide-react";
 import * as S from "../../styles/format/formatDetailStyle";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../context/AlertContext";
@@ -379,7 +379,10 @@ const LogFormatDetail = ({
 
         {isNew && (
           <S.ButtonContainer>
-            <S.Button onClick={handleFormatApply}>포맷 적용</S.Button>
+            <S.FormatButton onClick={handleFormatApply}>
+              <Play size={16} />
+              포맷 적용
+            </S.FormatButton>
           </S.ButtonContainer>
         )}
 
@@ -578,12 +581,15 @@ const LogFormatDetail = ({
         </S.Section>
 
         <S.ButtonContainer>
-          <S.Button onClick={handleSubmit}>{isNew ? "생성" : "수정"}</S.Button>
-          <S.Button onClick={onClose}>취소</S.Button>
+          <S.Button onClick={handleSubmit}>
+            <Save size={16} />
+            생성
+          </S.Button>
         </S.ButtonContainer>
         {!isNew && (
           <S.ButtonContainer align="center">
             <S.FilterButton onClick={() => handleFilterClick()}>
+              <Filter size={16} />
               필터링
             </S.FilterButton>
           </S.ButtonContainer>
