@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Play, Square, Trash2 } from "lucide-react";
 import { Layout } from "../Layout";
 import Loading from "../Loading";
-import { executePipeline } from "../../api/ProcessApi";
+import { executePipeline, deletePipeline } from "../../api/ProcessApi";
 import useProcessDetail from "../../hooks/process/useProcessDetail";
 import * as S from "../../styles/process/processDetailStyle";
 import { useAlert } from "../../context/AlertContext";
@@ -11,6 +11,7 @@ import { useConfirm } from "../../context/ConfirmContext";
 
 const ProcessDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { showAlert } = useAlert();
   const { showConfirm } = useConfirm();
   const { pipelineDetail, loading, error, refetch } = useProcessDetail(id);
@@ -21,9 +22,7 @@ const ProcessDetail = () => {
 
     if (isConfirmed) {
       try {
-        // 여기에 삭제 API 호출
-        console.log("Deleting pipeline...");
-        // await deletePipeline(id);
+        await deletePipeline(Number(id));
         showAlert("파이프라인이 성공적으로 삭제되었습니다.");
         navigate("/process");
       } catch (error) {

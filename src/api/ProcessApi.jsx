@@ -110,3 +110,14 @@ export const executePipeline = async (id, executable) => {
     throw error;
   }
 };
+
+//삭제
+export const deletePipeline = async (id) => {
+  try {
+    const response = await api.post("/pipeline/delpipeline", id);
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting pipeline:", error);
+    throw error;
+  }
+};
