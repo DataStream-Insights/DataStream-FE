@@ -10,7 +10,7 @@ const ProcessList = ({ isDetailVisible }) => {
   const { data, loading, error } = useProcess();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
 
   const filteredProcesses = useMemo(() => {
     return (data.pipelines || []).filter(

@@ -57,6 +57,7 @@ export const SearchButton = styled.button`
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; // 테이블 레이아웃 고정
 `;
 
 export const TableHeader = styled.tr`
@@ -68,6 +69,14 @@ export const TableHeader = styled.tr`
     font-weight: 700;
     color: #374151;
     font-size: 0.875rem;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:nth-child(2) {
+      max-width: 300px;
+    }
   }
 `;
 
@@ -84,6 +93,9 @@ export const TableCell = styled.td`
   padding: 0.75rem;
   font-size: 0.875rem;
   color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   .id-cell {
     display: flex;
@@ -94,6 +106,22 @@ export const TableCell = styled.td`
   .description {
     color: #6b7280;
     font-size: 0.775rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  // hover 시 전체 텍스트 표시
+  &:hover {
+    white-space: normal;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+
+    .description {
+      white-space: normal;
+      overflow: visible;
+    }
   }
 `;
 

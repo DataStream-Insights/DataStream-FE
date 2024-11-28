@@ -72,10 +72,28 @@ export const CreateButton = styled.button`
   }
 `;
 
+// export const Table = styled.table`
+//   width: 100%;
+//   border-collapse: collapse;
+// `;
+
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed; // 테이블 레이아웃 고정
 `;
+
+// export const TableHeader = styled.tr`
+//   border-bottom: 1px solid #e5e7eb;
+
+//   th {
+//     padding: 0.75rem;
+//     text-align: left;
+//     font-weight: 600;
+//     color: #374151;
+//     font-size: 0.875rem;
+//   }
+// `;
 
 export const TableHeader = styled.tr`
   border-bottom: 1px solid #e5e7eb;
@@ -83,9 +101,17 @@ export const TableHeader = styled.tr`
   th {
     padding: 0.75rem;
     text-align: left;
-    font-weight: 600;
+    font-weight: 700;
     color: #374151;
     font-size: 0.875rem;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:nth-child(2) {
+      max-width: 300px;
+    }
   }
 `;
 
@@ -98,10 +124,35 @@ export const TableRow = styled.tr`
   }
 `;
 
+// export const TableCell = styled.td`
+//   padding: 0.75rem;
+//   font-size: 0.875rem;
+//   color: #374151;
+// `;
+
 export const TableCell = styled.td`
   padding: 0.75rem;
   font-size: 0.875rem;
   color: #374151;
+  max-width: 200px; // 최대 너비 설정
+  white-space: nowrap; // 텍스트 줄바꿈 방지
+  overflow: hidden; // 넘치는 텍스트 숨김
+  text-overflow: ellipsis; // 말줄임(...) 표시
+
+  // ID 셀의 경우 더 넓게 설정 (선택적)
+  &:nth-child(2) {
+    max-width: 300px;
+  }
+
+  // hover 시 툴팁처럼 전체 텍스트 표시 (선택적)
+  &:hover {
+    white-space: normal;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 `;
 
 export const StatusBadge = styled.span`

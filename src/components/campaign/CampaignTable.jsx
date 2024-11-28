@@ -1,24 +1,21 @@
-import React, { useState, useEffect } from "react";
-import { useTable, useRowSelect } from "react-table";
-import { Search, Plus, MoreVertical } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import useCampaignData from "../../hooks/campaign/useCampaginData";
 import * as S from "../../styles/main/tableStyle";
 import Loading from "../Loading";
 
-export function CampaignTable({ onCreate, isDetailVisible }) {
+const CampaignTable = ({ onCreate, isDetailVisible }) => {
   const navigate = useNavigate();
   const { data, isLoading, refreshCampaigns } = useCampaignData();
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleCreateClick = () => {
     if (onCreate) {
       onCreate();
     }
-  };
-
-  const handleClose = () => {
-    setIsCreateOpen(false);
   };
 
   const handleRowClick = (campaignId) => {
@@ -27,147 +24,124 @@ export function CampaignTable({ onCreate, isDetailVisible }) {
 
   useEffect(() => {
     if (!isDetailVisible) {
-      // 슬라이드가 닫힐 때
       refreshCampaigns();
     }
   }, [isDetailVisible, refreshCampaigns]);
 
-  const columns = React.useMemo(
-    () => [
-      {
-        id: "selection",
-        Header: ({ getToggleAllRowsSelectedProps }) => {
-          const { indeterminate, ...props } = getToggleAllRowsSelectedProps();
-          return (
-            <S.Checkbox
-              {...props}
-              ref={(el) => {
-                if (el) {
-                  el.indeterminate = indeterminate;
-                }
-              }}
-              onClick={(e) => e.stopPropagation()} // 체크박스 클릭 시 행 클릭 이벤트 전파 방지
-            />
-          );
-        },
-        Cell: ({ row }) => {
-          const { indeterminate, ...props } = row.getToggleRowSelectedProps();
-          return (
-            <S.Checkbox
-              {...props}
-              onClick={(e) => e.stopPropagation()} // 체크박스 클릭 시 행 클릭 이벤트 전파 방지
-            />
-          );
-        },
-      },
-      { Header: "No", accessor: "no" },
-      { Header: "캠페인 ID", accessor: "campaignId" },
-      { Header: "분류1", accessor: "campaignClassification1" },
-      { Header: "분류2", accessor: "campaignClassification2" },
-      { Header: "캠페인명", accessor: "campaignName" },
-      { Header: "상태", accessor: "status" },
-      { Header: "시작 일자", accessor: "startDate" },
-      { Header: "종료 일자", accessor: "endDate" },
-      { Header: "공개 여부", accessor: "visibility" },
-      { Header: "기안 부서", accessor: "department" },
-      { Header: "기안자", accessor: "author" },
-      { Header: "기안일자", accessor: "createdDate" },
-    ],
-    []
-  );
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns,
-        data: data || [],
-      },
-      useRowSelect
+  const filteredData = useMemo(() => {
+    return (data || []).filter((campaign) =>
+      Object.values(campaign).some(
+        (value) =>
+          value &&
+          value.toString().toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
+  }, [data, searchTerm]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredData.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredData, currentPage]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   if (isLoading) {
     return <Loading />;
   }
 
   return (
-    <>
-      <S.HeaderContainer>
-        <S.FilterRow>
-          <S.StateDropdown>
-            <option value="">전체</option>
-            <option value="plan">계획</option>
-            <option value="progress">진행중</option>
-            <option value="complete">완료</option>
-          </S.StateDropdown>
+    <S.Container>
+      <S.Header>
+        <S.HeaderTop>
+          <S.Title>캠페인 관리</S.Title>
+          <S.CreateButton onClick={handleCreateClick}>
+            <Plus size={16} />
+            생성하기
+          </S.CreateButton>
+        </S.HeaderTop>
 
-          <S.SearchInput placeholder="캠페인 정보" />
+        <S.SearchContainer>
+          <S.SearchInput
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="캠페인 정보"
+          />
+          <S.SearchButton>
+            <Search size={20} />
+          </S.SearchButton>
+        </S.SearchContainer>
+      </S.Header>
 
-          <S.CheckboxContainer>
-            <input type="checkbox" id="myRegistration" />
-            <label htmlFor="myRegistration">내가 등록한 캠페인</label>
-          </S.CheckboxContainer>
+      <S.Table>
+        <thead>
+          <S.TableHeader>
+            <th>캠페인명</th>
+            <th>캠페인 ID</th>
+            <th>분류1</th>
+            <th>분류2</th>
+            <th>상태</th>
+            <th>시작일자</th>
+            <th>종료일자</th>
+            <th>기안부서</th>
+            <th>기안자</th>
+          </S.TableHeader>
+        </thead>
+        <tbody>
+          {paginatedData.map((campaign) => (
+            <S.TableRow
+              key={campaign.campaignId}
+              onClick={() => handleRowClick(campaign.campaignId)}
+            >
+              <S.TableCell>{campaign.campaignName}</S.TableCell>
+              <S.TableCell>{campaign.campaignId}</S.TableCell>
+              <S.TableCell>{campaign.campaignClassification1}</S.TableCell>
+              <S.TableCell>{campaign.campaignClassification2}</S.TableCell>
+              <S.TableCell>{campaign.status}</S.TableCell>
+              <S.TableCell>{campaign.startDate}</S.TableCell>
+              <S.TableCell>{campaign.endDate}</S.TableCell>
+              <S.TableCell>{campaign.department}</S.TableCell>
+              <S.TableCell>{campaign.author}</S.TableCell>
+            </S.TableRow>
+          ))}
+        </tbody>
+      </S.Table>
 
-          <S.ButtonGroup>
-            <S.SearchButton>
-              <Search size={16} />
-            </S.SearchButton>
-            <S.CreateButton onClick={handleCreateClick}>
-              <Plus size={16} />
-              Create
-            </S.CreateButton>
-            <S.SearchButton>
-              <MoreVertical size={16} />
-            </S.SearchButton>
-          </S.ButtonGroup>
-        </S.FilterRow>
-      </S.HeaderContainer>
-      <S.TableContainer>
-        <S.StyledTable>
-          <S.THead>
-            {headerGroups.map((headerGroup) => {
-              const { key, ...headerGroupProps } =
-                headerGroup.getHeaderGroupProps();
-              return (
-                <S.Tr key={key} {...headerGroupProps}>
-                  {headerGroup.headers.map((column) => {
-                    const { key, ...columnProps } = column.getHeaderProps();
-                    return (
-                      <S.Th key={key} {...columnProps}>
-                        {column.render("Header")}
-                      </S.Th>
-                    );
-                  })}
-                </S.Tr>
-              );
-            })}
-          </S.THead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              const { key, ...rowProps } = row.getRowProps();
-              return (
-                <S.Tr
-                  key={key}
-                  {...rowProps}
-                  onClick={() => handleRowClick(row.original.campaignId)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {row.cells.map((cell) => {
-                    const { key, ...cellProps } = cell.getCellProps();
-                    return (
-                      <S.Td key={key} {...cellProps}>
-                        {cell.render("Cell")}
-                      </S.Td>
-                    );
-                  })}
-                </S.Tr>
-              );
-            })}
-          </tbody>
-        </S.StyledTable>
-      </S.TableContainer>
-    </>
+      <S.PaginationContainer>
+        <S.PaginationButton
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft size={16} />
+        </S.PaginationButton>
+
+        {Array.from({ length: totalPages }, (_, index) => (
+          <S.PageNumber
+            key={index + 1}
+            $isActive={currentPage === index + 1}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </S.PageNumber>
+        ))}
+
+        <S.PaginationButton
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight size={16} />
+        </S.PaginationButton>
+      </S.PaginationContainer>
+    </S.Container>
   );
-}
+};
 
 export default CampaignTable;
