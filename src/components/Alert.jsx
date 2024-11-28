@@ -1,5 +1,5 @@
 import React from "react";
-import { Atom } from "lucide-react";
+import { Activity } from "lucide-react";
 import * as S from "../styles/AlertStyle";
 
 const Alert = ({ message, onClose }) => {
@@ -26,7 +26,7 @@ const Alert = ({ message, onClose }) => {
     <S.AlertBackdrop onClick={handleBackdropClick}>
       <S.AlertContainer>
         <S.IconWrapper>
-          <Atom />
+          <Activity />
         </S.IconWrapper>
         <S.AlertText>{message}</S.AlertText>
         <S.AlertButton onClick={onClose}>OK</S.AlertButton>

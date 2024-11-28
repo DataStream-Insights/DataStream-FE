@@ -1,162 +1,135 @@
-// FilterManagement.jsx
-import React, { useEffect } from "react";
-import { useTable, useRowSelect } from "react-table";
-import { Search, Plus, MoreVertical, X } from "lucide-react";
+import React, { useState, useMemo, useEffect } from "react";
+import { Search, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useParams } from "react-router-dom";
 import useFilterData from "../../hooks/filter/useFilterData";
 import * as S from "../../styles/main/tableStyle";
-
 import Loading from "../../components/Loading";
-export function FilterManagement({ onSelect, onCreate, isDetailVisible }) {
+
+const FilterManagement = ({ onSelect, onCreate, isDetailVisible }) => {
   const { campaignId, formatId } = useParams();
   const { data, isLoading, loadFilters } = useFilterData();
-
-  const handleRowClick = (row) => {
-    const duration = 800; // 애니메이션 지속 시간 (밀리초)
-    const start = window.pageYOffset;
-    const startTime =
-      "now" in window.performance ? performance.now() : new Date().getTime();
-
-    const scroll = () => {
-      const now =
-        "now" in window.performance ? performance.now() : new Date().getTime();
-      const time = Math.min(1, (now - startTime) / duration);
-
-      // easeInOutQuad 이징 함수 사용
-      const timeFunction =
-        time < 0.5 ? 2 * time * time : -1 + (4 - 2 * time) * time;
-
-      window.scrollTo(0, start * (1 - timeFunction));
-
-      if (time < 1) {
-        requestAnimationFrame(scroll);
-      }
-    };
-
-    requestAnimationFrame(scroll);
-    onSelect(row.original);
-  };
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   const handleCreateClick = () => {
     if (onCreate) {
-      onCreate(); // 새로고침 처리
+      onCreate();
     }
   };
 
-  // data가 변경될 때마다 테이블 업데이트
+  const handleRowClick = (filter) => {
+    if (onSelect) {
+      onSelect(filter);
+    }
+  };
+
   useEffect(() => {
     loadFilters();
   }, [loadFilters, isDetailVisible]);
 
-  const columns = React.useMemo(
-    () => [
-      {
-        id: "selection",
-        Header: ({ getToggleAllRowsSelectedProps }) => {
-          const { indeterminate, ...props } = getToggleAllRowsSelectedProps();
-          return (
-            <S.Checkbox
-              {...props}
-              ref={(el) => {
-                if (el) {
-                  el.indeterminate = indeterminate;
-                }
-              }}
-            />
-          );
-        },
-        Cell: ({ row }) => {
-          const { indeterminate, ...props } = row.getToggleRowSelectedProps();
-          return <S.Checkbox {...props} />;
-        },
-      },
-      { Header: "No", accessor: "id" },
-      { Header: "필터 ID", accessor: "filterManageId" },
-      { Header: "필터링명", accessor: "filterName" },
-    ],
-    []
-  );
-
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable(
-      {
-        columns,
-        data: data || [],
-      },
-      useRowSelect
+  const filteredData = useMemo(() => {
+    return (data || []).filter(
+      (filter) =>
+        filter.filterName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        filter.filterManageId?.toLowerCase().includes(searchTerm.toLowerCase())
     );
+  }, [data, searchTerm]);
+
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredData.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredData, currentPage]);
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   if (isLoading) {
     return <Loading />;
   }
 
   return (
-    <>
-      <S.HeaderContainer>
-        <S.FilterRow>
-          <S.SearchInput placeholder="필터링명 검색" />
-
-          <S.ButtonGroup>
-            <S.SearchButton>
-              <Search size={16} />
-            </S.SearchButton>
+    <S.Container>
+      <S.Header>
+        <S.HeaderTop>
+          <S.Title>필터 관리</S.Title>
+          {!isDetailVisible && (
             <S.CreateButton onClick={handleCreateClick}>
               <Plus size={16} />
-              Create
+              생성하기
             </S.CreateButton>
-            <S.SearchButton>
-              <MoreVertical size={16} />
-            </S.SearchButton>
-          </S.ButtonGroup>
-        </S.FilterRow>
-      </S.HeaderContainer>
-      <S.TableContainer>
-        <S.StyledTable {...getTableProps()}>
-          <S.THead>
-            {headerGroups.map((headerGroup) => {
-              const { key, ...headerGroupProps } =
-                headerGroup.getHeaderGroupProps();
-              return (
-                <S.Tr key={key} {...headerGroupProps}>
-                  {headerGroup.headers.map((column) => {
-                    const { key, ...columnProps } = column.getHeaderProps();
-                    return (
-                      <S.Th key={key} {...columnProps}>
-                        {column.render("Header")}
-                      </S.Th>
-                    );
-                  })}
-                </S.Tr>
-              );
-            })}
-          </S.THead>
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              const { key, ...rowProps } = row.getRowProps();
-              return (
-                <S.Tr
-                  key={key}
-                  {...rowProps}
-                  onClick={() => handleRowClick(row)}
-                  style={{ cursor: "pointer" }}
-                >
-                  {row.cells.map((cell) => {
-                    const { key, ...cellProps } = cell.getCellProps();
-                    return (
-                      <S.Td key={key} {...cellProps}>
-                        {cell.render("Cell")}
-                      </S.Td>
-                    );
-                  })}
-                </S.Tr>
-              );
-            })}
-          </tbody>
-        </S.StyledTable>
-      </S.TableContainer>
-    </>
+          )}
+        </S.HeaderTop>
+
+        <S.SearchContainer>
+          <S.SearchInput
+            value={searchTerm}
+            onChange={handleSearchChange}
+            placeholder="필터링명 검색"
+          />
+          <S.SearchButton>
+            <Search size={20} />
+          </S.SearchButton>
+        </S.SearchContainer>
+      </S.Header>
+
+      <S.Table>
+        <thead>
+          <S.TableHeader>
+            <th>필터링명</th>
+            <th>필터 ID</th>
+          </S.TableHeader>
+        </thead>
+        <tbody>
+          {paginatedData.map((filter) => (
+            <S.TableRow
+              key={filter.filterManageId}
+              onClick={() => handleRowClick(filter)}
+            >
+              <S.TableCell>{filter.filterName}</S.TableCell>
+              <S.TableCell>
+                <div className="id-cell">{filter.filterManageId}</div>
+              </S.TableCell>
+            </S.TableRow>
+          ))}
+        </tbody>
+      </S.Table>
+
+      <S.PaginationContainer>
+        <S.PaginationButton
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeft size={16} />
+        </S.PaginationButton>
+
+        {Array.from({ length: totalPages }, (_, index) => (
+          <S.PageNumber
+            key={index + 1}
+            $isActive={currentPage === index + 1}
+            onClick={() => handlePageChange(index + 1)}
+          >
+            {index + 1}
+          </S.PageNumber>
+        ))}
+
+        <S.PaginationButton
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRight size={16} />
+        </S.PaginationButton>
+      </S.PaginationContainer>
+    </S.Container>
   );
-}
+};
 
 export default FilterManagement;

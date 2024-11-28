@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Layout } from "../../components/Layout";
-import { CampaignTable } from "../../components/campaign/CampaignTable";
+import CampaignTable from "../../components/campaign/CampaignTable";
 import CreateCampaign from "./createCampaign";
 import * as S from "../../styles/format/formatPageStyle"; // format 스타일 재사용
 

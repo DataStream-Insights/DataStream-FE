@@ -10,7 +10,7 @@ const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const { data, isLoading } = useFormatData();
-  const itemsPerPage = 7;
+  const itemsPerPage = 10;
 
   const filteredFormats = useMemo(() => {
     return (formats || []).filter(
@@ -53,7 +53,7 @@ const LogFormatList = ({ formats, onSelect, onCreate, isDetailVisible }) => {
             </S.CreateButton>
           )}
         </S.HeaderTop>
-        <S.SubTitle>Log Format 관리</S.SubTitle>
+        <S.SubTitle></S.SubTitle>
 
         <S.SearchContainer>
           <S.SearchInput

@@ -3,7 +3,9 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   gap: 24px;
-  padding: 20px;
+  padding: 1rem;
+  height: 100%;
+  background-color: white;
 `;
 
 export const LeftSection = styled.div`
@@ -12,6 +14,221 @@ export const LeftSection = styled.div`
 
 export const RightSection = styled.div`
   flex: 1;
+`;
+
+export const Header = styled.div`
+  margin-bottom: 1.5rem;
+`;
+
+export const HeaderTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+`;
+
+export const Title = styled.h2`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+`;
+
+export const SearchContainer = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+`;
+
+export const SearchInput = styled.input`
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+  }
+`;
+
+export const SearchButton = styled.button`
+  padding: 0.5rem;
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  color: #6b7280;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+`;
+
+export const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+`;
+
+export const TableHeader = styled.tr`
+  border-bottom: 1px solid #e5e7eb;
+
+  th {
+    padding: 0.75rem;
+    text-align: left;
+    font-weight: 700;
+    color: #374151;
+    font-size: 0.875rem;
+    max-width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export const TableRow = styled.tr`
+  cursor: pointer;
+  border-bottom: 1px solid #e5e7eb;
+
+  &:hover {
+    background-color: #f9fafb;
+  }
+`;
+
+export const TableCell = styled.td`
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  color: #374151;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    white-space: normal;
+    overflow: visible;
+    position: relative;
+    z-index: 1;
+  }
+`;
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+  gap: 8px;
+`;
+
+export const PaginationButton = styled.button`
+  padding: 8px;
+  border: 1px solid #e9ecef;
+  background-color: white;
+  cursor: pointer;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #f8f9fa;
+  }
+`;
+
+export const PageNumber = styled.button`
+  padding: 8px 12px;
+  border: 1px solid #e9ecef;
+  background-color: ${(props) => (props.$isActive ? "#4263eb" : "white")};
+  color: ${(props) => (props.$isActive ? "white" : "#495057")};
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: ${(props) => (props.$isActive ? "#4263eb" : "#f8f9fa")};
+  }
+`;
+
+// 필터 섹션 관련 스타일
+export const FilterSection = styled.div`
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  padding: 20px;
+`;
+
+export const FilterTitle = styled.h3`
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 1rem;
+`;
+
+// Save 버튼 관련 스타일
+export const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 20px;
+`;
+
+export const SaveButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.875rem;
+
+  &:hover {
+    background-color: #2563eb;
+  }
+`;
+
+// 폼 관련 스타일
+export const Section = styled.div`
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+`;
+
+export const FormGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+`;
+
+export const Label = styled.label`
+  font-size: 0.813rem;
+  font-weight: 500;
+  color: #374151;
+`;
+
+export const Input = styled.input`
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: ${(props) => (props.readOnly ? "#f9fafb" : "white")};
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
+`;
+
+export const RepeatSection = styled.div`
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #e5e7eb;
 `;
 
 export const TableContainer = styled.div`
@@ -48,30 +265,6 @@ export const Td = styled.td`
   border-bottom: 1px solid #e9ecef;
 `;
 
-export const SearchInput = styled.input`
-  padding: 0.5rem;
-  border: 1px solid #e9ecef;
-  border-radius: 4px;
-  width: 200px;
-  &:focus {
-    outline: none;
-    border-color: #4dabf7;
-  }
-`;
-
-export const FilterSection = styled.div`
-  background: #fff;
-  border: 1px solid #e9ecef;
-  border-radius: 4px;
-  padding: 20px;
-`;
-
-export const FilterTitle = styled.h3`
-  margin: 0 0 16px 0;
-  font-size: 16px;
-  color: #212529;
-`;
-
 export const FilterTag = styled.div`
   display: flex;
   align-items: center;
@@ -101,12 +294,6 @@ export const Tag = styled.span`
     background: #e6fcf5;
     color: #087f5b;
   }
-`;
-
-export const RepeatSection = styled.div`
-  margin-top: 24px;
-  padding-top: 16px; // 위 여백 추가
-  border-top: 1px solid #e9ecef; // 구분선 추가
 `;
 
 export const InputGroup = styled.div`
@@ -174,13 +361,6 @@ export const Switch = styled.label`
   }
 `;
 
-export const ButtonContainer = styled.div`
-  display: flex;
-  justify-content: flex-end; // 오른쪽 정렬
-  gap: 8px; // 버튼 사이 간격
-  margin-top: 20px;
-`;
-
 export const BackButton = styled.button`
   padding: 8px 16px;
   background: #ffffff;
@@ -191,49 +371,5 @@ export const BackButton = styled.button`
 
   &:hover {
     background: #f0f0f0;
-  }
-`;
-
-export const SaveButton = styled.button`
-  padding: 8px 16px;
-  background: #228be6;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-
-  &:hover {
-    background: #1c7ed6;
-  }
-`;
-
-export const Section = styled.div`
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-`;
-
-export const FormGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-export const Label = styled.label`
-  font-size: 0.813rem;
-  font-weight: 500;
-  color: #374151;
-`;
-
-export const Input = styled.input`
-  width: 100%;
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  background-color: ${(props) => (props.readOnly ? "#f9fafb" : "white")};
-
-  &:focus {
-    outline: none;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
   }
 `;

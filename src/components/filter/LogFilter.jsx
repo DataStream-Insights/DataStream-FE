@@ -1,19 +1,13 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useTable } from "react-table";
+import { Search, Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
-import { X } from "lucide-react";
 import * as F from "../../styles/filter/filterStyle";
-import * as S from "../../styles/filter/filterdetailStyle"; // 헤더 스타일
-import { CustomTablePagination } from "../../styles/filter/filterPagenationStyle";
-import FirstPageRoundedIcon from "@mui/icons-material/FirstPageRounded";
-import LastPageRoundedIcon from "@mui/icons-material/LastPageRounded";
-import ChevronLeftRoundedIcon from "@mui/icons-material/ChevronLeftRounded";
-import ChevronRightRoundedIcon from "@mui/icons-material/ChevronRightRounded";
-import BehaviorFilter from "./BehaviorFilter";
+import * as S from "../../styles/filter/filterdetailStyle";
 import useFilterCreate from "../../hooks/filter/useFilterCreate";
 import { generateFilterId } from "../../utils/idGenerator";
 import Loading from "../../components/Loading";
 import { useAlert } from "../../context/AlertContext";
+import BehaviorFilter from "./BehaviorFilter";
 
 const LogFilter = ({
   onClose,
@@ -34,40 +28,22 @@ const LogFilter = ({
   } = useFilterCreate();
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-  const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
-  const { campaignId: urlCampaignId, formatId: urlFormatId } = useParams();
-
-  // 컬럼 정의
-  const columns = useMemo(
-    () => [
-      { Header: "아이템 명", accessor: "name" },
-      { Header: "아이템 별명", accessor: "namealias" },
-      { Header: "TYPE", accessor: "type" },
-    ],
-    []
-  );
-
-  // 필터링된 데이터
   const filteredData = useMemo(() => {
     if (!Array.isArray(items)) return [];
     if (!searchTerm.trim()) {
-      // 빈 값이거나 null인 항목 제외
       return items.filter(
         (item) => item && item.name && item.namealias && item.type
       );
     }
 
     const searchTermLower = searchTerm.toLowerCase().trim();
-
     return items.filter((item) => {
-      // 유효한 데이터만 포함
       if (!item || !item.name || !item.namealias || !item.type) {
         return false;
       }
-
       return (
         item.name.toLowerCase().includes(searchTermLower) ||
         item.namealias.toLowerCase().includes(searchTermLower) ||
@@ -76,25 +52,20 @@ const LogFilter = ({
     });
   }, [items, searchTerm]);
 
-  // useTable 훅을 컴포넌트 최상위 레벨에서 호출
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({
-      columns,
-      data: filteredData,
-    });
+  const paginatedData = useMemo(() => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    return filteredData.slice(startIndex, startIndex + itemsPerPage);
+  }, [filteredData, currentPage]);
 
-  // 페이지네이션된 데이터
-  const paginatedRows = useMemo(() => {
-    return rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [rows, page, rowsPerPage]);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
   };
 
   const handleSave = async () => {
@@ -104,13 +75,11 @@ const LogFilter = ({
         return;
       }
 
-      // 유효한 필터 체크 (모든 옵션이 선택된 필터만)
       const validFilters = filterSettings.behaviors?.filter(
         (behavior) =>
           behavior.idOption && behavior.operatorOption && behavior.actionValue
       );
 
-      // 유효한 필터가 하나도 없는 경우
       if (!validFilters || validFilters.length === 0) {
         showAlert(
           "최소 하나의 필터를 생성하고 모든 옵션(ID, 연산자, 값)을 선택해주세요."
@@ -150,25 +119,8 @@ const LogFilter = ({
     }
   };
 
-  useEffect(() => {
-    if (setGlobalLoading) {
-      setGlobalLoading(isLoading);
-    }
-  }, [isLoading, setGlobalLoading]);
-
   if (isLoading) {
-    return (
-      <div
-        style={{
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}
-      >
-        <Loading />
-      </div>
-    );
+    return <Loading />;
   }
 
   return (
@@ -181,88 +133,65 @@ const LogFilter = ({
       </S.Header>
       <F.Container>
         <F.LeftSection>
-          <div style={{ marginBottom: "16px" }}>
+          <F.SearchContainer>
             <F.SearchInput
-              placeholder="아이템 검색"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
+              placeholder="아이템 검색"
             />
-          </div>
+            <F.SearchButton>
+              <Search size={20} />
+            </F.SearchButton>
+          </F.SearchContainer>
 
-          <F.TableContainer>
-            <F.StyledTable {...getTableProps()}>
-              <F.THead>
-                {headerGroups.map((headerGroup, groupIndex) => (
-                  <F.Tr
-                    key={`header-group-${groupIndex}`}
-                    {...headerGroup.getHeaderGroupProps()}
-                  >
-                    {headerGroup.headers.map((column, columnIndex) => (
-                      <F.Th
-                        key={`header-${groupIndex}-${columnIndex}`}
-                        {...column.getHeaderProps()}
-                      >
-                        {column.render("Header")}
-                      </F.Th>
-                    ))}
-                  </F.Tr>
-                ))}
-              </F.THead>
-              <tbody {...getTableBodyProps()}>
-                {paginatedRows.map((row, rowIndex) => {
-                  prepareRow(row);
-                  return (
-                    <F.Tr key={`row-${rowIndex}`} {...row.getRowProps()}>
-                      {row.cells.map((cell, cellIndex) => (
-                        <F.Td
-                          key={`cell-${rowIndex}-${cellIndex}`}
-                          {...cell.getCellProps()}
-                        >
-                          {cell.render("Cell")}
-                        </F.Td>
-                      ))}
-                    </F.Tr>
-                  );
-                })}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <CustomTablePagination
-                    rowsPerPageOptions={[
-                      5,
-                      10,
-                      20,
-                      { label: "All", value: filteredData.length },
-                    ]}
-                    colSpan={3}
-                    count={rows.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    slotProps={{
-                      select: {
-                        "aria-label": "rows per page",
-                      },
-                      actions: {
-                        showFirstButton: true,
-                        showLastButton: true,
-                        slots: {
-                          firstPageIcon: FirstPageRoundedIcon,
-                          lastPageIcon: LastPageRoundedIcon,
-                          nextPageIcon: ChevronRightRoundedIcon,
-                          backPageIcon: ChevronLeftRoundedIcon,
-                        },
-                      },
-                    }}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                  />
-                </tr>
-              </tfoot>
-            </F.StyledTable>
-          </F.TableContainer>
+          <F.Table>
+            <thead>
+              <F.TableHeader>
+                <th>아이템 명</th>
+                <th>아이템 별명</th>
+                <th>TYPE</th>
+              </F.TableHeader>
+            </thead>
+            <tbody>
+              {paginatedData.map((item, index) => (
+                <F.TableRow key={index}>
+                  <F.TableCell>{item.name}</F.TableCell>
+                  <F.TableCell>{item.namealias}</F.TableCell>
+                  <F.TableCell>{item.type}</F.TableCell>
+                </F.TableRow>
+              ))}
+            </tbody>
+          </F.Table>
+
+          <F.PaginationContainer>
+            <F.PaginationButton
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeft size={16} />
+            </F.PaginationButton>
+
+            {Array.from({ length: totalPages }, (_, index) => (
+              <F.PageNumber
+                key={index + 1}
+                $isActive={currentPage === index + 1}
+                onClick={() => handlePageChange(index + 1)}
+              >
+                {index + 1}
+              </F.PageNumber>
+            ))}
+
+            <F.PaginationButton
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRight size={16} />
+            </F.PaginationButton>
+          </F.PaginationContainer>
         </F.LeftSection>
 
         <F.RightSection>
+          {/* 오른쪽 섹션은 기존 코드 유지 */}
           <F.FilterSection>
             <F.FilterTitle>행동 정의 설정</F.FilterTitle>
             <BehaviorFilter
