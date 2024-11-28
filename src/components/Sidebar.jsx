@@ -49,8 +49,9 @@ const Sidebar = () => {
 
   return (
     <S.SidebarContainer collapsed={collapsed}>
-      <S.SidebarHeader>
+      <S.SidebarHeader collapsed={collapsed}>
         <S.LogoContainer
+          collapsed={collapsed}
           onClick={() => navigate("/")}
           style={{ cursor: "pointer" }}
         >

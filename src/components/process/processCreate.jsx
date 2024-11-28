@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { X, Save } from "lucide-react";
+import { X, Save, ArrowLeft } from "lucide-react";
 import * as S from "../../styles/process/processCreateStyle";
 import useProcess from "../../hooks/process/useProcess";
 import Loading from "../../components/Loading";
@@ -138,6 +138,11 @@ const ProcessCreate = () => {
   return (
     <Layout title="프로세스 생성">
       <S.ProcessContainer>
+        <S.BackButtonWrapper>
+          <S.BackButton onClick={() => navigate(-1)}>
+            <ArrowLeft size={20} />
+          </S.BackButton>
+        </S.BackButtonWrapper>
         <S.HeaderContainer>
           <div>
             <S.SectionTitle>파이프라인</S.SectionTitle>

@@ -8,16 +8,16 @@ const LogFormatView = ({ onClose, selectedFormat, fields, campaignId }) => {
   const { showAlert } = useAlert();
   const navigate = useNavigate();
 
-  const handleFilterClick = () => {
-    if (!selectedFormat?.formatID) {
-      showAlert("포맷 정보를 찾을 수 없습니다.");
-      return;
-    }
+  // const handleFilterClick = () => {
+  //   if (!selectedFormat?.formatID) {
+  //     showAlert("포맷 정보를 찾을 수 없습니다.");
+  //     return;
+  //   }
 
-    navigate(
-      `/filter/${campaignId}/${selectedFormat.formatID}/filtermanagement`
-    );
-  };
+  //   navigate(
+  //     `/filter/${campaignId}/${selectedFormat.formatID}/filtermanagement`
+  //   );
+  // };
 
   return (
     <S.Container>
@@ -92,9 +92,9 @@ const LogFormatView = ({ onClose, selectedFormat, fields, campaignId }) => {
         {/* <S.ButtonContainer>
           <S.Button onClick={onClose}>닫기</S.Button>
         </S.ButtonContainer> */}
-        <S.ButtonContainer align="center">
+        {/* <S.ButtonContainer align="center">
           <S.FilterButton onClick={handleFilterClick}>필터링</S.FilterButton>
-        </S.ButtonContainer>
+        </S.ButtonContainer> */}
       </S.Card>
     </S.Container>
   );

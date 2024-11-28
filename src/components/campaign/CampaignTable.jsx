@@ -18,9 +18,9 @@ const CampaignTable = ({ onCreate, isDetailVisible }) => {
     }
   };
 
-  const handleRowClick = (campaignId) => {
-    navigate(`/format/${campaignId}/management`);
-  };
+  // const handleRowClick = (campaignId) => {
+  //   navigate(`/format/${campaignId}/management`);
+  // };
 
   useEffect(() => {
     if (!isDetailVisible) {
@@ -76,7 +76,7 @@ const CampaignTable = ({ onCreate, isDetailVisible }) => {
             placeholder="캠페인 정보"
           />
           <S.SearchButton>
-            <Search size={20} />
+            <Search size={18} />
           </S.SearchButton>
         </S.SearchContainer>
       </S.Header>
@@ -99,7 +99,7 @@ const CampaignTable = ({ onCreate, isDetailVisible }) => {
           {paginatedData.map((campaign) => (
             <S.TableRow
               key={campaign.campaignId}
-              onClick={() => handleRowClick(campaign.campaignId)}
+              // onClick={() => handleRowClick(campaign.campaignId)}
             >
               <S.TableCell>{campaign.campaignName}</S.TableCell>
               <S.TableCell>{campaign.campaignId}</S.TableCell>

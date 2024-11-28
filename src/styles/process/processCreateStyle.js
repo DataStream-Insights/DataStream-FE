@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const ProcessContainer = styled.div`
-  padding: 2rem;
+  padding: 0.3rem;
   background-color: white;
   border-radius: 8px;
 `;
@@ -115,6 +115,39 @@ export const PreviewSection = styled.div`
   padding: 1rem;
   background-color: #f8f9fa;
   border-radius: 4px;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+`;
+
+export const BackButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 1rem;
+`;
+
+export const BackButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  background-color: transparent;
+  color: #666;
+
+  &:hover {
+    color: #333;
+  }
+
+  svg {
+    stroke-width: 2.5;
+  }
 `;
 
 export const SubmitButton = styled.button`
