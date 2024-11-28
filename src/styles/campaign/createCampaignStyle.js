@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Form as AntForm } from "antd";
 
 export const FormContainer = styled.div`
   max-width: 800px;
@@ -7,22 +8,65 @@ export const FormContainer = styled.div`
   padding: 5px;
 `;
 
+export const StyledForm = styled(AntForm)`
+  .ant-form-item {
+    margin-bottom: 24px;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: 8px;
+  }
+
+  .ant-select {
+    min-width: 150px;
+  }
+
+  .ant-input,
+  .ant-select,
+  .ant-picker {
+    &:hover,
+    &:focus {
+      border-color: #4285f4;
+    }
+  }
+
+  .ant-radio-group {
+    display: flex;
+    gap: 32px;
+  }
+`;
+
 export const FormCard = styled.div`
   background: white;
   height: 100%;
-  padding: 20px;
+  padding: 10px 0px 10px 32px;
   overflow-y: auto;
 `;
 
+export const CategoryContainer = styled.div`
+  display: flex;
+  gap: 12px;
+
+  .ant-select {
+    flex: 1;
+  }
+`;
+
 export const SectionTitle = styled.h2`
-  font-size: 16px;
-  font-weight: bold;
-  margin: 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0 0 24px;
   display: flex;
   align-items: center;
+
   &:before {
-    content: "■";
+    content: "";
+    width: 4px;
+    height: 18px;
+    background: #4285f4;
     margin-right: 8px;
+    border-radius: 2px;
   }
 `;
 
@@ -52,13 +96,10 @@ export const TextArea = styled.textarea`
 
 export const SelectContainer = styled.div`
   display: flex;
-  gap: 10px;
+  gap: 12px;
 
-  select {
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    min-width: 150px;
+  .ant-select {
+    flex: 1;
   }
 `;
 
@@ -91,8 +132,8 @@ export const CustomerTypeSelect = styled.select`
 
 export const ButtonContainer = styled.div`
   display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
+  justify-content: flex-end;
+  margin-top: 32px;
 `;
 
 export const BackButton = styled.button`

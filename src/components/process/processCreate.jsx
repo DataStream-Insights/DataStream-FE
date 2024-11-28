@@ -8,6 +8,7 @@ import { Layout } from "../../components/Layout";
 import { generatePipelineId } from "../../utils/idGenerator";
 import { Switch } from "../../components/ui/switch";
 import { useAlert } from "../../context/AlertContext";
+import { Form, Input, Select } from "antd";
 
 const ProcessCreate = () => {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ const ProcessCreate = () => {
       filters: [],
     },
   ]);
+  const [form] = Form.useForm();
 
   // 포맷 선택 추가
   const addFormatSelection = () => {
@@ -143,195 +145,186 @@ const ProcessCreate = () => {
             <ArrowLeft size={20} />
           </S.BackButton>
         </S.BackButtonWrapper>
-        <S.HeaderContainer>
-          <div>
-            <S.SectionTitle>파이프라인</S.SectionTitle>
-            <S.ProcessNameInput
-              placeholder="파이프라인 이름을 입력하세요"
-              value={pipelineName}
-              onChange={(e) => setPipelineName(e.target.value)}
-            />
-          </div>
-          <S.ToggleWrapper>
-            <span>중복제거</span>
-            <Switch
-              checked={isDistinct}
-              onCheckedChange={setIsDistinct}
-              className="ml-2"
-            />
-          </S.ToggleWrapper>
-        </S.HeaderContainer>
 
-        <S.Section>
-          <S.SectionTitle>캠페인 선택</S.SectionTitle>
-          <S.Select
-            value={selectedCampaign}
-            onChange={(e) => setSelectedCampaign(e.target.value)}
-          >
-            <option value="">선택하세요</option>
-            {data.campaigns.length > 0 ? (
-              data.campaigns.map((campaign) => (
-                <option key={campaign.id} value={campaign.id}>
+        <S.StyledForm form={form} layout="vertical">
+          <S.HeaderContainer>
+            <div>
+              <Form.Item label="파이프라인" style={{ width: "700px" }}>
+                <Input
+                  placeholder="파이프라인 이름을 입력하세요"
+                  value={pipelineName}
+                  onChange={(e) => setPipelineName(e.target.value)}
+                />
+              </Form.Item>
+            </div>
+            <S.ToggleWrapper>
+              <span>중복제거</span>
+              <Switch
+                checked={isDistinct}
+                onCheckedChange={setIsDistinct}
+                className="ml-2"
+              />
+            </S.ToggleWrapper>
+          </S.HeaderContainer>
+
+          <Form.Item label="캠페인 선택">
+            <Select
+              value={selectedCampaign}
+              onChange={setSelectedCampaign}
+              placeholder="선택하세요"
+            >
+              {data.campaigns.map((campaign) => (
+                <Select.Option key={campaign.id} value={campaign.id}>
                   {campaign.name}
-                </option>
-              ))
-            ) : (
-              <option value="" disabled>
-                사용 가능한 캠페인이 없습니다
-              </option>
+                </Select.Option>
+              ))}
+            </Select>
+            {selectedCampaign && (
+              <S.SelectionInfo>
+                <S.InfoItem>
+                  <strong>캠페인명:</strong>
+                  {data.campaigns.find((c) => c.id === selectedCampaign)?.name}
+                </S.InfoItem>
+                <S.InfoItem>
+                  <strong>기안자:</strong>
+                  {
+                    data.campaigns.find((c) => c.id === selectedCampaign)
+                      ?.creator
+                  }
+                </S.InfoItem>
+              </S.SelectionInfo>
             )}
-          </S.Select>
-          {selectedCampaign && (
-            <S.SelectionInfo>
-              <S.InfoItem>
-                <strong>캠페인명:</strong>
-                {data.campaigns.find((c) => c.id === selectedCampaign)?.name}
-              </S.InfoItem>
-              <S.InfoItem>
-                <strong>기안자:</strong>
-                {data.campaigns.find((c) => c.id === selectedCampaign)?.creator}
-              </S.InfoItem>
-            </S.SelectionInfo>
-          )}
-        </S.Section>
-        <S.FormatsContainer>
-          {formatSelections.map((formatSelection, formatIndex) => (
-            <S.FormatBox key={formatIndex}>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <S.Select
-                  value={formatSelection.formatId}
-                  onChange={(e) =>
-                    handleFormatChange(formatIndex, e.target.value)
+          </Form.Item>
+
+          <S.FormatsContainer>
+            {formatSelections.map((formatSelection, formatIndex) => (
+              <S.FormatBox key={formatIndex}>
+                <div
+                  style={{ display: "flex", alignItems: "center", gap: "8px" }}
+                >
+                  <Select
+                    value={formatSelection.formatId}
+                    onChange={(value) => handleFormatChange(formatIndex, value)}
+                    placeholder="포맷 선택"
+                    style={{ flex: 1 }}
+                  >
+                    {data.formats
+                      .filter(
+                        (format) =>
+                          format.id === formatSelection.formatId ||
+                          !formatSelections.some(
+                            (selection) => selection.formatId === format.id
+                          )
+                      )
+                      .map((format) => (
+                        <Select.Option key={format.id} value={format.id}>
+                          {format.name}
+                        </Select.Option>
+                      ))}
+                  </Select>
+                  <S.IconButton
+                    onClick={() => removeFormatSelection(formatIndex)}
+                  >
+                    <X size={12} />
+                  </S.IconButton>
+                </div>
+
+                {formatSelection.formatId && (
+                  <S.SelectionInfo>
+                    <S.InfoItem>
+                      <strong>포맷명:</strong>
+                      {
+                        data.formats.find(
+                          (f) => f.id === formatSelection.formatId
+                        )?.name
+                      }
+                    </S.InfoItem>
+                    <S.InfoItem>
+                      <strong>ID:</strong>
+                      {formatSelection.formatId}
+                    </S.InfoItem>
+                  </S.SelectionInfo>
+                )}
+
+                {/* 필터 섹션 */}
+                {formatSelection.filters.map((filter, filterIndex) => (
+                  <S.FilterBox key={filterIndex}>
+                    <div
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                      }}
+                    >
+                      <Select
+                        value={filter}
+                        onChange={(value) =>
+                          handleFilterChange(formatIndex, filterIndex, value)
+                        }
+                        placeholder="필터 선택"
+                        style={{ flex: 1 }}
+                      >
+                        {data.filters
+                          .filter(
+                            (f) =>
+                              f.id === filter ||
+                              !formatSelection.filters.some(
+                                (selectedFilter) => selectedFilter === f.id
+                              )
+                          )
+                          .map((filter) => (
+                            <Select.Option key={filter.id} value={filter.id}>
+                              {filter.name}
+                            </Select.Option>
+                          ))}
+                      </Select>
+                      <S.IconButton
+                        onClick={() => removeFilter(formatIndex, filterIndex)}
+                      >
+                        <X size={12} />
+                      </S.IconButton>
+                    </div>
+                    {filter && (
+                      <S.SelectionInfo>
+                        <S.InfoItem>
+                          <strong>필터명:</strong>
+                          {data.filters.find((f) => f.id === filter)?.name}
+                        </S.InfoItem>
+                        <S.InfoItem>
+                          <strong>ID:</strong>
+                          {filter}
+                        </S.InfoItem>
+                      </S.SelectionInfo>
+                    )}
+                  </S.FilterBox>
+                ))}
+
+                <S.AddIconButton
+                  onClick={() => addFilter(formatIndex)}
+                  disabled={
+                    formatSelection.filters.length >= data.filters.length
                   }
                 >
-                  <option value="">포맷 선택</option>
-                  {data.formats
-                    .filter(
-                      (format) =>
-                        // 현재 선택된 포맷이거나, 다른 위치에서 선택되지 않은 포맷만 보여줌
-                        format.id === formatSelection.formatId ||
-                        !formatSelections.some(
-                          (selection) => selection.formatId === format.id
-                        )
-                    )
-                    .map((format) => (
-                      <option key={format.id} value={format.id}>
-                        {format.name}
-                      </option>
-                    ))}
-                </S.Select>
-                <S.IconButton
-                  onClick={() => removeFormatSelection(formatIndex)}
-                  aria-label="Delete format"
-                >
-                  <span
-                    style={{
-                      display: "block",
-                      width: "12px",
-                      height: "2px",
-                      backgroundColor: "currentColor",
-                    }}
-                  />
-                </S.IconButton>
-              </div>
-              {formatSelection.formatId && (
-                <S.SelectionInfo>
-                  <S.InfoItem>
-                    <strong>포맷명:</strong>
-                    {
-                      data.formats.find(
-                        (f) => f.id === formatSelection.formatId
-                      )?.name
-                    }
-                  </S.InfoItem>
-                  <S.InfoItem>
-                    <strong>ID:</strong>
-                    {formatSelection.formatId}
-                  </S.InfoItem>
-                </S.SelectionInfo>
-              )}
+                  필터 추가
+                </S.AddIconButton>
+              </S.FormatBox>
+            ))}
 
-              {formatSelection.filters.map((filter, filterIndex) => (
-                <S.FilterBox key={filterIndex}>
-                  <div style={{ display: "flex", alignItems: "center" }}>
-                    <S.Select
-                      value={filter}
-                      onChange={(e) =>
-                        handleFilterChange(
-                          formatIndex,
-                          filterIndex,
-                          e.target.value
-                        )
-                      }
-                    >
-                      <option value="">필터 선택</option>
-                      {data.filters
-                        .filter(
-                          (f) =>
-                            // 현재 선택된 필터이거나, 같은 포맷 내에서 선택되지 않은 필터만 보여줌
-                            f.id === filter ||
-                            !formatSelection.filters.some(
-                              (selectedFilter) => selectedFilter === f.id
-                            )
-                        )
-                        .map((filter) => (
-                          <option key={filter.id} value={filter.id}>
-                            {filter.name}
-                          </option>
-                        ))}
-                    </S.Select>
-                    <S.IconButton
-                      onClick={() => removeFilter(formatIndex, filterIndex)}
-                      aria-label="Delete filter"
-                    >
-                      <span
-                        style={{
-                          display: "block",
-                          width: "12px",
-                          height: "2px",
-                          backgroundColor: "currentColor",
-                        }}
-                      />
-                    </S.IconButton>
-                  </div>
-                  {filter && (
-                    <S.SelectionInfo>
-                      <S.InfoItem>
-                        <strong>필터명:</strong>
-                        {data.filters.find((f) => f.id === filter)?.name}
-                      </S.InfoItem>
-                      <S.InfoItem>
-                        <strong>ID:</strong>
-                        {filter}
-                      </S.InfoItem>
-                    </S.SelectionInfo>
-                  )}
-                </S.FilterBox>
-              ))}
+            <S.AddIconButton
+              onClick={addFormatSelection}
+              disabled={formatSelections.length >= data.formats.length}
+            >
+              포맷 추가
+            </S.AddIconButton>
+          </S.FormatsContainer>
 
-              <S.AddIconButton
-                onClick={() => addFilter(formatIndex)}
-                disabled={formatSelection.filters.length >= data.filters.length}
-              >
-                필터 추가
-              </S.AddIconButton>
-            </S.FormatBox>
-          ))}
-
-          <S.AddIconButton
-            onClick={addFormatSelection}
-            disabled={formatSelections.length >= data.formats.length}
-          >
-            포맷 추가
-          </S.AddIconButton>
-        </S.FormatsContainer>
-
-        <S.ButtonContainer>
-          <S.SubmitButton onClick={handleSave}>
-            <Save size={16} />
-            저장
-          </S.SubmitButton>
-        </S.ButtonContainer>
+          <S.ButtonContainer>
+            <S.SubmitButton onClick={handleSave}>
+              <Save size={16} />
+              저장
+            </S.SubmitButton>
+          </S.ButtonContainer>
+        </S.StyledForm>
       </S.ProcessContainer>
     </Layout>
   );

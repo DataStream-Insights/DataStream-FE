@@ -1,11 +1,15 @@
 import styled from "styled-components";
 
 export const SidebarContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
   height: 100vh;
   background-color: white;
   border-right: 1px solid #e5e7eb;
   width: ${(props) => (props.collapsed ? "4.5rem" : "15rem")};
   transition: all 0.3s;
+  z-index: 100;
 `;
 
 export const SidebarHeader = styled.div`

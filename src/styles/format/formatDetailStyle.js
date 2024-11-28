@@ -1,9 +1,33 @@
 import styled from "styled-components";
+import {
+  Form as AntForm,
+  Input as AntInput,
+  Select as AntSelect,
+  Button as AntButton,
+} from "antd";
+
+export const StyledForm = styled(AntForm)`
+  .ant-form-item {
+    margin-bottom: 24px;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: 8px;
+  }
+
+  .ant-input,
+  .ant-select,
+  .ant-picker {
+    &:hover,
+    &:focus {
+      border-color: #4285f4;
+    }
+  }
+`;
 
 export const Container = styled.div`
-  padding: 1rem;
+  padding: 0rem 0rem 1rem 1rem;
   height: 100%;
-  // background-color: #f3f4f6;
 `;
 
 export const Card = styled.div`
@@ -23,9 +47,41 @@ export const Header = styled.div`
 `;
 
 export const Title = styled.h2`
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    background: #4285f4;
+    margin-right: 8px;
+    border-radius: 2px;
+  }
 `;
+
+export const StyledInput = styled(AntInput)`
+  &.ant-input {
+    border-radius: 4px;
+  }
+`;
+
+export const StyledSelect = styled(AntSelect)`
+  &.ant-select {
+    width: 100%;
+  }
+`;
+
+export const StyledButton = styled(AntButton)`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: auto;
+  padding: 6px 16px;
+  border-radius: 20px;
+`;
+
 export const CloseButton = styled.button`
   padding: 0.25rem;
   color: #6b7280;
@@ -84,7 +140,15 @@ export const Select = styled.select`
 `;
 
 export const TableContainer = styled.div`
-  overflow-x: auto;
+  .ant-table {
+    .ant-table-thead > tr > th {
+      font-size: 0.813rem;
+      background: #f9fafb;
+    }
+    .ant-table-tbody > tr > td {
+      font-size: 0.813rem;
+    }
+  }
 `;
 
 export const Table = styled.table`

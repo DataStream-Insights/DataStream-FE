@@ -1,5 +1,20 @@
 import styled from "styled-components";
 
+export const LayoutWrapper = styled.div`
+  min-height: 100vh;
+  // background-color: #f8f9fa;
+`;
+
+export const MainContentWrapper = styled.div`
+  margin-left: ${(props) => (props.collapsed ? "4.5rem" : "15rem")};
+  transition: margin-left 0.3s ease;
+  min-height: 100vh;
+`;
+
+export const MainContainer = styled.div`
+  padding-top: 1rem; // Navbar 높이만큼 패딩
+`;
+
 export const PageContainer = styled.div`
   padding: 20px;
 `;
@@ -57,23 +72,4 @@ export const Description = styled.p`
   font-size: 14px;
   margin: 0;
   line-height: 1.5;
-`;
-
-export const LayoutWrapper = styled.div`
-  display: flex;
-  height: 100%;
-`;
-
-export const MainContentWrapper = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  // overflow: hidden;
-`;
-
-export const MainContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  // overflow: hidden;
 `;
