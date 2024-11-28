@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X } from "lucide-react";
+import { X, Save } from "lucide-react";
 import useCampaignData from "../../hooks/campaign/useCampaginData";
 import * as CS from "../../styles/filter/filterdetailStyle"; // 슬라이드 관련 스타일
 import * as S from "../../styles/campaign/createCampaignStyle"; // 기존 캠페인 스타일
@@ -258,7 +258,17 @@ export function CreateCampaign({ onClose }) {
 
           <S.ButtonContainer>
             <S.SubmitButton type="submit" disabled={isLoading}>
-              {isLoading ? "저장 중..." : "저장하기"}
+              {isLoading ? (
+                <>
+                  <span className="loading-spinner" />
+                  저장 중...
+                </>
+              ) : (
+                <>
+                  <Save size={16} />
+                  저장
+                </>
+              )}
             </S.SubmitButton>
           </S.ButtonContainer>
         </form>

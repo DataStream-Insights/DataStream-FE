@@ -137,75 +137,97 @@ export const CreateButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
+  background-color: transparent;
+  color: #4285f4;
+  border: 1px solid #4285f4;
   border-radius: 0.375rem;
   font-size: 0.875rem;
-
-  &:hover {
-    background-color: #2563eb;
-  }
+  font-weight: 500;
+  transition: all 0.2s ease;
 
   svg {
     width: 16px;
     height: 16px;
+    transition: transform 0.2s ease;
+  }
+
+  &:hover {
+    background-color: #4285f4;
+    color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    transform: translateY(1px);
   }
 `;
-/**
- * 페이지네이션 컨테이너
- * - 페이지 번호와 이전/다음 버튼을 중앙 정렬로 배치
- * - 요소들 사이에 일정한 간격 유지
- */
+
 export const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  gap: 8px;
+  margin-top: 16px;
+  gap: 4px;
 `;
 
-/**
- * 이전/다음 페이지 버튼
- * - 테두리와 호버 효과 포함
- * - 비활성화 상태일 때 시각적 피드백 제공
- */
 export const PaginationButton = styled.button`
-  padding: 8px;
-  border: 1px solid #e9ecef;
-  background-color: white;
+  padding: 6px;
+  border: none;
+  background-color: transparent;
+  color: #6b7280;
   cursor: pointer;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
+    color: #d1d5db;
   }
 
   &:hover:not(:disabled) {
-    background-color: #f8f9fa;
+    background-color: #f3f4f6;
+    color: #4285f4;
   }
 `;
 
-/**
- * 페이지 번호 버튼
- * - $isActive prop에 따라 활성/비활성 상태 스타일 변경
- * - 호버 효과 포함
- */
 export const PageNumber = styled.button`
-  padding: 8px 12px;
-  border: 1px solid #e9ecef;
-  background-color: ${(props) => (props.$isActive ? "#4263eb" : "white")};
-  color: ${(props) => (props.$isActive ? "white" : "#495057")};
+  padding: 4px 8px;
+  border: none;
+  background-color: transparent;
+  color: ${(props) => (props.$isActive ? "#4285F4" : "#6B7280")};
   cursor: pointer;
   border-radius: 4px;
+  font-size: 0.875rem;
+  min-width: 28px;
+  transition: all 0.2s;
+  font-weight: ${(props) => (props.$isActive ? "600" : "normal")};
 
   &:hover {
-    background-color: ${(props) => (props.$isActive ? "#4263eb" : "#f8f9fa")};
+    background-color: ${(props) => (props.$isActive ? "#F3F4F6" : "#F3F4F6")};
+    color: ${(props) => (props.$isActive ? "#4285F4" : "#4285F4")};
   }
+
+  ${(props) =>
+    props.$isActive &&
+    `
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 2px;
+      background-color: #4285F4;
+      border-radius: 1px;
+    }
+  `}
 `;
 
 export const LoadingMessage = styled.div`

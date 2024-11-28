@@ -1,44 +1,44 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 120">
   <!-- Main circular element -->
-  <circle cx="70" cy="60" r="45" fill="#f0f9ff"/>
+  <circle cx="70" cy="60" r="45" fill="#E8F1FF"/>
   
   <!-- Gradient bars representing data -->
   <g transform="translate(35, 40)">
-    <rect x="0" y="0" width="8" height="40" rx="4" fill="#2563eb" opacity="0.3"/>
-    <rect x="0" y="15" width="8" height="25" rx="4" fill="#2563eb" opacity="0.9"/>
+    <rect x="0" y="0" width="8" height="40" rx="4" fill="#0061FF" opacity="0.3"/>
+    <rect x="0" y="15" width="8" height="25" rx="4" fill="#0061FF" opacity="0.9"/>
     
-    <rect x="16" y="0" width="8" height="40" rx="4" fill="#2563eb" opacity="0.3"/>
-    <rect x="16" y="5" width="8" height="35" rx="4" fill="#2563eb" opacity="0.9"/>
+    <rect x="16" y="0" width="8" height="40" rx="4" fill="#0061FF" opacity="0.3"/>
+    <rect x="16" y="5" width="8" height="35" rx="4" fill="#0061FF" opacity="0.9"/>
     
-    <rect x="32" y="0" width="8" height="40" rx="4" fill="#2563eb" opacity="0.3"/>
-    <rect x="32" y="20" width="8" height="20" rx="4" fill="#2563eb" opacity="0.9"/>
+    <rect x="32" y="0" width="8" height="40" rx="4" fill="#0061FF" opacity="0.3"/>
+    <rect x="32" y="20" width="8" height="20" rx="4" fill="#0061FF" opacity="0.9"/>
     
-    <rect x="48" y="0" width="8" height="40" rx="4" fill="#2563eb" opacity="0.3"/>
-    <rect x="48" y="10" width="8" height="30" rx="4" fill="#2563eb" opacity="0.9"/>
+    <rect x="48" y="0" width="8" height="40" rx="4" fill="#0061FF" opacity="0.3"/>
+    <rect x="48" y="10" width="8" height="30" rx="4" fill="#0061FF" opacity="0.9"/>
   </g>
   
   <!-- Accent circles -->
-  <circle cx="40" cy="45" r="4" fill="#2563eb"/>
-  <circle cx="100" cy="45" r="4" fill="#2563eb"/>
+  <circle cx="40" cy="45" r="4" fill="#4285F4"/>
+  <circle cx="100" cy="45" r="4" fill="#4285F4"/>
   
   <!-- Logo text with modern font -->
-  <text x="140" y="75" font-family="Arial, sans-serif" font-weight="800" font-size="64">
-    <tspan fill="#1e40af">Logi</tspan><tspan fill="#2563eb">fy</tspan>
+  <text x="140" y="75" font-family="Arial, sans-serif" font-weight="700" font-size="64">
+    <tspan fill="#0061FF">Logi</tspan><tspan fill="#2196F3">fy</tspan>
   </text>
   
   <!-- Decorative dots -->
-  <g fill="#2563eb">
-    <circle cx="400" cy="40" r="3" opacity="0.4"/>
-    <circle cx="415" cy="40" r="3" opacity="0.6"/>
-    <circle cx="430" cy="40" r="3" opacity="0.8"/>
+  <g fill="#4285F4">
+    <circle cx="400" cy="40" r="3" opacity="0.5"/>
+    <circle cx="415" cy="40" r="3" opacity="0.7"/>
+    <circle cx="430" cy="40" r="3" opacity="0.9"/>
   </g>
   
   <!-- Subtle connecting lines -->
-  <path d="M40 45 Q 70 35 100 45" stroke="#2563eb" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M40 45 Q 70 35 100 45" stroke="#0061FF" stroke-width="1.5" fill="none" opacity="0.4"/>
   
   <!-- Dynamic pulse effect -->
-  <circle cx="70" cy="60" r="48" stroke="#2563eb" stroke-width="1" fill="none" opacity="0.2">
+  <circle cx="70" cy="60" r="48" stroke="#4285F4" stroke-width="1.5" fill="none" opacity="0.3">
     <animate attributeName="r" from="48" to="52" dur="2s" repeatCount="indefinite"/>
-    <animate attributeName="opacity" from="0.2" to="0" dur="2s" repeatCount="indefinite"/>
+    <animate attributeName="opacity" from="0.3" to="0" dur="2s" repeatCount="indefinite"/>
   </circle>
 </svg>

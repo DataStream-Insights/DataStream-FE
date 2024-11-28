@@ -117,41 +117,68 @@ export const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
-  gap: 8px;
+  margin-top: 16px;
+  gap: 4px;
 `;
 
 export const PaginationButton = styled.button`
-  padding: 8px;
-  border: 1px solid #e9ecef;
-  background-color: white;
+  padding: 6px;
+  border: none;
+  background-color: transparent;
+  color: #6b7280;
   cursor: pointer;
   border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 
   &:disabled {
     cursor: not-allowed;
-    opacity: 0.5;
+    opacity: 0.4;
+    color: #d1d5db;
   }
 
   &:hover:not(:disabled) {
-    background-color: #f8f9fa;
+    background-color: #f3f4f6;
+    color: #6366f1; // Indigo-500
   }
 `;
 
 export const PageNumber = styled.button`
-  padding: 8px 12px;
-  border: 1px solid #e9ecef;
-  background-color: ${(props) => (props.$isActive ? "#4263eb" : "white")};
-  color: ${(props) => (props.$isActive ? "white" : "#495057")};
+  padding: 4px 8px;
+  border: none;
+  background-color: transparent;
+  color: ${(props) => (props.$isActive ? "#6366f1" : "#6B7280")}; // Indigo-500
   cursor: pointer;
   border-radius: 4px;
+  font-size: 0.875rem;
+  min-width: 28px;
+  transition: all 0.2s;
+  font-weight: ${(props) => (props.$isActive ? "600" : "normal")};
 
   &:hover {
-    background-color: ${(props) => (props.$isActive ? "#4263eb" : "#f8f9fa")};
+    background-color: #f3f4f6;
+    color: #6366f1; // Indigo-500
   }
+
+  ${(props) =>
+    props.$isActive &&
+    `
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 2px;
+      background-color: #6366f1; // Indigo-500
+      border-radius: 1px;
+    }
+  `}
 `;
 
 // 필터 섹션 관련 스타일
@@ -180,16 +207,24 @@ export const ButtonContainer = styled.div`
 export const SaveButton = styled.button`
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  border-radius: 0.375rem;
   font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: 20px;
+  background: transparent;
+  border: 1.5px solid #10b981; // Green
+  color: #10b981;
+  transition: all 0.2s ease;
 
   &:hover {
-    background-color: #2563eb;
+    background: rgba(16, 185, 129, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 `;
 

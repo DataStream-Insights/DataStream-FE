@@ -61,39 +61,36 @@ export const CreateButton = styled.button`
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background-color: #3b82f6;
-  color: white;
-  border: none;
+  background-color: transparent;
+  color: #4285f4;
+  border: 1px solid #4285f4;
   border-radius: 0.375rem;
   font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+
+  svg {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.2s ease;
+  }
 
   &:hover {
-    background-color: #2563eb;
+    background-color: #4285f4;
+    color: white;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  &:active {
+    transform: translateY(1px);
   }
 `;
-
-// export const Table = styled.table`
-//   width: 100%;
-//   border-collapse: collapse;
-// `;
 
 export const Table = styled.table`
   width: 100%;
   border-collapse: collapse;
   table-layout: fixed; // 테이블 레이아웃 고정
 `;
-
-// export const TableHeader = styled.tr`
-//   border-bottom: 1px solid #e5e7eb;
-
-//   th {
-//     padding: 0.75rem;
-//     text-align: left;
-//     font-weight: 600;
-//     color: #374151;
-//     font-size: 0.875rem;
-//   }
-// `;
 
 export const TableHeader = styled.tr`
   border-bottom: 1px solid #e5e7eb;
@@ -123,12 +120,6 @@ export const TableRow = styled.tr`
     background-color: #f9fafb;
   }
 `;
-
-// export const TableCell = styled.td`
-//   padding: 0.75rem;
-//   font-size: 0.875rem;
-//   color: #374151;
-// `;
 
 export const TableCell = styled.td`
   padding: 0.75rem;
@@ -186,39 +177,66 @@ export const PaginationContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1.5rem;
-  gap: 0.5rem;
+  margin-top: 16px;
+  gap: 4px;
 `;
 
 export const PaginationButton = styled.button`
-  padding: 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.375rem;
-  background-color: white;
-  color: #374151;
+  padding: 6px;
+  border: none;
+  background-color: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s;
 
   &:disabled {
-    opacity: 0.5;
     cursor: not-allowed;
+    opacity: 0.4;
+    color: #d1d5db;
   }
 
   &:hover:not(:disabled) {
-    background-color: #f9fafb;
+    background-color: #f3f4f6;
+    color: #4285f4;
   }
 `;
 
 export const PageNumber = styled.button`
-  padding: 0.5rem 0.75rem;
-  border: 1px solid ${({ $isActive }) => ($isActive ? "#3b82f6" : "#e5e7eb")};
-  border-radius: 0.375rem;
-  background-color: ${({ $isActive }) => ($isActive ? "#3b82f6" : "white")};
-  color: ${({ $isActive }) => ($isActive ? "white" : "#374151")};
-  font-weight: ${({ $isActive }) => ($isActive ? "600" : "normal")};
+  padding: 4px 8px;
+  border: none;
+  background-color: transparent;
+  color: ${(props) => (props.$isActive ? "#4285F4" : "#6B7280")};
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  min-width: 28px;
+  transition: all 0.2s;
+  font-weight: ${(props) => (props.$isActive ? "600" : "normal")};
 
   &:hover {
-    background-color: ${({ $isActive }) => ($isActive ? "#2563eb" : "#f9fafb")};
+    background-color: ${(props) => (props.$isActive ? "#F3F4F6" : "#F3F4F6")};
+    color: ${(props) => (props.$isActive ? "#4285F4" : "#4285F4")};
   }
+
+  ${(props) =>
+    props.$isActive &&
+    `
+    position: relative;
+    
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 12px;
+      height: 2px;
+      background-color: #4285F4;
+      border-radius: 1px;
+    }
+  `}
 `;

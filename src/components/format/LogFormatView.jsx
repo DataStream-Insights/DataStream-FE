@@ -89,9 +89,9 @@ const LogFormatView = ({ onClose, selectedFormat, fields, campaignId }) => {
           </S.Table>
         </S.TableContainer>
 
-        <S.ButtonContainer>
+        {/* <S.ButtonContainer>
           <S.Button onClick={onClose}>닫기</S.Button>
-        </S.ButtonContainer>
+        </S.ButtonContainer> */}
         <S.ButtonContainer align="center">
           <S.FilterButton onClick={handleFilterClick}>필터링</S.FilterButton>
         </S.ButtonContainer>

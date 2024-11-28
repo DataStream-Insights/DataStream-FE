@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { X, Save } from "lucide-react";
 import * as S from "../../styles/process/processCreateStyle";
 import useProcess from "../../hooks/process/useProcess";
 import Loading from "../../components/Loading";
@@ -321,7 +322,10 @@ const ProcessCreate = () => {
         </S.FormatsContainer>
 
         <S.ButtonContainer>
-          <S.SubmitButton onClick={handleSave}>저장</S.SubmitButton>
+          <S.SubmitButton onClick={handleSave}>
+            <Save size={16} />
+            저장
+          </S.SubmitButton>
         </S.ButtonContainer>
       </S.ProcessContainer>
     </Layout>

@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Search, Plus, ChevronLeft, ChevronRight, X } from "lucide-react";
+import { Search, Plus, ChevronLeft, ChevronRight, X, Save } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import * as F from "../../styles/filter/filterStyle";
 import * as S from "../../styles/filter/filterdetailStyle";
@@ -216,7 +216,11 @@ const LogFilter = ({
 
             <F.RepeatSection>
               <F.ButtonContainer>
-                <F.SaveButton onClick={handleSave}>저장</F.SaveButton>
+                <F.SaveButton onClick={handleSave}>
+                  {" "}
+                  <Save size={16} />
+                  생성
+                </F.SaveButton>
               </F.ButtonContainer>
             </F.RepeatSection>
           </F.FilterSection>
