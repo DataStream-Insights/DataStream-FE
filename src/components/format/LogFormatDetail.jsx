@@ -3,6 +3,17 @@ import { Plus, Trash2, X, Play, Save, Filter } from "lucide-react";
 import * as S from "../../styles/format/formatDetailStyle";
 import { useNavigate } from "react-router-dom";
 import { useAlert } from "../../context/AlertContext";
+import {
+  Form,
+  Input,
+  Select,
+  Button,
+  Space,
+  Table,
+  InputNumber,
+  Tooltip,
+} from "antd";
+const { TextArea } = Input;
 
 const LogFormatDetail = ({
   onClose,
@@ -35,6 +46,7 @@ const LogFormatDetail = ({
     name: "",
     description: "",
   });
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (!isNew && selectedFormat) {
@@ -74,9 +86,8 @@ const LogFormatDetail = ({
   };
 
   // 파일 선택 핸들러
-  const handleLogFileSelect = (e) => {
-    const fileName = e.target.value;
-    selectLogFile(fileName);
+  const handleLogFileSelect = (value) => {
+    selectLogFile(value);
   };
 
   // 토글 클릭 시 실행되는 핸들러
@@ -300,146 +311,139 @@ const LogFormatDetail = ({
   return (
     <S.Container>
       <S.Card>
-        <S.Header>
-          <S.Title>
-            {isNew
-              ? "필드 설정 정보"
-              : `${selectedFormat?.formatname || ""} 상세 정보`}
-          </S.Title>
-          <S.CloseButton onClick={onClose}>
-            <X size={20} />
-          </S.CloseButton>
-        </S.Header>
+        <S.StyledForm form={form} layout="vertical">
+          <S.Header>
+            <S.Title>
+              {isNew
+                ? "필드 설정 정보"
+                : `${selectedFormat?.formatname || ""} 상세 정보`}
+            </S.Title>
+            <Button type="text" icon={<X size={20} />} onClick={onClose} />
+          </S.Header>
 
-        {/* 파일 선택 섹션 */}
-        {isNew && (
-          <S.Section>
-            <S.Label>로그 파일 선택</S.Label>
-            <S.Select
-              value={selectedFileName || ""}
-              onChange={handleLogFileSelect}
-            >
-              <option value="">파일을 선택하세요</option>
-              {logFiles.map((fileName, index) => (
-                <option key={index} value={fileName.title}>
-                  {fileName.title}
-                </option>
-              ))}
-            </S.Select>
-          </S.Section>
-        )}
+          {/* 파일 선택 섹션 */}
+          {isNew && (
+            <Form.Item label="로그 파일 선택">
+              <Select
+                value={selectedFileName}
+                onChange={handleLogFileSelect}
+                placeholder="파일을 선택하세요"
+                style={{ width: "100%" }}
+              >
+                {logFiles.map((file, index) => (
+                  <Select.Option key={index} value={file.title}>
+                    {file.title}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+          )}
 
-        {/* Log 서브스트링 섹션 */}
-        <S.Section>
-          <S.Label>Log 서브 스트링</S.Label>
-          <S.LogStyleRow>
-            <S.StyleSelect
-              value={substringType}
-              onChange={(e) => setSubstringType(e.target.value)}
-            >
-              <option>Substring</option>
-            </S.StyleSelect>
-            <S.Label style={{ minWidth: "40px" }}>시작</S.Label>
-            <S.StyleSelect
-              value={startType}
-              onChange={(e) => setStartType(e.target.value)}
-            >
-              <option>indexOf</option>
-            </S.StyleSelect>
-            <S.Input
-              value={startValue}
-              onChange={(e) => setStartValue(e.target.value)}
-            />
-            <S.NumberInput
-              type="number"
-              value={startOffset}
-              onChange={(e) => setStartOffset(Number(e.target.value))}
-            />
-          </S.LogStyleRow>
-          <S.LogStyleRow>
-            <div style={{ minWidth: "120px" }} />
-            <S.Label style={{ minWidth: "40px" }}>끝</S.Label>
-            <S.StyleSelect
-              value={endType}
-              onChange={(e) => setEndType(e.target.value)}
-            >
-              <option>lastIndex</option>
-            </S.StyleSelect>
-            <S.Input
-              value={endValue}
-              onChange={(e) => setEndValue(e.target.value)}
-            />
-            <S.NumberInput
-              type="number"
-              value={endOffset}
-              onChange={(e) => setEndOffset(Number(e.target.value))}
-            />
-          </S.LogStyleRow>
-        </S.Section>
+          {/* Log 서브스트링 섹션 */}
+          <Form.Item label="Log 서브 스트링">
+            <Space direction="vertical" style={{ width: "100%" }} size="middle">
+              <Space align="center">
+                <Select
+                  value={substringType}
+                  onChange={(value) => setSubstringType(value)}
+                  style={{ width: 120 }}
+                >
+                  <Select.Option value="Substring">Substring</Select.Option>
+                </Select>
+                <span>시작</span>
+                <Select
+                  value={startType}
+                  onChange={(value) => setStartType(value)}
+                  style={{ width: 120 }}
+                >
+                  <Select.Option value="indexOf">indexOf</Select.Option>
+                </Select>
+                <Input
+                  value={startValue}
+                  onChange={(e) => setStartValue(e.target.value)}
+                  style={{ width: 120 }}
+                />
+                <InputNumber
+                  value={startOffset}
+                  onChange={(value) => setStartOffset(value)}
+                  style={{ width: 80 }}
+                />
+              </Space>
+              <Space align="center">
+                <div style={{ width: 120 }} />{" "}
+                {/* 첫 번째 Select 자리 맞춤용 */}
+                <span>끝</span>
+                <Select
+                  value={endType}
+                  onChange={(value) => setEndType(value)}
+                  style={{ width: 120 }}
+                >
+                  <Select.Option value="lastIndex">lastIndex</Select.Option>
+                </Select>
+                <Input
+                  value={endValue}
+                  onChange={(e) => setEndValue(e.target.value)}
+                  style={{ width: 120 }}
+                />
+                <InputNumber
+                  value={endOffset}
+                  onChange={(value) => setEndOffset(value)}
+                  style={{ width: 80 }}
+                />
+              </Space>
+            </Space>
+          </Form.Item>
 
-        {isNew && (
-          <S.ButtonContainer>
-            <S.FormatButton onClick={handleFormatApply}>
-              <Play size={16} />
-              포맷 적용
-            </S.FormatButton>
-          </S.ButtonContainer>
-        )}
+          {isNew && (
+            <Form.Item>
+              <S.ButtonContainer>
+                <S.FormatButton onClick={handleFormatApply}>
+                  <Play size={16} />
+                  포맷 적용
+                </S.FormatButton>
+              </S.ButtonContainer>
+            </Form.Item>
+          )}
 
-        {/* 필드 테이블 */}
-        <S.TableContainer>
-          <S.Table>
-            <colgroup>
-              <col style={{ width: "15%" }} />
-              <col style={{ width: "17%" }} />
-              <col style={{ width: "15%" }} />
-              <col style={{ width: "12%" }} />
-              <col style={{ width: "15%" }} />
-              <col style={{ width: "9%" }} />
-            </colgroup>
-            <S.Thead>
-              <tr>
-                <S.Th>Field 명</S.Th>
-                <S.Th>Item 표시 명</S.Th>
-                <S.Th>Item 설명</S.Th>
-                <S.Th>Item 타입</S.Th>
-                <S.Th>Item 컨텐츠 예시</S.Th>
-                <S.Th></S.Th>
-              </tr>
-            </S.Thead>
-            <tbody>
-              {fields.map((field, index) => {
-                const level = field.path ? field.path.split(".").length - 1 : 0;
-                const isNewField = field.isUserCreated; // 새로 추가된 필드인지 확인
-                const hasPresetData = !!(
-                  field.itemAlias ||
-                  field.itemExplain ||
-                  field.itemType
-                );
-                const isReadOnly = !isNewField && hasPresetData;
+          {/* 필드 테이블 */}
+          <Table
+            dataSource={fields}
+            pagination={false}
+            size="small"
+            columns={[
+              {
+                title: "Field 명",
+                key: "name",
+                width: 150, // 고정 너비
+                render: (_, record, index) => {
+                  const level = record.path
+                    ? record.path.split(".").length - 1
+                    : 0;
+                  const isNewField = record.isUserCreated;
 
-                return (
-                  <tr key={index}>
-                    <S.Td>
+                  return (
+                    <Space style={{ paddingLeft: `${level * 20}px` }}>
+                      {record.hasChild && (
+                        <Button
+                          type="text"
+                          size="small"
+                          onClick={() => handleToggleClick(record, index)}
+                        >
+                          {expandedRows.has(`${index}-${record.name}`)
+                            ? "▼"
+                            : "▶"}
+                        </Button>
+                      )}
                       <div
                         style={{
-                          display: "flex",
-                          alignItems: "center",
-                          paddingLeft: `${level * 20}px`,
+                          width: level > 0 ? `${150 - level * 20}px` : "150px",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
                         }}
                       >
-                        {field.hasChild && (
-                          <S.ToggleButton
-                            onClick={() => handleToggleClick(field, index)}
-                          >
-                            {expandedRows.has(`${index}-${field.name}`)
-                              ? "▼"
-                              : "▶"}
-                          </S.ToggleButton>
-                        )}
                         {isNewField ? (
-                          <S.TableInput
-                            value={field.name}
+                          <Input
+                            value={record.name}
                             onChange={(e) =>
                               handleFieldInputChange(
                                 index,
@@ -448,16 +452,38 @@ const LogFormatDetail = ({
                               )
                             }
                             placeholder="필드명 입력"
+                            size="small"
                           />
                         ) : (
-                          <S.TableText>{field.name}</S.TableText>
+                          record.name
                         )}
                       </div>
-                    </S.Td>
-                    <S.Td>
+                    </Space>
+                  );
+                },
+              },
+              {
+                title: "Item 표시 명",
+                key: "displayName",
+                width: 200,
+                render: (_, record, index) => {
+                  const isNewField = record.isUserCreated;
+                  const hasPresetData = !!(
+                    record.itemAlias ||
+                    record.itemExplain ||
+                    record.itemType
+                  );
+
+                  return (
+                    <div
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                      }}
+                    >
                       {isNewField || !hasPresetData ? (
-                        <S.TableInput
-                          value={field.displayName || ""}
+                        <Input
+                          value={record.displayName}
                           onChange={(e) =>
                             handleFieldInputChange(
                               index,
@@ -465,15 +491,37 @@ const LogFormatDetail = ({
                               e.target.value
                             )
                           }
+                          size="small"
                         />
                       ) : (
-                        <S.TableText>{field.displayName}</S.TableText>
+                        record.displayName
                       )}
-                    </S.Td>
-                    <S.Td>
+                    </div>
+                  );
+                },
+              },
+              {
+                title: "Item 설명",
+                key: "description",
+                width: 200,
+                render: (_, record, index) => {
+                  const isNewField = record.isUserCreated;
+                  const hasPresetData = !!(
+                    record.itemAlias ||
+                    record.itemExplain ||
+                    record.itemType
+                  );
+
+                  return (
+                    <div
+                      style={{
+                        whiteSpace: "normal",
+                        wordBreak: "break-word",
+                      }}
+                    >
                       {isNewField || !hasPresetData ? (
-                        <S.TableInput
-                          value={field.description || ""}
+                        <Input
+                          value={record.description}
                           onChange={(e) =>
                             handleFieldInputChange(
                               index,
@@ -481,119 +529,170 @@ const LogFormatDetail = ({
                               e.target.value
                             )
                           }
+                          size="small"
                         />
                       ) : (
-                        <S.TableText>{field.description}</S.TableText>
+                        record.description
                       )}
-                    </S.Td>
-                    <S.Td>
-                      {isNewField || !hasPresetData ? (
-                        <S.TableSelect
-                          value={field.type}
-                          onChange={(e) =>
-                            handleFieldInputChange(
-                              index,
-                              "type",
-                              e.target.value
-                            )
-                          }
-                        >
-                          <option>STRING</option>
-                          <option>FLOAT</option>
-                          <option>INTEGER</option>
-                        </S.TableSelect>
-                      ) : (
-                        <S.TableText>{field.type}</S.TableText>
-                      )}
-                    </S.Td>
-                    <S.Td>
-                      {isNewField ? (
-                        <S.TableInput
-                          value={field.value || ""}
-                          onChange={(e) =>
-                            handleFieldInputChange(
-                              index,
-                              "value",
-                              e.target.value
-                            )
-                          }
-                          placeholder="컨텐츠 예시 입력"
-                        />
-                      ) : (
-                        <S.TableText>{field.value}</S.TableText>
-                      )}
-                    </S.Td>
-                    <S.Td>
+                    </div>
+                  );
+                },
+              },
+              {
+                title: "Item 타입",
+                key: "type",
+                width: 120,
+                render: (_, record, index) => {
+                  const isNewField = record.isUserCreated;
+                  const hasPresetData = !!(
+                    record.itemAlias ||
+                    record.itemExplain ||
+                    record.itemType
+                  );
+
+                  return isNewField || !hasPresetData ? (
+                    <Select
+                      value={record.type}
+                      onChange={(value) =>
+                        handleFieldInputChange(index, "type", value)
+                      }
+                      size="small"
+                      style={{ width: "100%" }}
+                    >
+                      <Select.Option value="STRING">STRING</Select.Option>
+                      <Select.Option value="FLOAT">FLOAT</Select.Option>
+                      <Select.Option value="INTEGER">INTEGER</Select.Option>
+                    </Select>
+                  ) : (
+                    record.type
+                  );
+                },
+              },
+              {
+                title: "Item 컨텐츠 예시",
+                key: "value",
+                width: 300,
+                render: (_, record, index) => {
+                  const isNewField = record.isUserCreated;
+
+                  return isNewField ? (
+                    <Input
+                      value={record.value}
+                      onChange={(e) =>
+                        handleFieldInputChange(index, "value", e.target.value)
+                      }
+                      placeholder="컨텐츠 예시 입력"
+                      size="small"
+                    />
+                  ) : (
+                    <Tooltip title={record.value}>
                       <div
                         style={{
-                          display: "flex",
-                          gap: "0.5rem",
-                          justifyContent: "center",
+                          whiteSpace: "normal",
+                          wordBreak: "break-word",
+                          maxHeight: "3em", // 약 2줄 정도의 높이
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          display: "-webkit-box",
+                          WebkitLineClamp: 2, // 최대 2줄까지만 표시
+                          WebkitBoxOrient: "vertical",
                         }}
                       >
-                        {!isNewField && (
-                          <S.ActionButton
-                            onClick={() => handleAddField(index, field.path)}
-                          >
-                            <Plus size={16} />
-                          </S.ActionButton>
-                        )}
-                        {(isNewField || !hasPresetData) && (
-                          <S.ActionButton
-                            onClick={() => updateField(index, null)}
-                          >
-                            <Trash2 size={16} />
-                          </S.ActionButton>
-                        )}
+                        {record.value}
                       </div>
-                    </S.Td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </S.Table>
-        </S.TableContainer>
+                    </Tooltip>
+                  );
+                },
+              },
+              {
+                title: "",
+                key: "action",
+                width: "10%",
+                render: (_, record, index) => {
+                  const isNewField = record.isUserCreated;
+                  const hasPresetData = !!(
+                    record.itemAlias ||
+                    record.itemExplain ||
+                    record.itemType
+                  );
 
-        {/* 이름과 설명 입력 섹션 */}
-        <S.Section>
-          <S.FormGrid>
-            <S.FormGroup>
-              <S.Label>이름</S.Label>
-              <S.Input
-                value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
-                placeholder="Log Format A"
-              />
-            </S.FormGroup>
-            <S.FormGroup>
-              <S.Label>설명</S.Label>
-              <S.Input
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                placeholder="Log Format A"
-              />
-            </S.FormGroup>
-          </S.FormGrid>
-        </S.Section>
+                  return (
+                    <Space>
+                      {!isNewField && (
+                        <Button
+                          type="text"
+                          icon={<Plus size={16} />}
+                          onClick={() => handleAddField(index, record.path)}
+                        />
+                      )}
+                      {(isNewField || !hasPresetData) && (
+                        <Button
+                          type="text"
+                          danger
+                          icon={<Trash2 size={16} />}
+                          onClick={() => updateField(index, null)}
+                        />
+                      )}
+                    </Space>
+                  );
+                },
+              },
+            ]}
+          />
 
-        <S.ButtonContainer>
-          <S.Button onClick={handleSubmit}>
-            <Save size={16} />
-            생성
-          </S.Button>
-        </S.ButtonContainer>
-        {!isNew && (
-          <S.ButtonContainer align="center">
-            <S.FilterButton onClick={() => handleFilterClick()}>
-              <Filter size={16} />
-              필터링
-            </S.FilterButton>
-          </S.ButtonContainer>
-        )}
+          {/* 이름과 설명 입력 섹션 */}
+          <Form.Item
+            label="이름"
+            required
+            rules={[{ required: true, message: "이름을 입력해주세요" }]}
+          >
+            <Input
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              placeholder="Log Format A"
+            />
+          </Form.Item>
+
+          <Form.Item
+            label="설명"
+            required
+            rules={[{ required: true, message: "설명을 입력해주세요" }]}
+          >
+            <Input
+              value={formData.description}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              placeholder="Log Format A"
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Space style={{ width: "100%", justifyContent: "flex-end" }}>
+              <S.ButtonContainer>
+                <S.Button onClick={handleSubmit}>
+                  <Save size={16} />
+                  생성
+                </S.Button>
+              </S.ButtonContainer>
+            </Space>
+          </Form.Item>
+
+          {!isNew && (
+            <Form.Item style={{ textAlign: "center" }}>
+              <Button
+                type="default"
+                onClick={handleFilterClick}
+                icon={<Filter size={16} />}
+                style={{ borderRadius: "20px" }}
+              >
+                필터링
+              </Button>
+            </Form.Item>
+          )}
+        </S.StyledForm>
       </S.Card>
     </S.Container>
   );

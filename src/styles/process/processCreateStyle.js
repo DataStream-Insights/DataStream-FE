@@ -1,4 +1,41 @@
 import styled from "styled-components";
+import { Form as AntForm, Select as AntSelect, Input as AntInput } from "antd";
+
+export const StyledForm = styled(AntForm)`
+  .ant-form-item {
+    margin-bottom: 24px;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: 8px;
+  }
+
+  .ant-select {
+    width: 100%;
+  }
+
+  .ant-input,
+  .ant-select {
+    &:hover,
+    &:focus {
+      border-color: #4285f4;
+    }
+  }
+`;
+
+// Input 컴포넌트 스타일링
+export const StyledInput = styled(AntInput)`
+  width: 100%;
+`;
+
+// 포맷 박스 스타일링
+export const FormatBox = styled.div`
+  border: 1px solid #e1e1e1;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+`;
 
 export const ProcessContainer = styled.div`
   padding: 0.3rem;
@@ -81,14 +118,6 @@ export const Select = styled.select`
 
 export const FormatsContainer = styled.div`
   margin-top: 2rem;
-`;
-
-export const FormatBox = styled.div`
-  border: 1px solid #e1e1e1;
-  border-radius: 4px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  background-color: #f8f9fa;
 `;
 
 export const FilterBox = styled.div`

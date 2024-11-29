@@ -1,15 +1,31 @@
 import React, { useState } from "react";
-import { X, Save } from "lucide-react";
 import useCampaignData from "../../hooks/campaign/useCampaginData";
-import * as CS from "../../styles/filter/filterdetailStyle"; // 슬라이드 관련 스타일
-import * as S from "../../styles/campaign/createCampaignStyle"; // 기존 캠페인 스타일
 import useCategoryData from "../../hooks/campaign/useCategoryData";
 import { useAlert } from "../../context/AlertContext";
+import {
+  Form,
+  Input,
+  Select,
+  DatePicker,
+  InputNumber,
+  Radio,
+  Button,
+} from "antd";
+import { SaveOutlined } from "@ant-design/icons";
+import { X, Save } from "lucide-react";
+import dayjs from "dayjs";
+import * as S from "../../styles/campaign/createCampaignStyle";
+import * as CS from "../../styles/filter/filterdetailStyle";
+
+const { TextArea } = Input;
+const { RangePicker } = DatePicker;
 
 export function CreateCampaign({ onClose }) {
   const { showAlert } = useAlert();
   const { categories1, categories2, loadCategory2Data } = useCategoryData();
   const { createCampaign, isLoading, error } = useCampaignData();
+  const { TextArea } = Input;
+  const { RangePicker } = DatePicker;
 
   const [formData, setFormData] = useState({
     campaignClassification1: "",
@@ -114,8 +130,11 @@ export function CreateCampaign({ onClose }) {
   return (
     <div style={{ height: "100%", overflow: "auto", padding: "10px" }}>
       <S.FormCard>
-        {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
-        <form onSubmit={handleSubmit}>
+        <S.StyledForm
+          layout="vertical"
+          onFinish={handleSubmit}
+          initialValues={formData}
+        >
           <CS.Header>
             <S.SectionTitle>캠페인 기초 정보</S.SectionTitle>
             <CS.CloseButton onClick={onClose}>
@@ -123,155 +142,151 @@ export function CreateCampaign({ onClose }) {
             </CS.CloseButton>
           </CS.Header>
 
-          <S.FormGroup>
-            <S.Label>캠페인 분류</S.Label>
+          <Form.Item label="캠페인 분류">
             <S.SelectContainer>
-              <select
-                name="campaignClassification1"
+              <Select
+                placeholder="[선택]"
                 value={formData.campaignClassification1}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "campaignClassification1", value },
+                  })
+                }
               >
-                <option value="">[선택]</option>
                 {renderCategory1Options()}
-              </select>
-              <select
-                name="campaignClassification2"
+              </Select>
+              <Select
+                placeholder="[선택]"
                 value={formData.campaignClassification2}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({
+                    target: { name: "campaignClassification2", value },
+                  })
+                }
                 disabled={!formData.campaignClassification1}
               >
-                <option value="">[선택]</option>
                 {renderCategory2Options()}
-              </select>
+              </Select>
             </S.SelectContainer>
-          </S.FormGroup>
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.Label>캠페인명</S.Label>
-            <S.Input
-              type="text"
-              name="campaignName"
+          <Form.Item label="캠페인명">
+            <Input
               value={formData.campaignName}
-              onChange={handleChange}
+              onChange={(e) =>
+                handleChange({
+                  target: { name: "campaignName", value: e.target.value },
+                })
+              }
             />
-          </S.FormGroup>
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.Label>캠페인 설명</S.Label>
-            <S.TextArea
-              name="campaignDescription"
+          <Form.Item label="캠페인 설명">
+            <TextArea
+              rows={4}
               value={formData.campaignDescription}
-              onChange={handleChange}
+              onChange={(e) =>
+                handleChange({
+                  target: {
+                    name: "campaignDescription",
+                    value: e.target.value,
+                  },
+                })
+              }
             />
-          </S.FormGroup>
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.Label>수행 일자</S.Label>
-            <S.DateContainer>
-              <S.Input
-                type="date"
-                name="startDate"
-                value={formData.startDate}
-                onChange={handleChange}
-              />
-              <span>~</span>
-              <S.Input
-                type="date"
-                name="endDate"
-                value={formData.endDate}
-                onChange={handleChange}
-              />
-            </S.DateContainer>
-          </S.FormGroup>
+          <Form.Item label="수행 일자">
+            <RangePicker
+              value={[dayjs(formData.startDate), dayjs(formData.endDate)]}
+              onChange={(dates) => {
+                if (dates) {
+                  handleChange({
+                    target: {
+                      name: "startDate",
+                      value: dates[0].format("YYYY-MM-DD"),
+                    },
+                  });
+                  handleChange({
+                    target: {
+                      name: "endDate",
+                      value: dates[1].format("YYYY-MM-DD"),
+                    },
+                  });
+                }
+              }}
+              style={{ width: "100%" }}
+            />
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.EndAfterContainer>
-              <S.Label>종료 후</S.Label>
-              <S.NumberInput
-                type="number"
-                name="endAfter"
+          <Form.Item label="종료 후">
+            <Input.Group compact>
+              <InputNumber
+                min={0}
                 value={formData.endAfter}
-                onChange={handleChange}
+                onChange={(value) =>
+                  handleChange({ target: { name: "endAfter", value } })
+                }
+                style={{ width: "100px" }}
               />
-              <span>일후 까지 실적으로 인정</span>
-            </S.EndAfterContainer>
-          </S.FormGroup>
+              <span style={{ padding: "0 8px", lineHeight: "32px" }}>
+                일후 까지 실적으로 인정
+              </span>
+            </Input.Group>
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.Label>고객군 유형</S.Label>
-            <S.CustomerTypeSelect
-              name="customerType"
+          <Form.Item label="고객군 유형">
+            <Select
               value={formData.customerType}
-              onChange={handleChange}
+              onChange={(value) =>
+                handleChange({ target: { name: "customerType", value } })
+              }
+              style={{ width: "200px" }}
             >
-              <option value="individual">개인</option>
-              <option value="corporate">법인</option>
-            </S.CustomerTypeSelect>
-          </S.FormGroup>
+              <Select.Option value="individual">개인</Select.Option>
+              <Select.Option value="corporate">법인</Select.Option>
+            </Select>
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.Label>공개 설정</S.Label>
-            <S.RadioContainer>
-              <S.RadioButton>
-                <input
-                  type="radio"
-                  name="visibility"
-                  value="private"
-                  checked={formData.visibility === "private"}
-                  onChange={handleChange}
-                />
-                <span>비공개</span>
-              </S.RadioButton>
-              <S.RadioButton>
-                <input
-                  type="radio"
-                  name="visibility"
-                  value="department"
-                  checked={formData.visibility === "department"}
-                  onChange={handleChange}
-                />
-                <span>부서공개</span>
-              </S.RadioButton>
-              <S.RadioButton>
-                <input
-                  type="radio"
-                  name="visibility"
-                  value="public"
-                  checked={formData.visibility === "public"}
-                  onChange={handleChange}
-                />
-                <span>전체공개</span>
-              </S.RadioButton>
-            </S.RadioContainer>
-          </S.FormGroup>
+          <Form.Item label="공개 설정">
+            <Radio.Group
+              value={formData.visibility}
+              onChange={(e) =>
+                handleChange({
+                  target: { name: "visibility", value: e.target.value },
+                })
+              }
+            >
+              <Radio value="private">비공개</Radio>
+              <Radio value="department">부서공개</Radio>
+              <Radio value="public">전체공개</Radio>
+            </Radio.Group>
+          </Form.Item>
 
-          <S.FormGroup>
-            <S.Label>태그</S.Label>
-            <S.Input
-              type="text"
-              name="tags"
-              value={formData.tags}
-              onChange={handleChange}
+          <Form.Item label="태그">
+            <Input
               placeholder="#태그"
+              value={formData.tags}
+              onChange={(e) =>
+                handleChange({
+                  target: { name: "tags", value: e.target.value },
+                })
+              }
             />
-          </S.FormGroup>
+          </Form.Item>
 
           <S.ButtonContainer>
-            <S.SubmitButton type="submit" disabled={isLoading}>
-              {isLoading ? (
-                <>
-                  <span className="loading-spinner" />
-                  저장 중...
-                </>
-              ) : (
-                <>
-                  <Save size={16} />
-                  저장
-                </>
-              )}
+            <S.SubmitButton
+              type="primary"
+              icon={<SaveOutlined />}
+              loading={isLoading}
+              onClick={handleSubmit}
+            >
+              <Save size={16} />
+              저장
             </S.SubmitButton>
           </S.ButtonContainer>
-        </form>
+        </S.StyledForm>
       </S.FormCard>
     </div>
   );

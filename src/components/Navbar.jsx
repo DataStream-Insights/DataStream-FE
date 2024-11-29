@@ -42,14 +42,14 @@ const Navbar = () => {
           ))}
         </S.TabList>
       </S.NavLeft>
-      <S.NavButtons>
+      {/* <S.NavButtons>
         <S.IconButton>
           <Settings size={20} />
         </S.IconButton>
         <S.IconButton>
           <User size={20} />
         </S.IconButton>
-      </S.NavButtons>
+      </S.NavButtons> */}
     </S.NavbarContainer>
   );
 };
