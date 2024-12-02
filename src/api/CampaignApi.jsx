@@ -31,17 +31,12 @@ export const createCampaignData = async (formData) => {
       campaignClassification1: formData.campaignClassification1,
       campaignClassification2: formData.campaignClassification2,
       campaignName: formData.campaignName,
-      customerType: formData.customerType,
-      status: "DRAFT",
       campaignDescription: formData.campaignDescription,
       startDate: formData.startDate,
       endDate: formData.endDate,
       endAfter: parseInt(formData.endAfter),
       visibility: formData.visibility,
-      department: 1, // 임시값 - 수정 필요
-      author: 1, // 임시값 - 수정 필요
       createdDate: new Date().toISOString().split("T")[0],
-      tags: formData.tags,
     };
 
     console.log("Sending data to server:", campaignDTO);
@@ -93,4 +88,14 @@ const generateCampaignId = () => {
     .padStart(3, "0");
   //ID
   return `CPG${year}${month}${day}${random}`;
+};
+
+export const fetchCampaignDetail = async (id) => {
+  try {
+    const response = await api.get(`/campaigns/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching campaign detail:", error);
+    throw error;
+  }
 };

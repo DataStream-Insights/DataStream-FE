@@ -132,8 +132,7 @@ const ProcessDetail = () => {
         </S.HeaderWrapper>
 
         <S.HierarchyContainer>
-          {/* Campaign Level */}
-          <S.Level>
+          <S.NodeWrapper>
             <S.Node $type="campaign">
               <S.NodeTitle>
                 [캠페인] {pipelineDetail.searchCampaignTopic.campaignName}
@@ -146,38 +145,34 @@ const ProcessDetail = () => {
               </S.NodeContent>
             </S.Node>
 
-            {/* Format Level */}
-            <S.Level $indent={20}>
-              {pipelineDetail.searchCampaignTopic.searchFormatTopics.map(
-                (format, formatIndex) => (
-                  <div key={formatIndex}>
-                    <S.Node $type="format">
-                      <S.NodeTitle>[포맷] {format.formatName}</S.NodeTitle>
-                      <S.NodeContent>
-                        <S.NodeItem>
-                          <strong>ID:</strong> {format.formatId}
-                        </S.NodeItem>
-                      </S.NodeContent>
-                    </S.Node>
+            {pipelineDetail.searchCampaignTopic.searchFormatTopics.map(
+              (format, formatIndex) => (
+                <S.NodeWrapper key={formatIndex} $indent={40}>
+                  <S.Node $type="format">
+                    <S.NodeTitle>[포맷] {format.formatName}</S.NodeTitle>
+                    <S.NodeContent>
+                      <S.NodeItem>
+                        <strong>ID:</strong> {format.formatId}
+                      </S.NodeItem>
+                    </S.NodeContent>
+                  </S.Node>
 
-                    {/* Filter Level */}
-                    <S.Level $indent={20}>
-                      {format.searchFilterTopics.map((filter, filterIndex) => (
-                        <S.Node key={filterIndex} $type="filter">
-                          <S.NodeTitle>[필터] {filter.filterName}</S.NodeTitle>
-                          <S.NodeContent>
-                            <S.NodeItem>
-                              <strong>ID:</strong> {filter.filterId}
-                            </S.NodeItem>
-                          </S.NodeContent>
-                        </S.Node>
-                      ))}
-                    </S.Level>
-                  </div>
-                )
-              )}
-            </S.Level>
-          </S.Level>
+                  {format.searchFilterTopics.map((filter, filterIndex) => (
+                    <S.NodeWrapper key={filterIndex} $indent={40}>
+                      <S.Node $type="filter">
+                        <S.NodeTitle>[필터] {filter.filterName}</S.NodeTitle>
+                        <S.NodeContent>
+                          <S.NodeItem>
+                            <strong>ID:</strong> {filter.filterId}
+                          </S.NodeItem>
+                        </S.NodeContent>
+                      </S.Node>
+                    </S.NodeWrapper>
+                  ))}
+                </S.NodeWrapper>
+              )
+            )}
+          </S.NodeWrapper>
         </S.HierarchyContainer>
       </S.DetailContainer>
     </Layout>

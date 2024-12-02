@@ -1,81 +1,306 @@
 import styled from "styled-components";
 
 export const DetailContainer = styled.div`
-  padding: 10px;
+  // padding: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  // box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+  //   0 2px 4px -1px rgba(0, 0, 0, 0.06);
+`;
+
+export const HeaderWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 1rem;
+  }
+`;
+
+export const HeaderContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+`;
+
+export const Title = styled.h2`
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+  line-height: 1.2;
+`;
+
+export const IdText = styled.p`
+  color: #6b7280;
+  font-size: 0.875rem;
+  margin: 0;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+`;
+
+export const ExecuteButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  transition: all 0.2s ease-in-out;
+  border: none;
+
+  ${(props) =>
+    props.$isExecuting
+      ? `
+    background-color: #ef4444;
+    color: white;
+    &:hover:not(:disabled) {
+      background-color: #dc2626;
+    }
+  `
+      : `
+    background-color: #10b981;
+    color: white;
+    &:hover:not(:disabled) {
+      background-color: #059669;
+    }
+  `}
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const DeleteButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border: 1px solid #e5e7eb;
+  background-color: white;
+  color: #6b7280;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #fee2e2;
+    border-color: #fecaca;
+    color: #dc2626;
+  }
+`;
+
+export const HierarchyContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+  padding: 1rem 0;
+`;
+
+export const Level = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+`;
+
+export const NodeWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.3rem;
+  padding-left: ${(props) => props.$indent || 0}px;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: ${(props) => {
+      // depth에 따라 left 값을 다르게 계산
+      const baseIndent = props.$indent || 0;
+      if (baseIndent === 0) return "-24px"; // 캠페인
+      if (baseIndent === 40) return "20px"; // 포맷
+      return "60px"; // 필터
+    }};
+    top: 28px;
+    bottom: -4px;
+    width: 2px;
+    background: linear-gradient(
+      to bottom,
+      #e5e7eb 0%,
+      #e5e7eb 50%,
+      transparent 100%
+    );
+  }
+`;
+
+export const Node = styled.div`
+  position: relative;
+  background: ${(props) => {
+    switch (props.$type) {
+      case "campaign":
+        return "linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)";
+      case "format":
+        return "linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%)";
+      case "filter":
+        return "linear-gradient(135deg, #93c5fd 0%, #60a5fa 100%)";
+      default:
+        return "#fff";
+    }
+  }};
+  color: ${(props) => (props.$type ? "#fff" : "#374151")};
+  border-radius: 16px;
+  padding: 1.2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+  width: ${(props) =>
+    props.$type === "campaign"
+      ? "100%"
+      : props.$type === "format"
+      ? "99.6%"
+      : "99.6%"};
+  margin-left: auto;
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: ${(props) => {
+      // depth에 따라 가로선의 길이도 조정
+      if (props.$type === "campaign") return "-24px";
+      if (props.$type === "format") return "-24px";
+      return "-24px";
+    }};
+    top: 50%;
+    width: 24px;
+    height: 2px;
+    background: #e5e7eb;
+    transform: translateY(-50%);
+  }
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    left: -28px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: ${(props) => {
+      switch (props.$type) {
+        case "campaign":
+          return "#2563eb";
+        case "format":
+          return "#3b82f6";
+        case "filter":
+          return "#60a5fa";
+        default:
+          return "#e5e7eb";
+      }
+    }};
+    transform: translateY(-50%);
+  }
+`;
+
+export const NodeTitle = styled.div`
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  &::before {
+    content: "";
+    display: inline-block;
+    width: 4px;
+    height: 4px;
+    background: currentColor;
+    border-radius: 50%;
+  }
+`;
+
+export const NodeContent = styled.div`
+  font-size: 0.875rem;
+  opacity: 0.9;
+  padding-left: 1rem;
+`;
+
+export const NodeItem = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+
+  strong {
+    font-weight: 500;
+    opacity: 0.8;
+  }
+`;
+
+export const StatusBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  width: 63px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background-color: ${(props) => (props.$status ? "#dcfce7" : "#fee2e2")};
+  color: ${(props) => (props.$status ? "#15803d" : "#dc2626")};
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`;
+
+export const BackButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  // border: 1px solid #e5e7eb;
+  background-color: white;
+  color: #6b7280;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-bottom: 1.5rem;
+
+  &:hover {
+    background-color: #f9fafb;
+    color: #111827;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 `;
 
 export const Header = styled.div`
   margin-bottom: 30px;
 `;
 
-export const Title = styled.h2`
-  font-size: 24px;
-  color: #333;
-  margin-bottom: 25px;
-`;
-
-export const IdText = styled.p`
-  color: #666;
-  font-size: 14px;
-`;
-
-export const HierarchyContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-`;
-
-export const Level = styled.div`
-  border-left: 2px solid #e0e0e0;
-  padding-left: 20px;
-  margin-left: ${(props) => props.$indent || 0}px;
-`;
-
-export const Node = styled.div`
-  background: ${(props) => {
-    switch (props.$type) {
-      case "campaign":
-        return "#90CAF9";
-      case "format":
-        return "#BBDEFB";
-      case "filter":
-        return "#E3F2FD";
-      default:
-        return "#f8f9fa";
-    }
-  }};
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 15px;
-  margin: 10px 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-
-  &:hover {
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  }
-`;
-
-export const NodeTitle = styled.div`
-  font-size: 16px;
-  color: #1b4f72; // 진한 파란색
-  margin: 0 0 8px 0;
-  font-weight: 600;
-`;
-
 export const NodeLabel = styled.span`
   font-weight: 600;
   color: #1976d2;
   margin-right: 8px;
-`;
-
-export const NodeContent = styled.div`
-  font-size: 14px;
-  color: #666;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
 `;
 
 export const ConnectLine = styled.div`
@@ -91,130 +316,8 @@ export const ErrorText = styled.div`
   text-align: center;
 `;
 
-export const HeaderWrapper = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
-`;
-
-export const HeaderContent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 16px;
-`;
-
-export const ButtonGroup = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-export const DeleteButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  background-color: transparent;
-  color: #666;
-
-  &:hover {
-    color: #dc3545;
-  }
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  svg {
-    stroke-width: 2.5;
-  }
-`;
-
 export const BackButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
   margin-bottom: 1rem;
-`;
-
-export const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  background-color: transparent;
-  color: #666;
-
-  &:hover {
-    color: #333;
-  }
-
-  svg {
-    stroke-width: 2.5;
-  }
-`;
-export const ExecuteButton = styled.button`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease-in-out;
-
-  ${(props) =>
-    props.$isExecuting
-      ? `
-    background-color: #dc3545;
-    color: white;
-    &:hover {
-      background-color: #c82333;
-    }
-  `
-      : `
-    background-color: #28a745;
-    color: white;
-    &:hover {
-      background-color: #218838;
-    }
-  `}
-
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-
-  svg {
-    stroke-width: 2.5;
-  }
-`;
-
-export const NodeItem = styled.div`
-  margin: 4px 0;
-
-  strong {
-    color: #555;
-    margin-right: 8px;
-  }
-`;
-
-export const StatusBadge = styled.span`
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  background-color: ${(props) => (props.$status ? "#4CAF50" : "#F44336")};
-  color: white;
 `;

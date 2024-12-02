@@ -10,10 +10,6 @@ export const StyledForm = styled(AntForm)`
     padding-bottom: 8px;
   }
 
-  .ant-select {
-    width: 100%;
-  }
-
   .ant-input,
   .ant-select {
     &:hover,
@@ -108,12 +104,29 @@ export const SectionTitle = styled.h3`
   color: #333;
 `;
 
+export const StyledSelect = styled(AntSelect)`
+  &.ant-select {
+    width: 100%;
+  }
+
+  .ant-select-selection-placeholder {
+    color: rgba(0, 0, 0, 0.25); // placeholder 색상
+    opacity: 1;
+  }
+`;
+
 export const Select = styled.select`
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid #e1e1e1;
-  border-radius: 4px;
-  margin-bottom: 1rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.375rem;
+  background-color: white;
+
+  &:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  }
 `;
 
 export const FormatsContainer = styled.div`

@@ -6,7 +6,7 @@ export const Header = styled.div`
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 10px;
-  border-bottom: 1px solid #e9ecef;
+  // border-bottom: 1px solid #e9ecef;
 `;
 
 export const CloseButton = styled.button`
@@ -23,10 +23,18 @@ export const CloseButton = styled.button`
 `;
 
 export const Title = styled.h2`
-  font-size: 1.5rem;
+  font-size: 1.125rem;
   font-weight: 600;
-  color: #343a40;
-  margin: 0;
+  display: flex;
+  align-items: center;
+  &:before {
+    content: "";
+    width: 4px;
+    height: 18px;
+    background: #4285f4;
+    margin-right: 8px;
+    border-radius: 2px;
+  }
 `;
 
 export const DetailSection = styled.div`
@@ -34,9 +42,10 @@ export const DetailSection = styled.div`
 `;
 
 export const DetailTitle = styled.h3`
-  font-size: 1.1rem;
-  color: #495057;
-  margin-bottom: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
 `;
 
 export const FilterItem = styled.div`
