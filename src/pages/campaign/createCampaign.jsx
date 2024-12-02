@@ -2,15 +2,8 @@ import React, { useState } from "react";
 import useCampaignData from "../../hooks/campaign/useCampaginData";
 import useCategoryData from "../../hooks/campaign/useCategoryData";
 import { useAlert } from "../../context/AlertContext";
-import {
-  Form,
-  Input,
-  Select,
-  DatePicker,
-  InputNumber,
-  Radio,
-  Button,
-} from "antd";
+import { Form, Input, DatePicker, InputNumber, Radio, Button } from "antd";
+import { Select as AntSelect } from "antd";
 import { SaveOutlined } from "@ant-design/icons";
 import { X, Save } from "lucide-react";
 import dayjs from "dayjs";
@@ -28,8 +21,8 @@ export function CreateCampaign({ onClose }) {
   const { RangePicker } = DatePicker;
 
   const [formData, setFormData] = useState({
-    campaignClassification1: "",
-    campaignClassification2: "",
+    campaignClassification1: undefined,
+    campaignClassification2: undefined,
     campaignName: "",
     campaignDescription: "",
     startDate: new Date().toISOString().split("T")[0],
@@ -37,9 +30,7 @@ export function CreateCampaign({ onClose }) {
       .toISOString()
       .split("T")[0],
     endAfter: 0,
-    customerType: "individual",
     visibility: "private",
-    tags: "",
   });
 
   const renderCategory1Options = () => {
@@ -102,11 +93,6 @@ export function CreateCampaign({ onClose }) {
       return;
     }
 
-    if (!formData.tags.trim()) {
-      showAlert("태그를 입력해주세요.");
-      return;
-    }
-
     try {
       const result = await createCampaign(formData);
       console.log("Campaign created successfully:", result);
@@ -144,7 +130,7 @@ export function CreateCampaign({ onClose }) {
 
           <Form.Item label="캠페인 분류">
             <S.SelectContainer>
-              <Select
+              <AntSelect
                 placeholder="[선택]"
                 value={formData.campaignClassification1}
                 onChange={(value) =>
@@ -154,8 +140,8 @@ export function CreateCampaign({ onClose }) {
                 }
               >
                 {renderCategory1Options()}
-              </Select>
-              <Select
+              </AntSelect>
+              <AntSelect
                 placeholder="[선택]"
                 value={formData.campaignClassification2}
                 onChange={(value) =>
@@ -166,7 +152,7 @@ export function CreateCampaign({ onClose }) {
                 disabled={!formData.campaignClassification1}
               >
                 {renderCategory2Options()}
-              </Select>
+              </AntSelect>
             </S.SelectContainer>
           </Form.Item>
 
@@ -235,19 +221,6 @@ export function CreateCampaign({ onClose }) {
             </Input.Group>
           </Form.Item>
 
-          <Form.Item label="고객군 유형">
-            <Select
-              value={formData.customerType}
-              onChange={(value) =>
-                handleChange({ target: { name: "customerType", value } })
-              }
-              style={{ width: "200px" }}
-            >
-              <Select.Option value="individual">개인</Select.Option>
-              <Select.Option value="corporate">법인</Select.Option>
-            </Select>
-          </Form.Item>
-
           <Form.Item label="공개 설정">
             <Radio.Group
               value={formData.visibility}
@@ -261,18 +234,6 @@ export function CreateCampaign({ onClose }) {
               <Radio value="department">부서공개</Radio>
               <Radio value="public">전체공개</Radio>
             </Radio.Group>
-          </Form.Item>
-
-          <Form.Item label="태그">
-            <Input
-              placeholder="#태그"
-              value={formData.tags}
-              onChange={(e) =>
-                handleChange({
-                  target: { name: "tags", value: e.target.value },
-                })
-              }
-            />
           </Form.Item>
 
           <S.ButtonContainer>

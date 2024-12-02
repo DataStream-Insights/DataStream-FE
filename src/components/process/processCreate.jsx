@@ -15,11 +15,11 @@ const ProcessCreate = () => {
   const { showAlert } = useAlert();
   const { data, loading, error, createPipeline } = useProcess();
   const [pipelineName, setPipelineName] = useState("");
-  const [selectedCampaign, setSelectedCampaign] = useState("");
+  const [selectedCampaign, setSelectedCampaign] = useState(undefined);
   const [isDistinct, setIsDistinct] = useState(false);
   const [formatSelections, setFormatSelections] = useState([
     {
-      formatId: "",
+      formatId: undefined,
       filters: [],
     },
   ]);
@@ -169,7 +169,7 @@ const ProcessCreate = () => {
 
           <Form.Item label="캠페인 선택">
             <Select
-              value={selectedCampaign}
+              value={selectedCampaign || undefined}
               onChange={setSelectedCampaign}
               placeholder="선택하세요"
             >
@@ -203,7 +203,7 @@ const ProcessCreate = () => {
                   style={{ display: "flex", alignItems: "center", gap: "8px" }}
                 >
                   <Select
-                    value={formatSelection.formatId}
+                    value={formatSelection.formatId || undefined}
                     onChange={(value) => handleFormatChange(formatIndex, value)}
                     placeholder="포맷 선택"
                     style={{ flex: 1 }}
@@ -257,7 +257,7 @@ const ProcessCreate = () => {
                       }}
                     >
                       <Select
-                        value={filter}
+                        value={filter || undefined}
                         onChange={(value) =>
                           handleFilterChange(formatIndex, filterIndex, value)
                         }

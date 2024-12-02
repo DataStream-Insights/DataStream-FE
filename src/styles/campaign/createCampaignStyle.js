@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Form as AntForm } from "antd";
+import { Form as AntForm, Select as AntSelect } from "antd";
 
 export const FormContainer = styled.div`
   max-width: 800px;
@@ -19,6 +19,11 @@ export const StyledForm = styled(AntForm)`
 
   .ant-select {
     min-width: 150px;
+
+    .ant-select-selection-placeholder {
+      color: rgba(0, 0, 0, 0.25);
+      opacity: 1 !important;
+    }
   }
 
   .ant-input,
@@ -33,6 +38,17 @@ export const StyledForm = styled(AntForm)`
   .ant-radio-group {
     display: flex;
     gap: 32px;
+  }
+`;
+
+export const StyledSelect = styled(AntSelect)`
+  &.ant-select {
+    min-width: 150px;
+  }
+
+  .ant-select-selection-placeholder {
+    color: rgba(0, 0, 0, 0.25) !important;
+    opacity: 1 !important;
   }
 `;
 
