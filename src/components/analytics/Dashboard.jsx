@@ -31,6 +31,7 @@ const Dashboard = () => {
     selectedPipeline,
     setSelectedPipeline,
     dashboardData,
+    processSpecificData,
     isLoading,
     refreshDashboard,
     dateTimeRangeData,
@@ -193,7 +194,7 @@ const Dashboard = () => {
                     <S.CardTitle>요일별 방문 현황</S.CardTitle>
                     <ResponsiveContainer width="100%" height={250}>
                       <BarChart
-                        data={dashboardData.dailyVisits}
+                        data={dashboardData.dayVisits}
                         margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
@@ -293,6 +294,57 @@ const Dashboard = () => {
                     </ResponsiveContainer>
                   )}
                 </S.Card>
+                {/* 프로세스별 데이터 섹션 */}
+                {processSpecificData.topItems.length > 0 && (
+                  <S.Card height="500px">
+                    <S.CardTitle>인기 상품 Top5</S.CardTitle>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <BarChart
+                        layout="vertical"
+                        data={processSpecificData.topItems}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <XAxis
+                          type="number"
+                          tickFormatter={(value) => `${value}%`}
+                        />
+                        <YAxis
+                          type="category"
+                          dataKey="item"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <Tooltip
+                          formatter={(value, name, props) => [
+                            `${props.payload.visits} (${value}%)`,
+                            "판매",
+                          ]}
+                        />
+                        <Bar
+                          dataKey="percentage"
+                          animationBegin={0}
+                          animationDuration={1000}
+                          animationEasing="ease-out"
+                        >
+                          {processSpecificData.topItems.map((entry, index) => (
+                            <Cell
+                              key={`cell-item-${index}`}
+                              fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
+                              radius={[0, 4, 4, 0]}
+                            />
+                          ))}
+                          <LabelList
+                            dataKey="percentage"
+                            position="right"
+                            formatter={(value) => `${value}%`}
+                            style={{ fill: "#666" }}
+                          />
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </S.Card>
+                )}
+
+                {/* 여기에 추후 다른 프로세스별 그래프들이 추가될 수 있음 */}
               </S.RightSection>
             </S.MainContent>
           </>

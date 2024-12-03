@@ -22,15 +22,16 @@ export const fetchProcesses = async () => {
 };
 
 //방문 시간대
-export const fetchTimeRangeData = async (processId) => {
+export const fetchTimeRangeData = async () => {
   try {
     const response = await api.get(
-      `/dashboard/processes/${processId}/datetimerrangeandcount`
+      `/dashboard/processes/dategraph/datetimerrangeandcount`
     );
     const transformedData = response.data.map((item) => ({
       hour: item.timeRange.split("-")[0], // "00:00-00:59" -> "00:00"
       방문: item.count,
     }));
+    console.log(transformedData);
     return transformedData;
   } catch (error) {
     throw handleApiError(error);
@@ -69,10 +70,10 @@ export const fetchTop5Items = async (processId) => {
 };
 
 //날짜별
-export const fetchDailyVisits = async (processId) => {
+export const fetchDailyVisits = async () => {
   try {
     const response = await api.get(
-      `/dashboard/processes/${processId}/countByDate`
+      `/dashboard/processes/dategraph/countByDate`
     );
     return response.data.map((item) => ({
       date: item.date,
@@ -84,11 +85,9 @@ export const fetchDailyVisits = async (processId) => {
 };
 
 //요일별
-export const fetchDayVisits = async (processId) => {
+export const fetchDayVisits = async () => {
   try {
-    const response = await api.get(
-      `/dashboard/processes/${processId}/dayvisit`
-    );
+    const response = await api.get(`/dashboard/processes/dategraph/dayvisit`);
 
     console.log(response.data);
     // 한글 요일 매핑
@@ -116,13 +115,10 @@ export const fetchDayVisits = async (processId) => {
 };
 
 //특정요일 시간대별
-export const fetchDateTimeRange = async (processId, date) => {
+export const fetchDateTimeRange = async (date) => {
   try {
     const response = await api.get(
-      `/dashboard/processes/${processId}/datetimerrangeandcount/${date}`
-    );
-    console.log(
-      `/dashboard/processes/${processId}/datetimerrangeandcount/${date}`
+      `/dashboard/processes/dategraph/datetimerrangeandcount/${date}`
     );
     const transformedData = response.data.map((item) => ({
       hour: item.timeRange.split("-")[0], // "00:00-00:59" -> "00:00"
@@ -133,40 +129,3 @@ export const fetchDateTimeRange = async (processId, date) => {
     throw handleApiError(error);
   }
 };
-
-// export const fetchTop5Items = async (processId) => {
-//     try {
-//       const response = await api.get(`/dashboard/processes/top5/${processId}`);
-//       const total = response.data.reduce((sum, item) => sum + item.count, 0);
-
-//       return response.data.map(item => ({
-//         item: item.data,
-//         visits: item.count,
-//         percentage: Number(((item.count / total) * 100).toFixed(1))
-//       }));
-//     } catch (error) {
-//       console.error("Error fetching top 5 items:", error);
-//       throw error;
-//     }
-//   };
-
-//목록 받아오기
-// export const fetchProcesses = async () => {
-//   try {
-//     const response = await api.get("/dashboard/processes");
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching processes:", error);
-//     throw error;
-//   }
-// };
-
-// export const fetchDashboardData = async (processId) => {
-//   try {
-//     const response = await api.get(`/dashboard/data/${processId}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error("Error fetching dashboard data:", error);
-//     throw error;
-//   }
-// };
