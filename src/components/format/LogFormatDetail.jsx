@@ -610,30 +610,43 @@ const LogFormatDetail = ({
                 width: "10%",
                 render: (_, record, index) => {
                   const isNewField = record.isUserCreated;
-                  const hasPresetData = !!(
-                    record.itemAlias ||
-                    record.itemExplain ||
-                    record.itemType
-                  );
+                  // const hasPresetData = !!(
+                  //   record.itemAlias ||
+                  //   record.itemExplain ||
+                  //   record.itemType
+                  // );
 
                   return (
                     <Space>
-                      {!isNewField && (
-                        <Button
-                          type="text"
-                          icon={<Plus size={16} />}
-                          onClick={() => handleAddField(index, record.path)}
-                        />
-                      )}
-                      {(isNewField || !hasPresetData) && (
-                        <Button
-                          type="text"
-                          danger
-                          icon={<Trash2 size={16} />}
-                          onClick={() => updateField(index, null)}
-                        />
-                      )}
+                      <Button
+                        type="text"
+                        icon={<Plus size={16} />}
+                        onClick={() => handleAddField(index, record.path)}
+                      />
+                      <Button
+                        type="text"
+                        danger
+                        icon={<Trash2 size={16} />}
+                        onClick={() => updateField(index, null)}
+                      />
                     </Space>
+                    // <Space>
+                    //   {!isNewField && (
+                    //     <Button
+                    //       type="text"
+                    //       icon={<Plus size={16} />}
+                    //       onClick={() => handleAddField(index, record.path)}
+                    //     />
+                    //   )}
+                    //   {(isNewField || !hasPresetData) && (
+                    //     <Button
+                    //       type="text"
+                    //       danger
+                    //       icon={<Trash2 size={16} />}
+                    //       onClick={() => updateField(index, null)}
+                    //     />
+                    //   )}
+                    // </Space>
                   );
                 },
               },
