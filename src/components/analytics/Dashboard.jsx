@@ -416,6 +416,97 @@ const Dashboard = () => {
                     </S.Card>
                   )}
 
+                {processSpecificData?.priceData &&
+                  typeof processSpecificData.priceData.average === "number" && (
+                    <S.Card height="250px">
+                      <S.CardTitle>가격 현황</S.CardTitle>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-around",
+                          alignItems: "center",
+                          height: "150px",
+                        }}
+                      >
+                        <div style={{ textAlign: "center" }}>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              color: "#666",
+                              marginBottom: "8px",
+                            }}
+                          >
+                            평균 금액
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.8rem",
+                              fontWeight: "bold",
+                              color: "#4B5563",
+                            }}
+                          >
+                            {processSpecificData.priceData.average.toLocaleString()}
+                            <span
+                              style={{ fontSize: "1rem", marginLeft: "4px" }}
+                            >
+                              원
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              color: "#666",
+                              marginBottom: "8px",
+                            }}
+                          >
+                            최저 금액
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.8rem",
+                              fontWeight: "bold",
+                              color: "#3B82F6",
+                            }}
+                          >
+                            {processSpecificData.priceData.min.toLocaleString()}
+                            <span
+                              style={{ fontSize: "1rem", marginLeft: "4px" }}
+                            >
+                              원
+                            </span>
+                          </div>
+                        </div>
+                        <div style={{ textAlign: "center" }}>
+                          <div
+                            style={{
+                              fontSize: "0.9rem",
+                              color: "#666",
+                              marginBottom: "8px",
+                            }}
+                          >
+                            최고 금액
+                          </div>
+                          <div
+                            style={{
+                              fontSize: "1.8rem",
+                              fontWeight: "bold",
+                              color: "#EF4444",
+                            }}
+                          >
+                            {processSpecificData.priceData.max.toLocaleString()}
+                            <span
+                              style={{ fontSize: "1rem", marginLeft: "4px" }}
+                            >
+                              원
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </S.Card>
+                  )}
+
                 {/* 여기에 추후 다른 프로세스별 그래프들이 추가될 수 있음 */}
               </S.RightSection>
             </S.MainContent>

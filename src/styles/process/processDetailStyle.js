@@ -322,3 +322,51 @@ export const BackButtonWrapper = styled.div`
   justify-content: flex-end;
   margin-bottom: 1rem;
 `;
+
+export const GraphDetailsContainer = styled.div`
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background: linear-gradient(to right, #f3f4f6, #f9fafb);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+`;
+
+export const GraphTitle = styled.h3`
+  font-size: 1.25rem;
+  color: #374151;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #e5e7eb;
+`;
+
+export const GraphList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+`;
+
+export const GraphCard = styled.div`
+  background: white;
+  padding: 1.25rem;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+`;
+
+export const GraphName = styled.h4`
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 0.5rem;
+`;
+
+export const GraphDescription = styled.p`
+  font-size: 0.875rem;
+  color: #6b7280;
+  line-height: 1.4;
+`;
