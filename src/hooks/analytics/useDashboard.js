@@ -28,6 +28,7 @@ export const useDashboard = () => {
     topItems: [],
     successRate: null,
     menuUsage: [],
+    priceData: null,
     // 추후 다른 프로세스별 데이터를 여기에 추가
   });
 
@@ -83,6 +84,13 @@ export const useDashboard = () => {
         { name: "결제하기", value: 100, percent: 10 },
       ];
 
+      // 임시 가격 데이터
+      const tempPriceData = {
+        average: 35000,
+        min: 15000,
+        max: 75000,
+      };
+
       // 데이터 유효성 검사
       const isValidProductData = (data) => {
         // 데이터가 존재하고
@@ -119,14 +127,18 @@ export const useDashboard = () => {
         setProcessSpecificData((prev) => ({
           ...prev,
           topItems: processedTop5Data,
+          successRate: tempSuccessData,
+          menuUsage: tempMenuData,
+          priceData: tempPriceData,
         }));
       } else {
         // 유효하지 않은 데이터인 경우 초기화
         setProcessSpecificData((prev) => ({
           ...prev,
           topItems: [],
-          successRate: tempSuccessData,
-          menuUsage: tempMenuData,
+          successRate: [],
+          menuUsage: [],
+          priceData: [],
         }));
       }
     } catch (error) {
@@ -136,6 +148,7 @@ export const useDashboard = () => {
         topItems: [],
         successRate: null,
         menuUsage: [],
+        priceData: [],
       }));
     } finally {
       setIsLoading(false);

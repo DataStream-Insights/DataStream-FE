@@ -5,6 +5,7 @@ import { Layout } from "../Layout";
 import Loading from "../Loading";
 import { executePipeline, deletePipeline } from "../../api/ProcessApi";
 import useProcessDetail from "../../hooks/process/useProcessDetail";
+import { useGraphDetail } from "../../hooks/process/useGraphDetail";
 import * as S from "../../styles/process/processDetailStyle";
 import { useAlert } from "../../context/AlertContext";
 import { useConfirm } from "../../context/ConfirmContext";
@@ -16,21 +17,8 @@ const ProcessDetail = () => {
   const { showConfirm } = useConfirm();
   const { pipelineDetail, loading, error, refetch } = useProcessDetail(id);
   const [executeLoading, setExecuteLoading] = useState(false);
+  const { graphDetails, loading: graphLoading } = useGraphDetail(id);
 
-  // const handleDelete = async () => {
-  //   const isConfirmed = await showConfirm("정말 삭제하시겠습니까?");
-
-  //   if (isConfirmed) {
-  //     try {
-  //       await deletePipeline(Number(id));
-  //       showAlert("파이프라인이 성공적으로 삭제되었습니다.");
-  //       navigate("/process");
-  //     } catch (error) {
-  //       console.error("Delete pipeline error:", error);
-  //       showAlert("파이프라인 삭제에 실패했습니다.");
-  //     }
-  //   }
-  // };
   const handleDelete = async () => {
     // 실행 상태에 따라 다른 메시지 표시
     const confirmMessage = pipelineDetail.status
@@ -130,6 +118,28 @@ const ProcessDetail = () => {
             </S.DeleteButton>
           </S.ButtonGroup>
         </S.HeaderWrapper>
+
+        <S.GraphDetailsContainer>
+          <S.GraphTitle>선택된 그래프</S.GraphTitle>
+          {graphLoading ? (
+            <Loading />
+          ) : graphDetails.length > 0 ? (
+            <S.GraphList>
+              {graphDetails.map((graph) => (
+                <S.GraphCard key={graph.id}>
+                  <S.GraphName>{graph.graph_name}</S.GraphName>
+                  <S.GraphDescription>{graph.graph_explain}</S.GraphDescription>
+                </S.GraphCard>
+              ))}
+            </S.GraphList>
+          ) : (
+            <div
+              style={{ textAlign: "center", padding: "1rem", color: "#6b7280" }}
+            >
+              선택된 그래프가 없습니다.
+            </div>
+          )}
+        </S.GraphDetailsContainer>
 
         <S.HierarchyContainer>
           <S.NodeWrapper>

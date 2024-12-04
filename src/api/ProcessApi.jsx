@@ -95,6 +95,16 @@ export const fetchPipelineDetail = async (id) => {
   }
 };
 
+//그래프 상세보기
+export const fetchGraphDetail = async (id) => {
+  try {
+    const response = await api.get(`/pipeline/getpipelinesgraph/${id}`);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
 //실행
 export const executePipeline = async (id, executable) => {
   try {

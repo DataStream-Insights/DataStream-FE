@@ -199,13 +199,6 @@ const ProcessCreate = () => {
                   <strong>캠페인명:</strong>
                   {data.campaigns.find((c) => c.id === selectedCampaign)?.name}
                 </S.InfoItem>
-                <S.InfoItem>
-                  <strong>기안자:</strong>
-                  {
-                    data.campaigns.find((c) => c.id === selectedCampaign)
-                      ?.creator
-                  }
-                </S.InfoItem>
               </S.SelectionInfo>
             )}
           </Form.Item>
