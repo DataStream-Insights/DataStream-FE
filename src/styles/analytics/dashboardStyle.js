@@ -9,6 +9,14 @@ export const DashboardContainer = styled.div`
   gap: 20px;
 `;
 
+export const DynamicSection = styled.div`
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 20px;
+`;
+
 export const Header = styled.div`
   display: flex;
   justify-content: space-between;

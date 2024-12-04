@@ -26,6 +26,7 @@ import { useDashboard } from "../../hooks/analytics/useDashboard";
 import * as S from "../../styles/analytics/dashboardStyle";
 import Loading from "../Loading";
 import DashboardHeader from "./DashboardHeader";
+import DashboardPrintView from "./DashboardPrintView";
 
 const Dashboard = () => {
   const printRef = useRef(null);
@@ -85,7 +86,7 @@ const Dashboard = () => {
         </div>
       </S.Header>
 
-      <PrintContent ref={printRef}>
+      <div className="screen-only">
         {dashboardData ? (
           <>
             <PrintHeader>
@@ -286,237 +287,239 @@ const Dashboard = () => {
                     </ResponsiveContainer>
                   )}
                 </S.Card>
-                {/* 프로세스별 데이터 섹션 */}
-                {processSpecificData.topItems.length > 0 && (
-                  <S.Card height="500px">
-                    <S.CardTitle>인기 상품 Top5</S.CardTitle>
-                    <ResponsiveContainer width="100%" height={400}>
-                      <BarChart
-                        layout="vertical"
-                        data={processSpecificData.topItems}
-                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+              </S.RightSection>
+            </S.MainContent>
+            <S.DynamicSection>
+              {/* 프로세스별 데이터 섹션 */}
+              {processSpecificData.topItems.length > 0 && (
+                <S.Card height="480px">
+                  <S.CardTitle>인기 상품 Top5</S.CardTitle>
+                  <ResponsiveContainer width="100%" height={400}>
+                    <BarChart
+                      layout="vertical"
+                      data={processSpecificData.topItems}
+                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                    >
+                      <XAxis
+                        type="number"
+                        tickFormatter={(value) => `${value}%`}
+                      />
+                      <YAxis
+                        type="category"
+                        dataKey="item"
+                        tick={{ fontSize: 12 }}
+                      />
+                      <Tooltip
+                        formatter={(value, name, props) => [
+                          `${props.payload.visits} (${value}%)`,
+                          "판매",
+                        ]}
+                      />
+                      <Bar
+                        dataKey="percentage"
+                        animationBegin={0}
+                        animationDuration={1000}
+                        animationEasing="ease-out"
                       >
-                        <XAxis
-                          type="number"
-                          tickFormatter={(value) => `${value}%`}
+                        {processSpecificData.topItems.map((entry, index) => (
+                          <Cell
+                            key={`cell-item-${index}`}
+                            fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
+                            radius={[0, 4, 4, 0]}
+                          />
+                        ))}
+                        <LabelList
+                          dataKey="percentage"
+                          position="right"
+                          formatter={(value) => `${value}%`}
+                          style={{ fill: "#666" }}
                         />
-                        <YAxis
-                          type="category"
-                          dataKey="item"
-                          tick={{ fontSize: 12 }}
-                        />
+                      </Bar>
+                    </BarChart>
+                  </ResponsiveContainer>
+                </S.Card>
+              )}
+              {/* Success Rate Pie Chart */}
+              {processSpecificData.successRate && (
+                <S.Card height="370px">
+                  <S.CardTitle>프로세스 성공률</S.CardTitle>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <PieChart>
+                      <Pie
+                        data={[
+                          {
+                            name: "성공",
+                            value: processSpecificData.successRate.success,
+                          },
+                          {
+                            name: "실패",
+                            value: processSpecificData.successRate.failure,
+                          },
+                        ]}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ percent }) =>
+                          `${(percent * 100).toFixed(1)}%`
+                        }
+                        outerRadius={80}
+                        dataKey="value"
+                      >
+                        <Cell fill="#4ade80" /> {/* 성공 - 초록색 */}
+                        <Cell fill="#f87171" /> {/* 실패 - 빨간색 */}
+                      </Pie>
+                      <Tooltip
+                        formatter={(value, name) => [
+                          `${value}%`,
+                          name === "성공" ? "성공률" : "실패율",
+                        ]}
+                      />
+                      <Legend />
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="text-center mt-4">
+                    총 {processSpecificData.successRate.totalCount}건
+                  </div>
+                </S.Card>
+              )}
+
+              {/* Menu Usage Treemap */}
+              {processSpecificData?.menuUsage &&
+                processSpecificData.menuUsage.length > 0 && (
+                  <S.Card height="400px">
+                    <S.CardTitle>메뉴별 방문 비율</S.CardTitle>
+                    <ResponsiveContainer width="100%" height={280}>
+                      <Treemap
+                        data={processSpecificData.menuUsage}
+                        dataKey="value"
+                        aspectRatio={3 / 4}
+                        stroke="#fff"
+                      >
                         <Tooltip
                           formatter={(value, name, props) => [
-                            `${props.payload.visits} (${value}%)`,
-                            "판매",
+                            `${props.payload.percent}% (${value}회)`,
+                            props.payload.name,
                           ]}
                         />
-                        <Bar
-                          dataKey="percentage"
-                          animationBegin={0}
-                          animationDuration={1000}
-                          animationEasing="ease-out"
-                        >
-                          {processSpecificData.topItems.map((entry, index) => (
-                            <Cell
-                              key={`cell-item-${index}`}
-                              fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
-                              radius={[0, 4, 4, 0]}
-                            />
-                          ))}
-                          <LabelList
-                            dataKey="percentage"
-                            position="right"
-                            formatter={(value) => `${value}%`}
-                            style={{ fill: "#666" }}
+                        {processSpecificData.menuUsage.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={
+                              index === 0
+                                ? "#60a5fa" // 상품조회 - 파란색
+                                : index === 1
+                                ? "#4ade80" // 장바구니 - 초록색
+                                : index === 2
+                                ? "#f59e0b" // 주문하기 - 주황색
+                                : "#f87171" // 결제하기 - 빨간색
+                            }
                           />
-                        </Bar>
-                      </BarChart>
+                        ))}
+                      </Treemap>
                     </ResponsiveContainer>
                   </S.Card>
                 )}
-                {/* Success Rate Pie Chart */}
-                {processSpecificData.successRate && (
-                  <S.Card height="356px">
-                    <S.CardTitle>프로세스 성공률</S.CardTitle>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <PieChart>
-                        <Pie
-                          data={[
-                            {
-                              name: "성공",
-                              value: processSpecificData.successRate.success,
-                            },
-                            {
-                              name: "실패",
-                              value: processSpecificData.successRate.failure,
-                            },
-                          ]}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ percent }) =>
-                            `${(percent * 100).toFixed(1)}%`
-                          }
-                          outerRadius={80}
-                          fill="#8884d8"
+
+              {processSpecificData?.priceData &&
+                typeof processSpecificData.priceData.average === "number" && (
+                  <S.Card height="240px">
+                    <S.CardTitle>가격 현황</S.CardTitle>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-around",
+                        alignItems: "center",
+                        height: "150px",
+                      }}
+                    >
+                      <div style={{ textAlign: "center" }}>
+                        <div
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "#666",
+                            marginBottom: "8px",
+                          }}
                         >
-                          <Cell fill="#4ade80" /> {/* 성공 - 초록색 */}
-                          <Cell fill="#f87171" /> {/* 실패 - 빨간색 */}
-                        </Pie>
-                        <Tooltip
-                          formatter={(value, name) => [
-                            `${value}%`,
-                            name === "성공" ? "성공률" : "실패율",
-                          ]}
-                        />
-                        <Legend />
-                      </PieChart>
-                    </ResponsiveContainer>
-                    <div className="text-center mt-4">
-                      총 {processSpecificData.successRate.totalCount}건
+                          평균 금액
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "1.8rem",
+                            fontWeight: "bold",
+                            color: "#4B5563",
+                          }}
+                        >
+                          {processSpecificData.priceData.average.toLocaleString()}
+                          <span style={{ fontSize: "1rem", marginLeft: "4px" }}>
+                            원
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "#666",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          최저 금액
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "1.8rem",
+                            fontWeight: "bold",
+                            color: "#3B82F6",
+                          }}
+                        >
+                          {processSpecificData.priceData.min.toLocaleString()}
+                          <span style={{ fontSize: "1rem", marginLeft: "4px" }}>
+                            원
+                          </span>
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        <div
+                          style={{
+                            fontSize: "0.9rem",
+                            color: "#666",
+                            marginBottom: "8px",
+                          }}
+                        >
+                          최고 금액
+                        </div>
+                        <div
+                          style={{
+                            fontSize: "1.8rem",
+                            fontWeight: "bold",
+                            color: "#EF4444",
+                          }}
+                        >
+                          {processSpecificData.priceData.max.toLocaleString()}
+                          <span style={{ fontSize: "1rem", marginLeft: "4px" }}>
+                            원
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </S.Card>
                 )}
-
-                {/* Menu Usage Treemap */}
-                {processSpecificData?.menuUsage &&
-                  processSpecificData.menuUsage.length > 0 && (
-                    <S.Card height="330px">
-                      <S.CardTitle>메뉴별 방문 비율</S.CardTitle>
-                      <ResponsiveContainer width="100%" height={250}>
-                        <Treemap
-                          data={processSpecificData.menuUsage}
-                          dataKey="value"
-                          aspectRatio={3 / 4}
-                          stroke="#fff"
-                        >
-                          <Tooltip
-                            formatter={(value, name, props) => [
-                              `${props.payload.percent}% (${value}회)`,
-                              props.payload.name,
-                            ]}
-                          />
-                          {processSpecificData.menuUsage.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={
-                                index === 0
-                                  ? "#60a5fa" // 상품조회 - 파란색
-                                  : index === 1
-                                  ? "#4ade80" // 장바구니 - 초록색
-                                  : index === 2
-                                  ? "#f59e0b" // 주문하기 - 주황색
-                                  : "#f87171" // 결제하기 - 빨간색
-                              }
-                            />
-                          ))}
-                        </Treemap>
-                      </ResponsiveContainer>
-                    </S.Card>
-                  )}
-
-                {processSpecificData?.priceData &&
-                  typeof processSpecificData.priceData.average === "number" && (
-                    <S.Card height="250px">
-                      <S.CardTitle>가격 현황</S.CardTitle>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "space-around",
-                          alignItems: "center",
-                          height: "150px",
-                        }}
-                      >
-                        <div style={{ textAlign: "center" }}>
-                          <div
-                            style={{
-                              fontSize: "0.9rem",
-                              color: "#666",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            평균 금액
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "1.8rem",
-                              fontWeight: "bold",
-                              color: "#4B5563",
-                            }}
-                          >
-                            {processSpecificData.priceData.average.toLocaleString()}
-                            <span
-                              style={{ fontSize: "1rem", marginLeft: "4px" }}
-                            >
-                              원
-                            </span>
-                          </div>
-                        </div>
-                        <div style={{ textAlign: "center" }}>
-                          <div
-                            style={{
-                              fontSize: "0.9rem",
-                              color: "#666",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            최저 금액
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "1.8rem",
-                              fontWeight: "bold",
-                              color: "#3B82F6",
-                            }}
-                          >
-                            {processSpecificData.priceData.min.toLocaleString()}
-                            <span
-                              style={{ fontSize: "1rem", marginLeft: "4px" }}
-                            >
-                              원
-                            </span>
-                          </div>
-                        </div>
-                        <div style={{ textAlign: "center" }}>
-                          <div
-                            style={{
-                              fontSize: "0.9rem",
-                              color: "#666",
-                              marginBottom: "8px",
-                            }}
-                          >
-                            최고 금액
-                          </div>
-                          <div
-                            style={{
-                              fontSize: "1.8rem",
-                              fontWeight: "bold",
-                              color: "#EF4444",
-                            }}
-                          >
-                            {processSpecificData.priceData.max.toLocaleString()}
-                            <span
-                              style={{ fontSize: "1rem", marginLeft: "4px" }}
-                            >
-                              원
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </S.Card>
-                  )}
-
-                {/* 여기에 추후 다른 프로세스별 그래프들이 추가될 수 있음 */}
-              </S.RightSection>
-            </S.MainContent>
+            </S.DynamicSection>
           </>
         ) : (
           <div className="flex items-center justify-center h-[calc(100vh-200px)] text-gray-500">
             데이터를 불러오는 중 오류가 발생했습니다.
           </div>
         )}
-      </PrintContent>
+      </div>
+      <div ref={printRef}>
+        <DashboardPrintView
+          dashboardData={dashboardData}
+          processSpecificData={processSpecificData}
+          dateTimeRangeData={dateTimeRangeData}
+          selectedDate={selectedDate}
+        />
+      </div>
     </S.DashboardContainer>
   );
 };

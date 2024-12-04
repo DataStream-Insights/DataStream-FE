@@ -41,7 +41,7 @@ export const fetchTimeRangeData = async () => {
 //상품 top5
 export const fetchTop5Items = async (processId) => {
   try {
-    const response = await api.get(`/dashboard/processes/top5/${processId}`);
+    const response = await api.get(`/dashboard/Barchart/${processId}`);
     return response.data;
   } catch (error) {
     if (error.response) {
@@ -127,5 +127,110 @@ export const fetchDateTimeRange = async (date) => {
     return transformedData;
   } catch (error) {
     throw handleApiError(error);
+  }
+};
+
+export const fetchTreemap = async (processId) => {
+  try {
+    const response = await api.get(`/dashboard/Treemap/${processId}`);
+    // 데이터 구조 변환
+    const transformedData = response.data.map((item) => ({
+      name: item.brandname, // brandname을 name으로
+      value: item.count, // count를 value로
+      percent: 0, // percent는 나중에 계산
+    }));
+
+    // 퍼센트 계산
+    const total = transformedData.reduce((sum, item) => sum + item.value, 0);
+    return transformedData.map((item) => ({
+      ...item,
+      percent: Number(((item.value / total) * 100).toFixed(1)),
+    }));
+  } catch (error) {
+    if (error.response) {
+      throw {
+        status: error.response.status,
+        message: error.response.data.message || "서버 오류가 발생했습니다.",
+        details: error.response.data,
+      };
+    } else if (error.request) {
+      throw {
+        status: 0,
+        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
+        details: error.request,
+      };
+    } else {
+      throw {
+        status: 0,
+        message: "요청 중 오류가 발생했습니다.",
+        details: error.message,
+      };
+    }
+  }
+};
+
+// price board
+export const fetchPriceBoard = async (processId) => {
+  try {
+    const response = await api.get(`/dashboard/Priceboard/${processId}`);
+    // 데이터 구조 변환
+    return {
+      average: response.data.averageValue,
+      min: response.data.minValue,
+      max: response.data.maxValue,
+    };
+  } catch (error) {
+    if (error.response) {
+      throw {
+        status: error.response.status,
+        message: error.response.data.message || "서버 오류가 발생했습니다.",
+        details: error.response.data,
+      };
+    } else if (error.request) {
+      throw {
+        status: 0,
+        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
+        details: error.request,
+      };
+    } else {
+      throw {
+        status: 0,
+        message: "요청 중 오류가 발생했습니다.",
+        details: error.message,
+      };
+    }
+  }
+};
+
+// pie chart
+export const fetchPieChart = async (processId) => {
+  try {
+    const response = await api.get(`/dashboard/Piechart/${processId}`);
+    // 데이터 구조 변환
+    return {
+      success: response.data.success,
+      failure: response.data.failure,
+      totalCount: response.data.success + response.data.failure,
+    };
+  } catch (error) {
+    if (error.response) {
+      throw {
+        status: error.response.status,
+        message: error.response.data.message || "서버 오류가 발생했습니다.",
+        details: error.response.data,
+      };
+    } else if (error.request) {
+      throw {
+        status: 0,
+        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
+        details: error.request,
+      };
+    } else {
+      throw {
+        status: 0,
+        message: "요청 중 오류가 발생했습니다.",
+        details: error.message,
+      };
+    }
   }
 };
