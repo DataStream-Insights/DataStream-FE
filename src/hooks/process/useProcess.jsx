@@ -6,6 +6,7 @@ import {
   fetchPipelines,
   createPipeline,
   fetchPipelineDetail,
+  fetchGraphs,
 } from "../../api/ProcessApi";
 
 const useProcess = () => {
@@ -13,17 +14,20 @@ const useProcess = () => {
   const [campaigns, setCampaigns] = useState([]);
   const [formats, setFormats] = useState([]);
   const [filters, setFilters] = useState([]);
+  const [graphs, setGraphs] = useState([]);
   const [loading, setLoading] = useState({
     pipelines: false,
     campaigns: false,
     formats: false,
     filters: false,
+    graphs: false,
   });
   const [error, setError] = useState({
     pipelines: null,
     campaigns: null,
     formats: null,
     filters: null,
+    graphs: null,
   });
   const [createLoading, setCreateLoading] = useState(false);
   const [createError, setCreateError] = useState(null);
@@ -119,6 +123,23 @@ const useProcess = () => {
     }
   };
 
+  // 그래프 목록 로드
+  const loadGraphs = async () => {
+    setLoading((prev) => ({ ...prev, graphs: true }));
+    try {
+      const data = await fetchGraphs();
+      setGraphs(data);
+    } catch (err) {
+      console.error("Failed to load graphs:", err);
+      setError((prev) => ({
+        ...prev,
+        graphs: "그래프 목록을 불러오는데 실패했습니다.",
+      }));
+    } finally {
+      setLoading((prev) => ({ ...prev, graphs: false }));
+    }
+  };
+
   //생성
   const handleCreatePipeline = async (pipelineData) => {
     setCreateLoading(true);
@@ -142,6 +163,7 @@ const useProcess = () => {
     loadCampaigns();
     loadFormats();
     loadFilters();
+    loadGraphs();
   }, []);
 
   // 각 목록 리로드 함수
@@ -150,6 +172,7 @@ const useProcess = () => {
     campaigns: loadCampaigns,
     formats: loadFormats,
     filters: loadFilters,
+    graphs: loadGraphs,
   };
 
   return {
@@ -160,6 +183,7 @@ const useProcess = () => {
       ),
       formats,
       filters,
+      graphs,
     },
     loading: {
       ...loading,

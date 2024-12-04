@@ -121,3 +121,18 @@ export const deletePipeline = async (id) => {
     throw error;
   }
 };
+
+// 그래프 옵션 조회
+export const fetchGraphs = async () => {
+  try {
+    const response = await api.get("/pipeline/graphList");
+    return response.data.map((graph) => ({
+      id: graph.id,
+      name: graph.graph_name,
+      creator: graph.graph_explain,
+    }));
+  } catch (error) {
+    console.error("Error fetching graphs:", error);
+    throw error;
+  }
+};

@@ -26,6 +26,8 @@ export const useDashboard = () => {
   // 프로세스별 데이터를 저장할 상태 추가
   const [processSpecificData, setProcessSpecificData] = useState({
     topItems: [],
+    successRate: null,
+    menuUsage: [],
     // 추후 다른 프로세스별 데이터를 여기에 추가
   });
 
@@ -65,6 +67,21 @@ export const useDashboard = () => {
 
       // Top5 데이터 로드
       const rawTop5Data = await fetchTop5Items(pipelineId);
+
+      // 임시 데이터: 성공/실패율
+      const tempSuccessData = {
+        success: 75,
+        failure: 25,
+        totalCount: 200,
+      };
+
+      // 임시 데이터: 메뉴 방문 비율
+      const tempMenuData = [
+        { name: "상품조회", value: 400, percent: 40 },
+        { name: "장바구니", value: 300, percent: 30 },
+        { name: "주문하기", value: 200, percent: 20 },
+        { name: "결제하기", value: 100, percent: 10 },
+      ];
 
       // 데이터 유효성 검사
       const isValidProductData = (data) => {
@@ -108,6 +125,8 @@ export const useDashboard = () => {
         setProcessSpecificData((prev) => ({
           ...prev,
           topItems: [],
+          successRate: tempSuccessData,
+          menuUsage: tempMenuData,
         }));
       }
     } catch (error) {
@@ -115,6 +134,8 @@ export const useDashboard = () => {
       setProcessSpecificData((prev) => ({
         ...prev,
         topItems: [],
+        successRate: null,
+        menuUsage: [],
       }));
     } finally {
       setIsLoading(false);

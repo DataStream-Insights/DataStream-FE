@@ -18,10 +18,14 @@ import {
   LabelList,
   AreaChart,
   Area,
+  PieChart,
+  Pie,
+  Treemap,
 } from "recharts";
 import { useDashboard } from "../../hooks/analytics/useDashboard";
 import * as S from "../../styles/analytics/dashboardStyle";
 import Loading from "../Loading";
+import DashboardHeader from "./DashboardHeader";
 
 const Dashboard = () => {
   const printRef = useRef(null);
@@ -64,23 +68,11 @@ const Dashboard = () => {
   return (
     <S.DashboardContainer>
       <S.Header className="no-print">
-        <S.DropdownContainer>
-          <Select
-            style={{ width: "100%" }}
-            value={
-              selectedPipeline
-                ? pipelines.find((p) => p.id === selectedPipeline)?.pipelineName
-                : undefined
-            }
-            onChange={(_, option) => setSelectedPipeline(option.data.id)}
-            placeholder="프로세스를 선택하세요"
-            options={pipelines.map((p) => ({
-              value: p.pipelineName,
-              label: p.pipelineName,
-              data: p,
-            }))}
-          />
-        </S.DropdownContainer>
+        <DashboardHeader
+          pipelines={pipelines}
+          selectedPipeline={selectedPipeline}
+          onPipelineSelect={setSelectedPipeline}
+        />
         <div className="flex gap-2">
           <S.RefreshButton onClick={refreshDashboard}>
             <RefreshCw size={16} />
@@ -343,6 +335,86 @@ const Dashboard = () => {
                     </ResponsiveContainer>
                   </S.Card>
                 )}
+                {/* Success Rate Pie Chart */}
+                {processSpecificData.successRate && (
+                  <S.Card height="356px">
+                    <S.CardTitle>프로세스 성공률</S.CardTitle>
+                    <ResponsiveContainer width="100%" height={250}>
+                      <PieChart>
+                        <Pie
+                          data={[
+                            {
+                              name: "성공",
+                              value: processSpecificData.successRate.success,
+                            },
+                            {
+                              name: "실패",
+                              value: processSpecificData.successRate.failure,
+                            },
+                          ]}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ percent }) =>
+                            `${(percent * 100).toFixed(1)}%`
+                          }
+                          outerRadius={80}
+                          fill="#8884d8"
+                        >
+                          <Cell fill="#4ade80" /> {/* 성공 - 초록색 */}
+                          <Cell fill="#f87171" /> {/* 실패 - 빨간색 */}
+                        </Pie>
+                        <Tooltip
+                          formatter={(value, name) => [
+                            `${value}%`,
+                            name === "성공" ? "성공률" : "실패율",
+                          ]}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <div className="text-center mt-4">
+                      총 {processSpecificData.successRate.totalCount}건
+                    </div>
+                  </S.Card>
+                )}
+
+                {/* Menu Usage Treemap */}
+                {processSpecificData?.menuUsage &&
+                  processSpecificData.menuUsage.length > 0 && (
+                    <S.Card height="330px">
+                      <S.CardTitle>메뉴별 방문 비율</S.CardTitle>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <Treemap
+                          data={processSpecificData.menuUsage}
+                          dataKey="value"
+                          aspectRatio={3 / 4}
+                          stroke="#fff"
+                        >
+                          <Tooltip
+                            formatter={(value, name, props) => [
+                              `${props.payload.percent}% (${value}회)`,
+                              props.payload.name,
+                            ]}
+                          />
+                          {processSpecificData.menuUsage.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={
+                                index === 0
+                                  ? "#60a5fa" // 상품조회 - 파란색
+                                  : index === 1
+                                  ? "#4ade80" // 장바구니 - 초록색
+                                  : index === 2
+                                  ? "#f59e0b" // 주문하기 - 주황색
+                                  : "#f87171" // 결제하기 - 빨간색
+                              }
+                            />
+                          ))}
+                        </Treemap>
+                      </ResponsiveContainer>
+                    </S.Card>
+                  )}
 
                 {/* 여기에 추후 다른 프로세스별 그래프들이 추가될 수 있음 */}
               </S.RightSection>
@@ -353,26 +425,6 @@ const Dashboard = () => {
             데이터를 불러오는 중 오류가 발생했습니다.
           </div>
         )}
-        {/* 프린트용 숨겨진 대시보드 */}
-        {/* <div style={{ display: "none" }}>
-          <div
-            ref={componentRef}
-            style={{ backgroundColor: "white", padding: "20px" }}
-          >
-            {dashboardData && (
-              <>
-                <PrintHeader>
-                  <h1>대시보드 리포트</h1>
-                  <p>생성일: {new Date().toLocaleDateString()}</p>
-                </PrintHeader>
-                <div style={{ display: "block" }}>
-                  <S.MainContent>
-                  </S.MainContent>
-                </div>
-              </>
-            )}
-          </div>
-        </div> */}
       </PrintContent>
     </S.DashboardContainer>
   );

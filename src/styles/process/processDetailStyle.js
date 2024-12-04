@@ -257,10 +257,11 @@ export const NodeItem = styled.div`
 
 export const StatusBadge = styled.span`
   display: inline-flex;
-  align-items: center;
+  align-items: center; //세로축
+  justify-content: center; //가로축
   padding: 0.375rem 0.75rem;
   border-radius: 9999px;
-  width: 63px;
+  width: 70px;
   font-size: 0.75rem;
   font-weight: 600;
   background-color: ${(props) => (props.$status ? "#dcfce7" : "#fee2e2")};
