@@ -271,3 +271,43 @@ export const AddIconButton = styled.button`
     font-weight: bold;
   }
 `;
+
+export const GraphSection = styled.div`
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid #e1e1e1;
+`;
+
+export const GraphList = styled.div`
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+`;
+
+export const GraphItem = styled.div`
+  padding: 1rem;
+  border: 1px solid ${(props) => (props.selected ? "#4263eb" : "#e1e1e1")};
+  border-radius: 8px;
+  background-color: ${(props) =>
+    props.selected ? "rgba(66, 99, 235, 0.1)" : "#fff"};
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #4263eb;
+    background-color: rgba(66, 99, 235, 0.05);
+  }
+`;
+
+export const GraphName = styled.h4`
+  margin: 0;
+  font-size: 1rem;
+  color: #333;
+`;
+
+export const GraphDescription = styled.p`
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  color: #666;
+`;

@@ -16,6 +16,7 @@ const ProcessCreate = () => {
   const { data, loading, error, createPipeline } = useProcess();
   const [pipelineName, setPipelineName] = useState("");
   const [selectedCampaign, setSelectedCampaign] = useState(undefined);
+  const [selectedGraphs, setSelectedGraphs] = useState([]);
   const [isDistinct, setIsDistinct] = useState(false);
   const [formatSelections, setFormatSelections] = useState([
     {
@@ -67,6 +68,16 @@ const ProcessCreate = () => {
     setFormatSelections(newSelections);
   };
 
+  // 그래프 추가 handler
+  const addGraph = (graphId) => {
+    setSelectedGraphs((prev) => [...prev, graphId]);
+  };
+
+  // 그래프 제거 handler
+  const removeGraph = (graphId) => {
+    setSelectedGraphs((prev) => prev.filter((id) => id !== graphId));
+  };
+
   const handleSave = async () => {
     // 입력 데이터 유효성 검사
     if (!pipelineName.trim()) {
@@ -98,18 +109,21 @@ const ProcessCreate = () => {
 
     // 유효한 포맷과 필터만 필터링하여 데이터 구성
     const processData = {
-      pipelineName,
-      pipelineId: generatePipelineId(),
-      distinctCode: isDistinct ? 3 : 0,
-      addcampaignTopic: {
-        campaignId: selectedCampaign,
-        addFormatTopics: validFormats.map((format) => ({
-          formatId: format.formatId,
-          addFilterTopics: format.filters
-            .filter((filter) => filter)
-            .map((filter) => ({ filterId: filter })),
-        })),
+      dto: {
+        pipelineName,
+        pipelineId: generatePipelineId(),
+        distinctCode: isDistinct ? 3 : 0,
+        addcampaignTopic: {
+          campaignId: selectedCampaign,
+          addFormatTopics: validFormats.map((format) => ({
+            formatId: format.formatId,
+            addFilterTopics: format.filters
+              .filter((filter) => filter)
+              .map((filter) => ({ filterId: filter })),
+          })),
+        },
       },
+      iddto: selectedGraphs.map((id) => ({ id: Number(id) })),
     };
 
     console.log(
@@ -317,6 +331,28 @@ const ProcessCreate = () => {
               포맷 추가
             </S.AddIconButton>
           </S.FormatsContainer>
+
+          <S.GraphSection>
+            <S.SectionTitle>그래프 선택</S.SectionTitle>
+            <S.GraphList>
+              {data.graphs.map((graph) => (
+                <S.GraphItem
+                  key={graph.id}
+                  selected={selectedGraphs.includes(graph.id)}
+                  onClick={() => {
+                    if (selectedGraphs.includes(graph.id)) {
+                      removeGraph(graph.id);
+                    } else {
+                      addGraph(graph.id);
+                    }
+                  }}
+                >
+                  <S.GraphName>{graph.name}</S.GraphName>
+                  <S.GraphDescription>{graph.creator}</S.GraphDescription>
+                </S.GraphItem>
+              ))}
+            </S.GraphList>
+          </S.GraphSection>
 
           <S.ButtonContainer>
             <S.SubmitButton onClick={handleSave}>
