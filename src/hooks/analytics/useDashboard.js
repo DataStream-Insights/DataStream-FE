@@ -6,6 +6,9 @@ import {
   fetchDailyVisits,
   fetchDayVisits,
   fetchDateTimeRange,
+  fetchTreemap,
+  fetchPriceBoard,
+  fetchPieChart,
 } from "../../api/DashboardApi";
 
 export const useDashboard = () => {
@@ -56,6 +59,9 @@ export const useDashboard = () => {
       // 프로세스 선택이 해제되면 프로세스별 데이터 초기화
       setProcessSpecificData({
         topItems: [],
+        successRate: null, // null로 초기화
+        menuUsage: [], // 빈 배열로 초기화
+        priceData: null, // null로 초기화
         // 추후 다른 프로세스별 데이터도 여기서 초기화
       });
     }
@@ -66,81 +72,57 @@ export const useDashboard = () => {
     try {
       setIsLoading(true);
 
-      // Top5 데이터 로드
-      const rawTop5Data = await fetchTop5Items(pipelineId);
-
-      // 임시 데이터: 성공/실패율
-      const tempSuccessData = {
-        success: 75,
-        failure: 25,
-        totalCount: 200,
-      };
-
-      // 임시 데이터: 메뉴 방문 비율
-      const tempMenuData = [
-        { name: "상품조회", value: 400, percent: 40 },
-        { name: "장바구니", value: 300, percent: 30 },
-        { name: "주문하기", value: 200, percent: 20 },
-        { name: "결제하기", value: 100, percent: 10 },
-      ];
-
-      // 임시 가격 데이터
-      const tempPriceData = {
-        average: 35000,
-        min: 15000,
-        max: 75000,
-      };
+      //데이터 동시에 로드
+      const [rawTop5Data, treeMapData, priceBoardData, pieChartData] =
+        await Promise.all([
+          fetchTop5Items(pipelineId),
+          fetchTreemap(pipelineId),
+          fetchPriceBoard(pipelineId),
+          fetchPieChart(pipelineId),
+        ]);
 
       // 데이터 유효성 검사
-      const isValidProductData = (data) => {
-        // 데이터가 존재하고
-        if (!data || !Array.isArray(data)) return false;
+      // const isValidProductData = (data) => {
+      //   // 데이터가 존재하고
+      //   if (!data || !Array.isArray(data)) return false;
 
-        // 최소 1개 이상의 항목이 있고
-        if (data.length === 0) return false;
+      //   // 최소 1개 이상의 항목이 있고
+      //   if (data.length === 0) return false;
 
-        // 각 항목이 올바른 형식인지 확인
-        return data.every((item) => {
-          // data 필드가 문자열이고 상품 형식인지 확인
-          // v_로 시작하거나 숫자로만 이루어진 문자열은 제외
-          const isValidProduct =
-            typeof item.data === "string" &&
-            !item.data.startsWith("v_") &&
-            !/^\d+$/.test(item.data);
+      //   // 각 항목이 올바른 형식인지 확인
+      //   return data.every((item) => {
+      //     // data 필드가 문자열이고 상품 형식인지 확인
+      //     // v_로 시작하거나 숫자로만 이루어진 문자열은 제외
+      //     const isValidProduct =
+      //       typeof item.data === "string" &&
+      //       !item.data.startsWith("v_") &&
+      //       !/^\d+$/.test(item.data);
 
-          // count가 숫자인지 확인
-          const isValidCount =
-            typeof item.count === "number" && item.count >= 0;
+      //     // count가 숫자인지 확인
+      //     const isValidCount =
+      //       typeof item.count === "number" && item.count >= 0;
 
-          return isValidProduct && isValidCount;
-        });
-      };
+      //     return isValidProduct && isValidCount;
+      //   });
+      // };
 
+      // Top5 데이터 처리
+      let processedTop5Data = [];
       if (isValidProductData(rawTop5Data)) {
         const total = rawTop5Data.reduce((sum, item) => sum + item.count, 0);
-        const processedTop5Data = rawTop5Data.map((item) => ({
+        processedTop5Data = rawTop5Data.map((item) => ({
           item: item.data,
           visits: item.count,
           percentage: Number(((item.count / total) * 100).toFixed(1)),
         }));
-
-        setProcessSpecificData((prev) => ({
-          ...prev,
-          topItems: processedTop5Data,
-          successRate: tempSuccessData,
-          menuUsage: tempMenuData,
-          priceData: tempPriceData,
-        }));
-      } else {
-        // 유효하지 않은 데이터인 경우 초기화
-        setProcessSpecificData((prev) => ({
-          ...prev,
-          topItems: [],
-          successRate: [],
-          menuUsage: [],
-          priceData: [],
-        }));
       }
+      // 모든 데이터 설정 (Top5가 유효하지 않아도 다른 임시 데이터는 설정)
+      setProcessSpecificData({
+        topItems: processedTop5Data,
+        successRate: pieChartData || null,
+        menuUsage: treeMapData || [],
+        priceData: priceBoardData || null,
+      });
     } catch (error) {
       console.error("Failed to load process specific data:", error);
       setProcessSpecificData((prev) => ({
@@ -148,7 +130,7 @@ export const useDashboard = () => {
         topItems: [],
         successRate: null,
         menuUsage: [],
-        priceData: [],
+        priceData: null,
       }));
     } finally {
       setIsLoading(false);
