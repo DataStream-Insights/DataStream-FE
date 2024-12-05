@@ -2,7 +2,7 @@ import axios from "axios";
 
 // 공통 axios 인스턴스 생성
 const api = axios.create({
-  baseURL: "http://14.63.178.40/api",
+  baseURL: "/api",
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
