@@ -20,22 +20,22 @@ export const fetchGraphList = async () => {
   }
 };
 
-export const submitGraphSelections = async (processId, graphIds) => {
-  const responses = await Promise.all(
-    graphIds.map(async (graphId) => {
-      switch (graphId) {
-        case 1: // barchart
-          return fetchTop5Items(processId);
-        case 2: // piechart
-          return fetchPieChart(processId);
-        case 3: // treemap
-          return fetchTreemap(processId);
-        case 4: // priceboard
-          return fetchPriceBoard(processId);
-        default:
-          return null;
-      }
-    })
-  );
-  return responses;
-};
+// export const submitGraphSelections = async (processId, graphIds) => {
+//   const responses = await Promise.all(
+//     graphIds.map(async (graphId) => {
+//       switch (graphId) {
+//         case 1: // barchart
+//           return fetchTop5Items(processId);
+//         case 2: // piechart
+//           return fetchPieChart(processId);
+//         case 3: // treemap
+//           return fetchTreemap(processId);
+//         case 4: // priceboard
+//           return fetchPriceBoard(processId);
+//         default:
+//           return null;
+//       }
+//     })
+//   );
+//   return responses;
+// };

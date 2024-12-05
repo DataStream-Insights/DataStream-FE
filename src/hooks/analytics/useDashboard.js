@@ -80,6 +80,7 @@ export const useDashboard = () => {
   };
 
   // 프로세스별 데이터를 로드하는 함수
+  // useDashboard.js의 loadProcessSpecificData 함수 수정
   const loadProcessSpecificData = async (pipelineId, selectedGraphs) => {
     if (!pipelineId || !selectedGraphs || selectedGraphs.length === 0) return;
 
@@ -94,40 +95,29 @@ export const useDashboard = () => {
         priceData: null,
       };
 
-      // 선택된 그래프에 따라 API 호출
-      const responses = await Promise.all(
+      await Promise.all(
         selectedGraphs.map(async (graphId) => {
           try {
             let data;
             switch (graphId) {
-              case 1: // Barchart (Top 5)
+              case 1:
                 data = await fetchTop5Items(pipelineId);
-                if (isValidResponse({ data })) {
-                  const total = data.reduce((sum, item) => sum + item.count, 0);
-                  processedData.topItems = data.map((item) => ({
-                    item: item.data,
-                    visits: item.count,
-                    percentage: Number(((item.count / total) * 100).toFixed(1)),
-                  }));
-                }
+                if (data) processedData.topItems = data;
                 break;
-              case 2: // Piechart
+
+              case 2:
                 data = await fetchPieChart(pipelineId);
-                if (isValidResponse({ data })) {
-                  processedData.successRate = data;
-                }
+                if (data) processedData.successRate = data;
                 break;
-              case 3: // Treemap
+
+              case 3:
                 data = await fetchTreemap(pipelineId);
-                if (isValidResponse({ data })) {
-                  processedData.menuUsage = data;
-                }
+                if (data && data.length > 0) processedData.menuUsage = data;
                 break;
-              case 4: // Priceboard
+
+              case 4:
                 data = await fetchPriceBoard(pipelineId);
-                if (isValidResponse({ data })) {
-                  processedData.priceData = data;
-                }
+                if (data) processedData.priceData = data;
                 break;
             }
           } catch (error) {
@@ -136,6 +126,7 @@ export const useDashboard = () => {
         })
       );
 
+      console.log("Final processed data:", processedData);
       setProcessSpecificData(processedData);
     } catch (error) {
       console.error("Failed to load process specific data:", error);
