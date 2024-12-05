@@ -491,10 +491,10 @@ const Dashboard = () => {
                             color: "#4B5563",
                           }}
                         >
-                          {processSpecificData.priceData.average.toLocaleString()}
                           <span style={{ fontSize: "1rem", marginLeft: "4px" }}>
-                            원
+                            $
                           </span>
+                          {processSpecificData.priceData.average.toLocaleString()}
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -514,10 +514,10 @@ const Dashboard = () => {
                             color: "#3B82F6",
                           }}
                         >
-                          {processSpecificData.priceData.min.toLocaleString()}
                           <span style={{ fontSize: "1rem", marginLeft: "4px" }}>
-                            원
+                            $
                           </span>
+                          {processSpecificData.priceData.min.toLocaleString()}
                         </div>
                       </div>
                       <div style={{ textAlign: "center" }}>
@@ -537,10 +537,10 @@ const Dashboard = () => {
                             color: "#EF4444",
                           }}
                         >
-                          {processSpecificData.priceData.max.toLocaleString()}
                           <span style={{ fontSize: "1rem", marginLeft: "4px" }}>
-                            원
+                            $
                           </span>
+                          {processSpecificData.priceData.max.toLocaleString()}
                         </div>
                       </div>
                     </div>
