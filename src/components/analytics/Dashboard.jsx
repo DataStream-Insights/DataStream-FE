@@ -426,7 +426,7 @@ const Dashboard = () => {
                   <S.CardTitle>메뉴별 방문 비율</S.CardTitle>
                   {processSpecificData?.menuUsage &&
                   processSpecificData.menuUsage.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={280}>
+                    <ResponsiveContainer width="100%" height={300}>
                       <Treemap
                         data={processSpecificData.menuUsage}
                         dataKey="value"
