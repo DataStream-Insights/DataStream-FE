@@ -3,8 +3,19 @@ import { Select } from "antd";
 import { Plus } from "lucide-react";
 import * as S from "../../styles/analytics/dashboardHeader";
 import { useGraphSelection } from "../../hooks/analytics/useGraphSelection";
+import { useAlert } from "../../context/AlertContext";
+import { submitGraphSelections } from "../../api/GraphApi";
 
-const DashboardHeader = ({ pipelines, selectedPipeline, onPipelineSelect }) => {
+const DashboardHeader = ({
+  pipelines,
+  selectedPipeline,
+  onPipelineSelect,
+  onApply,
+  refreshDashboard,
+  selectedGraphs,
+  onGraphSelect,
+}) => {
+  const { showAlert } = useAlert();
   const {
     graphSelections,
     isLoading,
@@ -14,18 +25,29 @@ const DashboardHeader = ({ pipelines, selectedPipeline, onPipelineSelect }) => {
     addGraphSelection,
     removeGraphSelection,
     getSelectedGraphs,
-  } = useGraphSelection();
+  } = useGraphSelection({
+    initialGraphs: selectedGraphs,
+    onChange: onGraphSelect,
+  });
 
-  const handleApply = () => {
-    const selectedProcess = pipelines.find((p) => p.id === selectedPipeline);
+  const handleApply = async () => {
+    if (!selectedPipeline) {
+      showAlert("프로세스를 선택해주세요.");
+      return;
+    }
+
     const selectedGraphs = getSelectedGraphs();
+    if (selectedGraphs.length === 0) {
+      showAlert("그래프를 선택해주세요.");
+      return;
+    }
 
-    // 선택된 정보 출력
-    console.log("Selected Process:", {
-      id: selectedProcess?.id,
-      name: selectedProcess?.pipelineName,
-    });
-    console.log("Selected Graph IDs:", selectedGraphs);
+    try {
+      onApply(selectedPipeline, selectedGraphs);
+    } catch (error) {
+      console.error("Failed to apply selections:", error);
+      showAlert("그래프 데이터를 불러오는데 실패했습니다.");
+    }
   };
 
   if (error) {

@@ -20,9 +20,22 @@ export const fetchGraphList = async () => {
   }
 };
 
-// 향후 추가될 그래프 관련 API 호출들을 위한 자리
 export const submitGraphSelections = async (processId, graphIds) => {
-  // 백엔드 API가 준비되면 여기에 POST 요청 구현
-  console.log("Process ID:", processId);
-  console.log("Selected Graph IDs:", graphIds);
+  const responses = await Promise.all(
+    graphIds.map(async (graphId) => {
+      switch (graphId) {
+        case 1: // barchart
+          return fetchTop5Items(processId);
+        case 2: // piechart
+          return fetchPieChart(processId);
+        case 3: // treemap
+          return fetchTreemap(processId);
+        case 4: // priceboard
+          return fetchPriceBoard(processId);
+        default:
+          return null;
+      }
+    })
+  );
+  return responses;
 };

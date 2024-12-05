@@ -42,6 +42,10 @@ const Dashboard = () => {
     dateTimeRangeData,
     handleDateSelect,
     selectedDate,
+    loadProcessSpecificData,
+    selectedGraphs,
+    updateGraphSelections,
+    appliedGraphs,
   } = useDashboard();
 
   const handlePrint = useReactToPrint({
@@ -64,6 +68,21 @@ const Dashboard = () => {
     `,
   });
 
+  const handleApply = async (pipelineId, selectedGraphs) => {
+    try {
+      await loadProcessSpecificData(pipelineId, selectedGraphs);
+      refreshDashboard();
+    } catch (error) {
+      console.error("Failed to apply dashboard settings:", error);
+    }
+  };
+
+  const renderErrorMessage = () => (
+    <div className="flex items-center justify-center h-[180px] text-gray-500">
+      이 프로세스에서는 해당 그래프를 확인할 수 없습니다
+    </div>
+  );
+
   if (isLoading) return <Loading />;
 
   return (
@@ -73,6 +92,11 @@ const Dashboard = () => {
           pipelines={pipelines}
           selectedPipeline={selectedPipeline}
           onPipelineSelect={setSelectedPipeline}
+          onApply={loadProcessSpecificData}
+          refreshDashboard={refreshDashboard}
+          selectedGraphs={selectedGraphs}
+          onGraphSelect={updateGraphSelections}
+          appliedGraphs={appliedGraphs}
         />
         <div className="flex gap-2">
           <S.RefreshButton onClick={refreshDashboard}>
@@ -291,103 +315,114 @@ const Dashboard = () => {
             </S.MainContent>
             <S.DynamicSection>
               {/* 프로세스별 데이터 섹션 */}
-              {processSpecificData.topItems.length > 0 && (
+              {appliedGraphs.includes(1) && (
                 <S.Card height="480px">
                   <S.CardTitle>인기 상품 Top5</S.CardTitle>
-                  <ResponsiveContainer width="100%" height={400}>
-                    <BarChart
-                      layout="vertical"
-                      data={processSpecificData.topItems}
-                      margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
-                    >
-                      <XAxis
-                        type="number"
-                        tickFormatter={(value) => `${value}%`}
-                      />
-                      <YAxis
-                        type="category"
-                        dataKey="item"
-                        tick={{ fontSize: 12 }}
-                      />
-                      <Tooltip
-                        formatter={(value, name, props) => [
-                          `${props.payload.visits} (${value}%)`,
-                          "판매",
-                        ]}
-                      />
-                      <Bar
-                        dataKey="percentage"
-                        animationBegin={0}
-                        animationDuration={1000}
-                        animationEasing="ease-out"
+                  {processSpecificData.topItems.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={400}>
+                      <BarChart
+                        layout="vertical"
+                        data={processSpecificData.topItems}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                       >
-                        {processSpecificData.topItems.map((entry, index) => (
-                          <Cell
-                            key={`cell-item-${index}`}
-                            fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
-                            radius={[0, 4, 4, 0]}
-                          />
-                        ))}
-                        <LabelList
-                          dataKey="percentage"
-                          position="right"
-                          formatter={(value) => `${value}%`}
-                          style={{ fill: "#666" }}
+                        <XAxis
+                          type="number"
+                          tickFormatter={(value) => `${value}%`}
                         />
-                      </Bar>
-                    </BarChart>
-                  </ResponsiveContainer>
+                        <YAxis
+                          type="category"
+                          dataKey="item"
+                          tick={{ fontSize: 12 }}
+                        />
+                        <Tooltip
+                          formatter={(value, name, props) => [
+                            `${props.payload.visits} (${value}%)`,
+                            "판매",
+                          ]}
+                        />
+                        <Bar
+                          dataKey="percentage"
+                          animationBegin={0}
+                          animationDuration={1000}
+                          animationEasing="ease-out"
+                        >
+                          {processSpecificData.topItems.map((entry, index) => (
+                            <Cell
+                              key={`cell-item-${index}`}
+                              fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
+                              radius={[0, 4, 4, 0]}
+                            />
+                          ))}
+                          <LabelList
+                            dataKey="percentage"
+                            position="right"
+                            formatter={(value) => `${value}%`}
+                            style={{ fill: "#666" }}
+                          />
+                        </Bar>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    renderErrorMessage()
+                  )}
                 </S.Card>
               )}
               {/* Success Rate Pie Chart */}
-              {processSpecificData.successRate && (
+              {appliedGraphs.includes(2) && (
                 <S.Card height="370px">
                   <S.CardTitle>프로세스 성공률</S.CardTitle>
-                  <ResponsiveContainer width="100%" height={250}>
-                    <PieChart>
-                      <Pie
-                        data={[
-                          {
-                            name: "성공",
-                            value: processSpecificData.successRate.success,
-                          },
-                          {
-                            name: "실패",
-                            value: processSpecificData.successRate.failure,
-                          },
-                        ]}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={false}
-                        label={({ percent }) =>
-                          `${(percent * 100).toFixed(1)}%`
-                        }
-                        outerRadius={80}
-                        dataKey="value"
-                      >
-                        <Cell fill="#4ade80" /> {/* 성공 - 초록색 */}
-                        <Cell fill="#f87171" /> {/* 실패 - 빨간색 */}
-                      </Pie>
-                      <Tooltip
-                        formatter={(value, name) => [
-                          `${value}%`,
-                          name === "성공" ? "성공률" : "실패율",
-                        ]}
-                      />
-                      <Legend />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="text-center mt-4">
-                    총 {processSpecificData.successRate.totalCount}건
-                  </div>
+                  {processSpecificData.successRate ? (
+                    <>
+                      <ResponsiveContainer width="100%" height={250}>
+                        <PieChart>
+                          <Pie
+                            data={[
+                              {
+                                name: "성공",
+                                value: processSpecificData.successRate.success,
+                              },
+                              {
+                                name: "실패",
+                                value: processSpecificData.successRate.failure,
+                              },
+                            ]}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ percent }) =>
+                              `${(percent * 100).toFixed(1)}%`
+                            }
+                            outerRadius={80}
+                            dataKey="value"
+                          >
+                            <Cell fill="#4ade80" /> {/* 성공 - 초록색 */}
+                            <Cell fill="#f87171" /> {/* 실패 - 빨간색 */}
+                          </Pie>
+                          <Tooltip
+                            formatter={(value, name) => [
+                              `${value}%`,
+                              name === "성공" ? "성공률" : "실패율",
+                            ]}
+                          />
+                          <Legend />
+                        </PieChart>
+                      </ResponsiveContainer>
+                      <div className="text-center mt-4">
+                        총 {processSpecificData.successRate.totalCount}건
+                      </div>
+                    </>
+                  ) : (
+                    renderErrorMessage()
+                  )}
                 </S.Card>
               )}
 
               {/* Menu Usage Treemap */}
-              {processSpecificData?.menuUsage &&
-                processSpecificData.menuUsage.length > 0 && (
-                  <S.Card height="400px">
-                    <S.CardTitle>메뉴별 방문 비율</S.CardTitle>
+              {appliedGraphs.includes(3) && (
+                <S.Card height="400px">
+                  <S.CardTitle>메뉴별 방문 비율</S.CardTitle>
+                  {processSpecificData?.menuUsage &&
+                  processSpecificData.menuUsage.length > 0 ? (
                     <ResponsiveContainer width="100%" height={280}>
                       <Treemap
                         data={processSpecificData.menuUsage}
@@ -417,13 +452,17 @@ const Dashboard = () => {
                         ))}
                       </Treemap>
                     </ResponsiveContainer>
-                  </S.Card>
-                )}
+                  ) : (
+                    renderErrorMessage()
+                  )}
+                </S.Card>
+              )}
 
-              {processSpecificData?.priceData &&
-                typeof processSpecificData.priceData.average === "number" && (
-                  <S.Card height="240px">
-                    <S.CardTitle>가격 현황</S.CardTitle>
+              {appliedGraphs.includes(4) && (
+                <S.Card height="240px">
+                  <S.CardTitle>가격 현황</S.CardTitle>
+                  {processSpecificData?.priceData &&
+                  typeof processSpecificData.priceData.average === "number" ? (
                     <div
                       style={{
                         display: "flex",
@@ -502,8 +541,11 @@ const Dashboard = () => {
                         </div>
                       </div>
                     </div>
-                  </S.Card>
-                )}
+                  ) : (
+                    renderErrorMessage()
+                  )}
+                </S.Card>
+              )}
             </S.DynamicSection>
           </>
         ) : (

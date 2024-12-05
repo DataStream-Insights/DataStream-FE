@@ -16,6 +16,8 @@ export const useDashboard = () => {
   const [selectedPipeline, setSelectedPipeline] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [dateTimeRangeData, setDateTimeRangeData] = useState(null);
+  const [selectedGraphs, setSelectedGraphs] = useState([]);
+  const [appliedGraphs, setAppliedGraphs] = useState([]);
   const [dashboardData, setDashboardData] = useState({
     statusDistribution: { 신규방문: 0, 재방문: 0 },
     summaryData: {
@@ -53,85 +55,90 @@ export const useDashboard = () => {
 
   const handlePipelineSelect = (pipelineId) => {
     setSelectedPipeline(pipelineId);
-    if (pipelineId) {
-      loadProcessSpecificData(pipelineId);
-    } else {
-      // 프로세스 선택이 해제되면 프로세스별 데이터 초기화
+    if (!pipelineId) {
       setProcessSpecificData({
-        topItems: [],
-        successRate: null, // null로 초기화
-        menuUsage: [], // 빈 배열로 초기화
-        priceData: null, // null로 초기화
-        // 추후 다른 프로세스별 데이터도 여기서 초기화
-      });
-    }
-  };
-
-  // 프로세스별 데이터를 로드하는 함수
-  const loadProcessSpecificData = async (pipelineId) => {
-    try {
-      setIsLoading(true);
-
-      //데이터 동시에 로드
-      const [rawTop5Data, treeMapData, priceBoardData, pieChartData] =
-        await Promise.all([
-          fetchTop5Items(pipelineId),
-          fetchTreemap(pipelineId),
-          fetchPriceBoard(pipelineId),
-          fetchPieChart(pipelineId),
-        ]);
-
-      // 데이터 유효성 검사
-      // const isValidProductData = (data) => {
-      //   // 데이터가 존재하고
-      //   if (!data || !Array.isArray(data)) return false;
-
-      //   // 최소 1개 이상의 항목이 있고
-      //   if (data.length === 0) return false;
-
-      //   // 각 항목이 올바른 형식인지 확인
-      //   return data.every((item) => {
-      //     // data 필드가 문자열이고 상품 형식인지 확인
-      //     // v_로 시작하거나 숫자로만 이루어진 문자열은 제외
-      //     const isValidProduct =
-      //       typeof item.data === "string" &&
-      //       !item.data.startsWith("v_") &&
-      //       !/^\d+$/.test(item.data);
-
-      //     // count가 숫자인지 확인
-      //     const isValidCount =
-      //       typeof item.count === "number" && item.count >= 0;
-
-      //     return isValidProduct && isValidCount;
-      //   });
-      // };
-
-      // Top5 데이터 처리
-      let processedTop5Data = [];
-      if (isValidProductData(rawTop5Data)) {
-        const total = rawTop5Data.reduce((sum, item) => sum + item.count, 0);
-        processedTop5Data = rawTop5Data.map((item) => ({
-          item: item.data,
-          visits: item.count,
-          percentage: Number(((item.count / total) * 100).toFixed(1)),
-        }));
-      }
-      // 모든 데이터 설정 (Top5가 유효하지 않아도 다른 임시 데이터는 설정)
-      setProcessSpecificData({
-        topItems: processedTop5Data,
-        successRate: pieChartData || null,
-        menuUsage: treeMapData || [],
-        priceData: priceBoardData || null,
-      });
-    } catch (error) {
-      console.error("Failed to load process specific data:", error);
-      setProcessSpecificData((prev) => ({
-        ...prev,
         topItems: [],
         successRate: null,
         menuUsage: [],
         priceData: null,
-      }));
+      });
+      setSelectedGraphs([]); // 프로세스 선택 해제시 그래프 선택도 초기화
+    }
+  };
+
+  const updateGraphSelections = (graphs) => {
+    setSelectedGraphs(graphs);
+  };
+
+  // 데이터 유효성 검사 함수
+  const isValidResponse = (response) => {
+    return (
+      response &&
+      response.data &&
+      (!Array.isArray(response.data) || response.data.length > 0)
+    );
+  };
+
+  // 프로세스별 데이터를 로드하는 함수
+  const loadProcessSpecificData = async (pipelineId, selectedGraphs) => {
+    if (!pipelineId || !selectedGraphs || selectedGraphs.length === 0) return;
+
+    try {
+      setIsLoading(true);
+      setAppliedGraphs(selectedGraphs);
+
+      const processedData = {
+        topItems: [],
+        successRate: null,
+        menuUsage: [],
+        priceData: null,
+      };
+
+      // 선택된 그래프에 따라 API 호출
+      const responses = await Promise.all(
+        selectedGraphs.map(async (graphId) => {
+          try {
+            let data;
+            switch (graphId) {
+              case 1: // Barchart (Top 5)
+                data = await fetchTop5Items(pipelineId);
+                if (isValidResponse({ data })) {
+                  const total = data.reduce((sum, item) => sum + item.count, 0);
+                  processedData.topItems = data.map((item) => ({
+                    item: item.data,
+                    visits: item.count,
+                    percentage: Number(((item.count / total) * 100).toFixed(1)),
+                  }));
+                }
+                break;
+              case 2: // Piechart
+                data = await fetchPieChart(pipelineId);
+                if (isValidResponse({ data })) {
+                  processedData.successRate = data;
+                }
+                break;
+              case 3: // Treemap
+                data = await fetchTreemap(pipelineId);
+                if (isValidResponse({ data })) {
+                  processedData.menuUsage = data;
+                }
+                break;
+              case 4: // Priceboard
+                data = await fetchPriceBoard(pipelineId);
+                if (isValidResponse({ data })) {
+                  processedData.priceData = data;
+                }
+                break;
+            }
+          } catch (error) {
+            console.error(`Failed to fetch graph ${graphId}:`, error);
+          }
+        })
+      );
+
+      setProcessSpecificData(processedData);
+    } catch (error) {
+      console.error("Failed to load process specific data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -201,8 +208,8 @@ export const useDashboard = () => {
 
   const refreshDashboard = () => {
     loadDashboardData();
-    if (selectedPipeline) {
-      loadProcessSpecificData(selectedPipeline);
+    if (selectedPipeline && selectedGraphs.length > 0) {
+      loadProcessSpecificData(selectedPipeline, selectedGraphs);
     }
   };
 
@@ -217,5 +224,9 @@ export const useDashboard = () => {
     dashboardData,
     isLoading,
     refreshDashboard,
+    loadProcessSpecificData,
+    selectedGraphs,
+    updateGraphSelections,
+    appliedGraphs,
   };
 };
