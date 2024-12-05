@@ -4,7 +4,6 @@ import { Plus } from "lucide-react";
 import * as S from "../../styles/analytics/dashboardHeader";
 import { useGraphSelection } from "../../hooks/analytics/useGraphSelection";
 import { useAlert } from "../../context/AlertContext";
-import { submitGraphSelections } from "../../api/GraphApi";
 
 const DashboardHeader = ({
   pipelines,

@@ -68,14 +68,14 @@ const Dashboard = () => {
     `,
   });
 
-  const handleApply = async (pipelineId, selectedGraphs) => {
-    try {
-      await loadProcessSpecificData(pipelineId, selectedGraphs);
-      refreshDashboard();
-    } catch (error) {
-      console.error("Failed to apply dashboard settings:", error);
-    }
-  };
+  // const handleApply = async (pipelineId, selectedGraphs) => {
+  //   try {
+  //     await loadProcessSpecificData(pipelineId, selectedGraphs);
+  //     refreshDashboard();
+  //   } catch (error) {
+  //     console.error("Failed to apply dashboard settings:", error);
+  //   }
+  // };
 
   const renderErrorMessage = () => (
     <div className="flex items-center justify-center h-[180px] text-gray-500">
@@ -371,7 +371,11 @@ const Dashboard = () => {
               {appliedGraphs.includes(2) && (
                 <S.Card height="370px">
                   <S.CardTitle>프로세스 성공률</S.CardTitle>
-                  {processSpecificData.successRate ? (
+                  {processSpecificData.successRate &&
+                  typeof processSpecificData.successRate.success === "number" &&
+                  typeof processSpecificData.successRate.failure === "number" &&
+                  (processSpecificData.successRate.success > 0 ||
+                    processSpecificData.successRate.failure > 0) ? (
                     <>
                       <ResponsiveContainer width="100%" height={250}>
                         <PieChart>
@@ -395,8 +399,8 @@ const Dashboard = () => {
                             outerRadius={80}
                             dataKey="value"
                           >
-                            <Cell fill="#4ade80" /> {/* 성공 - 초록색 */}
-                            <Cell fill="#f87171" /> {/* 실패 - 빨간색 */}
+                            <Cell fill="#4ade80" />
+                            <Cell fill="#f87171" />
                           </Pie>
                           <Tooltip
                             formatter={(value, name) => [
@@ -416,7 +420,6 @@ const Dashboard = () => {
                   )}
                 </S.Card>
               )}
-
               {/* Menu Usage Treemap */}
               {appliedGraphs.includes(3) && (
                 <S.Card height="400px">

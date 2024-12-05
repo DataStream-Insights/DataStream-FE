@@ -39,35 +39,36 @@ export const fetchTimeRangeData = async () => {
 };
 
 //상품 top5
-export const fetchTop5Items = async (processId) => {
-  try {
-    const response = await api.get(`/dashboard/Barchart/${processId}`);
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      // 서버가 응답을 반환한 경우 (400, 401, 403, 404, 500 등)
-      throw {
-        status: error.response.status,
-        message: error.response.data.message || "서버 오류가 발생했습니다.",
-        details: error.response.data,
-      };
-    } else if (error.request) {
-      // 요청은 보냈지만 응답을 받지 못한 경우
-      throw {
-        status: 0,
-        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
-        details: error.request,
-      };
-    } else {
-      // 요청 설정 중에 오류가 발생한 경우
-      throw {
-        status: 0,
-        message: "요청 중 오류가 발생했습니다.",
-        details: error.message,
-      };
-    }
-  }
-};
+// export const fetchTop5Items = async (processId) => {
+//   try {
+//     const response = await api.get(`/dashboard/Barchart/${processId}`);
+//     console.log("fetchTop5Items response:", response.data);
+//     return response.data;
+//   } catch (error) {
+//     if (error.response) {
+//       // 서버가 응답을 반환한 경우 (400, 401, 403, 404, 500 등)
+//       throw {
+//         status: error.response.status,
+//         message: error.response.data.message || "서버 오류가 발생했습니다.",
+//         details: error.response.data,
+//       };
+//     } else if (error.request) {
+//       // 요청은 보냈지만 응답을 받지 못한 경우
+//       throw {
+//         status: 0,
+//         message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
+//         details: error.request,
+//       };
+//     } else {
+//       // 요청 설정 중에 오류가 발생한 경우
+//       throw {
+//         status: 0,
+//         message: "요청 중 오류가 발생했습니다.",
+//         details: error.message,
+//       };
+//     }
+//   }
+// };
 
 //날짜별
 export const fetchDailyVisits = async () => {
@@ -130,107 +131,108 @@ export const fetchDateTimeRange = async (date) => {
   }
 };
 
+export const fetchTop5Items = async (processId) => {
+  try {
+    const response = await api.get(`/dashboard/Barchart/${processId}`);
+    console.log("Top5Items raw response:", response.data);
+
+    if (!response.data?.barchartDTOs) return null;
+
+    const total = response.data.barchartDTOs.reduce(
+      (sum, item) => sum + item.count,
+      0
+    );
+    return response.data.barchartDTOs.map((item) => ({
+      item: item.data,
+      visits: item.count,
+      percentage: Number(((item.count / total) * 100).toFixed(1)),
+    }));
+  } catch (error) {
+    handleApiError(error);
+    return null;
+  }
+};
+
+export const fetchPieChart = async (processId) => {
+  try {
+    const response = await api.get(`/dashboard/Piechart/${processId}`);
+    console.log("Piechart raw response:", response.data);
+
+    if (!response.data?.piechartDTO) return null;
+
+    const { success, failure } = response.data.piechartDTO;
+    return {
+      success,
+      failure,
+      totalCount: success + failure,
+    };
+  } catch (error) {
+    handleApiError(error);
+    return null;
+  }
+};
+
 export const fetchTreemap = async (processId) => {
   try {
     const response = await api.get(`/dashboard/Treemap/${processId}`);
-    // 데이터 구조 변환
-    const transformedData = response.data.map((item) => ({
-      name: item.brandname, // brandname을 name으로
-      value: item.count, // count를 value로
-      percent: 0, // percent는 나중에 계산
+    console.log("Treemap raw response:", response.data);
+
+    if (!response.data?.treemaps) return [];
+
+    const transformedData = response.data.treemaps.map((item) => ({
+      name: item.name,
+      value: item.value,
     }));
 
-    // 퍼센트 계산
     const total = transformedData.reduce((sum, item) => sum + item.value, 0);
     return transformedData.map((item) => ({
       ...item,
       percent: Number(((item.value / total) * 100).toFixed(1)),
     }));
   } catch (error) {
-    if (error.response) {
-      throw {
-        status: error.response.status,
-        message: error.response.data.message || "서버 오류가 발생했습니다.",
-        details: error.response.data,
-      };
-    } else if (error.request) {
-      throw {
-        status: 0,
-        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
-        details: error.request,
-      };
-    } else {
-      throw {
-        status: 0,
-        message: "요청 중 오류가 발생했습니다.",
-        details: error.message,
-      };
-    }
+    handleApiError(error);
+    return [];
   }
 };
 
-// price board
 export const fetchPriceBoard = async (processId) => {
   try {
     const response = await api.get(`/dashboard/Priceboard/${processId}`);
-    // 데이터 구조 변환
+    console.log("Priceboard raw response:", response.data);
+
+    if (!response.data?.priceboardDTO) return null;
+
+    const { averageValue, minValue, maxValue } = response.data.priceboardDTO;
     return {
-      average: response.data.averageValue,
-      min: response.data.minValue,
-      max: response.data.maxValue,
+      average: averageValue,
+      min: minValue,
+      max: maxValue,
     };
   } catch (error) {
-    if (error.response) {
-      throw {
-        status: error.response.status,
-        message: error.response.data.message || "서버 오류가 발생했습니다.",
-        details: error.response.data,
-      };
-    } else if (error.request) {
-      throw {
-        status: 0,
-        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
-        details: error.request,
-      };
-    } else {
-      throw {
-        status: 0,
-        message: "요청 중 오류가 발생했습니다.",
-        details: error.message,
-      };
-    }
+    handleApiError(error);
+    return null;
   }
 };
 
-// pie chart
-export const fetchPieChart = async (processId) => {
-  try {
-    const response = await api.get(`/dashboard/Piechart/${processId}`);
-    // 데이터 구조 변환
-    return {
-      success: response.data.success,
-      failure: response.data.failure,
-      totalCount: response.data.success + response.data.failure,
+// 공통 에러 처리 함수
+const handleApiError = (error) => {
+  if (error.response) {
+    throw {
+      status: error.response.status,
+      message: error.response.data.message || "서버 오류가 발생했습니다.",
+      details: error.response.data,
     };
-  } catch (error) {
-    if (error.response) {
-      throw {
-        status: error.response.status,
-        message: error.response.data.message || "서버 오류가 발생했습니다.",
-        details: error.response.data,
-      };
-    } else if (error.request) {
-      throw {
-        status: 0,
-        message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
-        details: error.request,
-      };
-    } else {
-      throw {
-        status: 0,
-        message: "요청 중 오류가 발생했습니다.",
-        details: error.message,
-      };
-    }
+  } else if (error.request) {
+    throw {
+      status: 0,
+      message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
+      details: error.request,
+    };
+  } else {
+    throw {
+      status: 0,
+      message: "요청 중 오류가 발생했습니다.",
+      details: error.message,
+    };
   }
 };

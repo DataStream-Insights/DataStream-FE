@@ -201,39 +201,42 @@ const DashboardPrintView = React.forwardRef(
           )}
 
         {/* 가격 현황 */}
-        {processSpecificData.priceData && (
-          <Section>
-            <h2>가격 현황</h2>
-            <Table>
-              <thead>
-                <tr>
-                  <th>구분</th>
-                  <th>금액</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>평균 금액</td>
-                  <td>
-                    {processSpecificData.priceData.average.toLocaleString()}원
-                  </td>
-                </tr>
-                <tr>
-                  <td>최저 금액</td>
-                  <td>
-                    {processSpecificData.priceData.min.toLocaleString()}원
-                  </td>
-                </tr>
-                <tr>
-                  <td>최고 금액</td>
-                  <td>
-                    {processSpecificData.priceData.max.toLocaleString()}원
-                  </td>
-                </tr>
-              </tbody>
-            </Table>
-          </Section>
-        )}
+        {processSpecificData.priceData &&
+          typeof processSpecificData.priceData.average === "number" &&
+          typeof processSpecificData.priceData.min === "number" &&
+          typeof processSpecificData.priceData.max === "number" && (
+            <Section>
+              <h2>가격 현황</h2>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>구분</th>
+                    <th>금액</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>평균 금액</td>
+                    <td>
+                      {processSpecificData.priceData.average.toLocaleString()}원
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>최저 금액</td>
+                    <td>
+                      {processSpecificData.priceData.min.toLocaleString()}원
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>최고 금액</td>
+                    <td>
+                      {processSpecificData.priceData.max.toLocaleString()}원
+                    </td>
+                  </tr>
+                </tbody>
+              </Table>
+            </Section>
+          )}
       </PrintContainer>
     );
   }
