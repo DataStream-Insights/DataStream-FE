@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Plus, X, ChevronDown } from "lucide-react";
 import * as S from "../../styles/filter/behaviorFilterStyle";
+import { v4 as uuidv4 } from "uuid";
 
 const BehaviorFilter = ({
   filters = [],
@@ -19,7 +20,7 @@ const BehaviorFilter = ({
     onChange([
       ...filters,
       {
-        id: crypto.randomUUID(),
+        id: uuidv4(),
         idOption: null,
         operatorOption: null,
         actionValue: "",
