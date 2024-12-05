@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const HeroSection = styled.div`
   position: relative;
-  height: 300px;
+  height: 450px;
   width: 100%;
   overflow: hidden;
 `;
