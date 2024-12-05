@@ -27,6 +27,7 @@ export const fetchTimeRangeData = async () => {
     const response = await api.get(
       `/dashboard/processes/dategraph/datetimerrangeandcount`
     );
+    console.log(response.data);
     const transformedData = response.data.map((item) => ({
       hour: item.timeRange.split("-")[0], // "00:00-00:59" -> "00:00"
       방문: item.count,
