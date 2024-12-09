@@ -425,8 +425,10 @@ const Dashboard = () => {
                           <LabelList
                             dataKey="percentage"
                             position="right"
-                            formatter={(value) =>
-                              `${value}% (${props.payload.visits.toLocaleString()}회)`
+                            formatter={(value, entry) =>
+                              `${value}% (${
+                                entry.visits?.toLocaleString() || 0
+                              }회)`
                             }
                             style={{ fill: "#666" }}
                           />
@@ -442,11 +444,11 @@ const Dashboard = () => {
               {appliedGraphs.includes(2) && (
                 <S.Card height="370px">
                   <S.CardTitle>프로세스 성공률</S.CardTitle>
-                  {processSpecificData.successRate &&
-                  typeof processSpecificData.successRate.success === "number" &&
-                  typeof processSpecificData.successRate.failure === "number" &&
-                  (processSpecificData.successRate.success > 0 ||
-                    processSpecificData.successRate.failure > 0) ? (
+                  {processSpecificData?.successRate &&
+                  typeof processSpecificData?.successRate?.success ===
+                    "number" &&
+                  typeof processSpecificData?.successRate?.failure ===
+                    "number" ? (
                     <>
                       <ResponsiveContainer width="100%" height={250}>
                         <PieChart>
