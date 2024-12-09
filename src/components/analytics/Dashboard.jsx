@@ -75,24 +75,19 @@ const Dashboard = () => {
     contentRef: printGraphRef,
     pageStyle: `
       @page {
-        size: A4 portrait;
-        margin: 20mm;
+        size: A4;
+        margin: 0;
       }
       @media print {
         body {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
-          background-color: white !important;
         }
-        svg {
-          display: block !important;
-          page-break-inside: avoid !important;
-          max-width: 100% !important;
-          height: auto !important;
-        }
-        .recharts-wrapper {
-          width: 100% !important;
-          height: auto !important;
+        html, body {
+          width: 210mm;
+          height: max-content;
+          margin: 0;
+          padding: 0;
         }
       }
     `,
