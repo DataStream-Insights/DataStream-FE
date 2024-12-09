@@ -439,7 +439,7 @@ const Dashboard = () => {
               {appliedGraphs.includes(2) && (
                 <S.Card height="370px">
                   <S.CardTitle>프로세스 성공률</S.CardTitle>
-                  {processSpecificData?.successRate &&
+                  {processSpecificData.successRate &&
                   typeof processSpecificData.successRate.success === "number" &&
                   typeof processSpecificData.successRate.failure === "number" &&
                   (processSpecificData.successRate.success > 0 ||
@@ -451,13 +451,11 @@ const Dashboard = () => {
                             data={[
                               {
                                 name: "성공",
-                                value:
-                                  processSpecificData.successRate.success || 0,
+                                value: processSpecificData.successRate.success,
                               },
                               {
                                 name: "실패",
-                                value:
-                                  processSpecificData.successRate.failure || 0,
+                                value: processSpecificData.successRate.failure,
                               },
                             ]}
                             cx="50%"
@@ -473,25 +471,16 @@ const Dashboard = () => {
                             <Cell fill="#f87171" />
                           </Pie>
                           <Tooltip
-                            formatter={(value, name) => {
-                              const formattedValue = value
-                                ? Number(value).toLocaleString()
-                                : "0";
-                              return [
-                                `${formattedValue}건`,
-                                name === "성공" ? "성공" : "실패",
-                              ];
-                            }}
+                            formatter={(value, name) => [
+                              `${value}%`,
+                              name === "성공" ? "성공률" : "실패율",
+                            ]}
                           />
                           <Legend />
                         </PieChart>
                       </ResponsiveContainer>
                       <div className="text-center mt-4">
-                        총{" "}
-                        {Number(
-                          processSpecificData.successRate.totalCount || 0
-                        ).toLocaleString()}
-                        건
+                        총 {processSpecificData.successRate.totalCount}건
                       </div>
                     </>
                   ) : (

@@ -240,11 +240,7 @@ const DashboardPrintGraph = React.forwardRef(
           )}
 
           {/* 프로세스 성공률 */}
-          {processSpecificData?.successRate &&
-          typeof processSpecificData.successRate.success === "number" &&
-          typeof processSpecificData.successRate.failure === "number" &&
-          (processSpecificData.successRate.success > 0 ||
-            processSpecificData.successRate.failure > 0) ? (
+          {processSpecificData.successRate && (
             <ChartSection>
               <h2>프로세스 성공률</h2>
               <ChartWrapper>
@@ -253,11 +249,11 @@ const DashboardPrintGraph = React.forwardRef(
                     data={[
                       {
                         name: "성공",
-                        value: processSpecificData.successRate.success || 0,
+                        value: processSpecificData.successRate.success,
                       },
                       {
                         name: "실패",
-                        value: processSpecificData.successRate.failure || 0,
+                        value: processSpecificData.successRate.failure,
                       },
                     ]}
                     cx={350}
@@ -269,25 +265,10 @@ const DashboardPrintGraph = React.forwardRef(
                     <Cell fill="#4ade80" />
                     <Cell fill="#f87171" />
                   </Pie>
-                  <Tooltip
-                    formatter={(value, name) => {
-                      const formattedValue = value
-                        ? Number(value).toLocaleString()
-                        : "0";
-                      return [
-                        `${formattedValue}건`,
-                        name === "성공" ? "성공률" : "실패율",
-                      ];
-                    }}
-                  />
+                  <Tooltip />
                   <Legend />
                 </PieChart>
               </ChartWrapper>
-            </ChartSection>
-          ) : (
-            <ChartSection>
-              <h2>프로세스 성공률</h2>
-              <p>데이터가 없습니다.</p>
             </ChartSection>
           )}
 
