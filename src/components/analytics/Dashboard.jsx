@@ -73,22 +73,25 @@ const Dashboard = () => {
 
   const handlePrintGraph = useReactToPrint({
     contentRef: printGraphRef,
-    documentTitle: `Dashboard_Graph_${new Date().toLocaleDateString()}`,
     pageStyle: `
       @page {
         size: A4 portrait;
-        margin: 15mm;
+        margin: 20mm;
       }
       @media print {
         body {
           -webkit-print-color-adjust: exact !important;
           print-color-adjust: exact !important;
-        }
-        .no-print {
-          display: none !important;
+          background-color: white !important;
         }
         svg {
+          display: block !important;
+          page-break-inside: avoid !important;
           max-width: 100% !important;
+          height: auto !important;
+        }
+        .recharts-wrapper {
+          width: 100% !important;
           height: auto !important;
         }
       }
