@@ -27,7 +27,7 @@ const DashboardPrintTable = React.forwardRef(
               {dashboardData.timeSeriesData.map((item, index) => (
                 <tr key={index}>
                   <td>{item.hour}</td>
-                  <td>{item.방문.toLocaleString()}회</td>
+                  <td>{item.방문.toLocaleString() ?? 0}회</td>
                 </tr>
               ))}
             </tbody>
@@ -54,7 +54,7 @@ const DashboardPrintTable = React.forwardRef(
                       day: "numeric",
                     })}
                   </td>
-                  <td>{item.visits.toLocaleString()}회</td>
+                  <td>{item.visits.toLocaleString() ?? 0}회</td>
                 </tr>
               ))}
             </tbody>
@@ -75,7 +75,7 @@ const DashboardPrintTable = React.forwardRef(
               {dashboardData.dayVisits.map((item, index) => (
                 <tr key={index}>
                   <td>{item.day}</td>
-                  <td>{item.visits.toLocaleString()}명</td>
+                  <td>{item.visits.toLocaleString() ?? 0}명</td>
                 </tr>
               ))}
             </tbody>
@@ -110,7 +110,7 @@ const DashboardPrintTable = React.forwardRef(
                 {dateTimeRangeData.map((item, index) => (
                   <tr key={index}>
                     <td>{item.hour}</td>
-                    <td>{item.count.toLocaleString()}회</td>
+                    <td>{item.count.toLocaleString() ?? 0}회</td>
                   </tr>
                 ))}
               </tbody>
@@ -136,7 +136,7 @@ const DashboardPrintTable = React.forwardRef(
                   <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{item.item}</td>
-                    <td>{item.visits.toLocaleString()}회</td>
+                    <td>{item.visits.toLocaleString() ?? 0}회</td>
                     <td>{item.percentage}%</td>
                   </tr>
                 ))}
@@ -161,21 +161,27 @@ const DashboardPrintTable = React.forwardRef(
                 <tr>
                   <td>성공</td>
                   <td>
-                    {processSpecificData.successRate.success.toLocaleString()}건
+                    {processSpecificData.successRate.success.toLocaleString() ??
+                      0}
+                    건
                   </td>
                   <td>{processSpecificData.successRate.success}%</td>
                 </tr>
                 <tr>
                   <td>실패</td>
                   <td>
-                    {processSpecificData.successRate.failure.toLocaleString()}건
+                    {processSpecificData.successRate.failure.toLocaleString() ??
+                      0}
+                    건
                   </td>
                   <td>{processSpecificData.successRate.failure}%</td>
                 </tr>
               </tbody>
             </Table>
             <p>
-              총 {processSpecificData.successRate.totalCount.toLocaleString()}건
+              총{" "}
+              {processSpecificData.successRate.totalCount.toLocaleString() ?? 0}
+              건
             </p>
           </Section>
         )}
@@ -197,7 +203,7 @@ const DashboardPrintTable = React.forwardRef(
                   {processSpecificData.menuUsage.map((item, index) => (
                     <tr key={index}>
                       <td>{item.name}</td>
-                      <td>{item.value.toLocaleString()}회</td>
+                      <td>{item.value.toLocaleString() ?? 0}회</td>
                       <td>{item.percent}%</td>
                     </tr>
                   ))}
@@ -224,19 +230,21 @@ const DashboardPrintTable = React.forwardRef(
                   <tr>
                     <td>평균 금액</td>
                     <td>
-                      {processSpecificData.priceData.average.toLocaleString()}원
+                      $
+                      {processSpecificData.priceData.average.toLocaleString() ??
+                        0}
                     </td>
                   </tr>
                   <tr>
                     <td>최저 금액</td>
                     <td>
-                      {processSpecificData.priceData.min.toLocaleString()}원
+                      ${processSpecificData.priceData.min.toLocaleString() ?? 0}
                     </td>
                   </tr>
                   <tr>
                     <td>최고 금액</td>
                     <td>
-                      {processSpecificData.priceData.max.toLocaleString()}원
+                      ${processSpecificData.priceData.max.toLocaleString() ?? 0}
                     </td>
                   </tr>
                 </tbody>

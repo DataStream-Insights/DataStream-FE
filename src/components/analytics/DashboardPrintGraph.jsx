@@ -46,7 +46,10 @@ const DashboardPrintGraph = React.forwardRef(
                 <XAxis dataKey="hour" />
                 <YAxis />
                 <Tooltip
-                  formatter={(value) => [`${value.toLocaleString()}회`, "방문"]}
+                  formatter={(value) => [
+                    `${value.toLocaleString() ?? 0}회`,
+                    "방문",
+                  ]}
                 />
                 <Legend />
                 <Line
@@ -93,7 +96,10 @@ const DashboardPrintGraph = React.forwardRef(
                 />
                 <YAxis />
                 <Tooltip
-                  formatter={(value) => [`${value.toLocaleString()}회`, "방문"]}
+                  formatter={(value) => [
+                    `${value.toLocaleString() ?? 0}회`,
+                    "방문",
+                  ]}
                 />
                 <Area
                   type="monotone"
@@ -120,7 +126,7 @@ const DashboardPrintGraph = React.forwardRef(
                 <YAxis />
                 <Tooltip
                   formatter={(value) => [
-                    `${value.toLocaleString()}명`,
+                    `${value.toLocaleString() ?? 0}명`,
                     "방문자 수",
                   ]}
                 />
@@ -128,7 +134,7 @@ const DashboardPrintGraph = React.forwardRef(
                   <LabelList
                     dataKey="visits"
                     position="top"
-                    formatter={(value) => `${value.toLocaleString()}명`}
+                    formatter={(value) => `${value.toLocaleString() ?? 0}명`}
                   />
                 </Bar>
               </BarChart>
@@ -180,7 +186,7 @@ const DashboardPrintGraph = React.forwardRef(
                   <YAxis />
                   <Tooltip
                     formatter={(value) => [
-                      `${value.toLocaleString()}회`,
+                      `${value.toLocaleString() ?? 0}회`,
                       "방문",
                     ]}
                   />
@@ -213,7 +219,7 @@ const DashboardPrintGraph = React.forwardRef(
                     <YAxis type="category" dataKey="item" width={150} />
                     <Tooltip
                       formatter={(value, name, props) => [
-                        `${value.toLocaleString()}회 (${
+                        `${value.toLocaleString() ?? 0}회 (${
                           props.payload.percentage
                         }%)`,
                         "판매",
@@ -229,7 +235,9 @@ const DashboardPrintGraph = React.forwardRef(
                       <LabelList
                         dataKey="visits"
                         position="right"
-                        formatter={(value) => `${value.toLocaleString()}회`}
+                        formatter={(value) =>
+                          `${value.toLocaleString() ?? 0}회`
+                        }
                       />
                     </Bar>
                   </BarChart>
@@ -264,7 +272,10 @@ const DashboardPrintGraph = React.forwardRef(
                     <Cell fill="#f87171" />
                   </Pie>
                   <Tooltip
-                    formatter={(value) => [`${value.toLocaleString()}건`, ""]}
+                    formatter={(value) => [
+                      `${value.toLocaleString() ?? 0}건`,
+                      "",
+                    ]}
                   />
                   <Legend />
                 </PieChart>
@@ -321,7 +332,7 @@ const DashboardPrintGraph = React.forwardRef(
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip
-                      formatter={(value) => `${value.toLocaleString()}원`}
+                      formatter={(value) => `$${value.toLocaleString() ?? 0}`}
                     />
                     <Bar dataKey="value">
                       {/* 각 막대에 다른 색상 적용 */}
@@ -331,7 +342,7 @@ const DashboardPrintGraph = React.forwardRef(
                       <LabelList
                         dataKey="value"
                         position="top"
-                        formatter={(value) => `${value.toLocaleString()}원`}
+                        formatter={(value) => `$${value.toLocaleString() ?? 0}`}
                       />
                     </Bar>
                   </BarChart>
