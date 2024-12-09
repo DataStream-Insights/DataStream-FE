@@ -26,10 +26,13 @@ import { useDashboard } from "../../hooks/analytics/useDashboard";
 import * as S from "../../styles/analytics/dashboardStyle";
 import Loading from "../Loading";
 import DashboardHeader from "./DashboardHeader";
-import DashboardPrintView from "./DashboardPrintView";
+// import DashboardPrintView from "./DashboardPrintView";
+import DashboardPrintTable from "./DashboardPrintTable";
+import DashboardPrintGraph from "./DashboardPrintGraph";
 
 const Dashboard = () => {
-  const printRef = useRef(null);
+  const printTableRef = useRef(null);
+  const printGraphRef = useRef(null);
 
   const {
     pipelines,
@@ -48,9 +51,9 @@ const Dashboard = () => {
     appliedGraphs,
   } = useDashboard();
 
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    documentTitle: `Dashboard_${new Date().toLocaleDateString()}`,
+  const handlePrintTable = useReactToPrint({
+    contentRef: printTableRef,
+    documentTitle: `Dashboard_Table_${new Date().toLocaleDateString()}`,
     pageStyle: `
       @page {
         size: A4 portrait;
@@ -67,6 +70,50 @@ const Dashboard = () => {
       }
     `,
   });
+
+  const handlePrintGraph = useReactToPrint({
+    contentRef: printGraphRef,
+    documentTitle: `Dashboard_Graph_${new Date().toLocaleDateString()}`,
+    pageStyle: `
+      @page {
+        size: A4 portrait;
+        margin: 15mm;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact !important;
+          print-color-adjust: exact !important;
+        }
+        .no-print {
+          display: none !important;
+        }
+        svg {
+          max-width: 100% !important;
+          height: auto !important;
+        }
+      }
+    `,
+  });
+
+  // const handlePrint = useReactToPrint({
+  //   contentRef: printRef,
+  //   documentTitle: `Dashboard_${new Date().toLocaleDateString()}`,
+  //   pageStyle: `
+  //     @page {
+  //       size: A4 portrait;
+  //       margin: 15mm;
+  //     }
+  //     @media print {
+  //       body {
+  //         -webkit-print-color-adjust: exact !important;
+  //         print-color-adjust: exact !important;
+  //       }
+  //       .no-print {
+  //         display: none !important;
+  //       }
+  //     }
+  //   `,
+  // });
 
   // const handleApply = async (pipelineId, selectedGraphs) => {
   //   try {
@@ -99,14 +146,24 @@ const Dashboard = () => {
           appliedGraphs={appliedGraphs}
         />
         <div className="flex gap-2">
-          <S.RefreshButton onClick={refreshDashboard}>
+          {/* <S.RefreshButton onClick={refreshDashboard}>
             <RefreshCw size={16} />
             Refresh
-          </S.RefreshButton>
-          <ExportButton onClick={handlePrint}>
-            <Download size={16} />
-            PDF 내보내기
-          </ExportButton>
+          </S.RefreshButton> */}
+          <ExportButtons>
+            <S.RefreshButton onClick={refreshDashboard}>
+              <RefreshCw size={16} />
+              Refresh
+            </S.RefreshButton>
+            <ExportButton onClick={handlePrintTable}>
+              <Download size={16} />
+              표로 내보내기
+            </ExportButton>
+            <ExportButton onClick={handlePrintGraph}>
+              <Download size={16} />
+              그래프로 내보내기
+            </ExportButton>
+          </ExportButtons>
         </div>
       </S.Header>
 
@@ -557,8 +614,17 @@ const Dashboard = () => {
           </div>
         )}
       </div>
-      <div ref={printRef}>
-        <DashboardPrintView
+      {/* 프린트용 컴포넌트 추가 */}
+      <div style={{ display: "none" }}>
+        <DashboardPrintTable
+          ref={printTableRef}
+          dashboardData={dashboardData}
+          processSpecificData={processSpecificData}
+          dateTimeRangeData={dateTimeRangeData}
+          selectedDate={selectedDate}
+        />
+        <DashboardPrintGraph
+          ref={printGraphRef}
           dashboardData={dashboardData}
           processSpecificData={processSpecificData}
           dateTimeRangeData={dateTimeRangeData}
@@ -591,6 +657,11 @@ const PrintHeader = styled.div`
   p {
     color: #666;
   }
+`;
+
+const ExportButtons = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
 const ExportButton = styled(S.RefreshButton)`
