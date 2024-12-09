@@ -479,7 +479,7 @@ const Dashboard = () => {
                                 : "0";
                               return [
                                 `${formattedValue}건`,
-                                name === "성공" ? "성공률" : "실패율",
+                                name === "성공" ? "성공" : "실패",
                               ];
                             }}
                           />
