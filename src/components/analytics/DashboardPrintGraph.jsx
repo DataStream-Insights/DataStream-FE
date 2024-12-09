@@ -217,12 +217,7 @@ const DashboardPrintGraph = React.forwardRef(
                   <XAxis type="number" />
                   <YAxis type="category" dataKey="item" width={150} />
                   <Tooltip
-                    formatter={(value, name, entry) => [
-                      `${
-                        entry?.payload?.visits?.toLocaleString() || 0
-                      }회 (${value}%)`,
-                      "판매",
-                    ]}
+                    formatter={(value) => [`${value}%`, "판매"]} // 여기 수정
                   />
                   <Bar dataKey="percentage">
                     {processSpecificData.topItems.map((entry, index) => (
@@ -234,7 +229,7 @@ const DashboardPrintGraph = React.forwardRef(
                     <LabelList
                       dataKey="visits"
                       position="right"
-                      formatter={(value) =>
+                      formatter={(value, entry) =>
                         `${(value || 0).toLocaleString()}회`
                       }
                     />

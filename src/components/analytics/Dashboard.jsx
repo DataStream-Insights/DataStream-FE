@@ -387,7 +387,7 @@ const Dashboard = () => {
               {appliedGraphs.includes(1) && (
                 <S.Card height="480px">
                   <S.CardTitle>인기 상품 Top5</S.CardTitle>
-                  {processSpecificData.topItems.length > 0 ? (
+                  {processSpecificData?.topItems?.length > 0 ? (
                     <ResponsiveContainer width="100%" height={400}>
                       <BarChart
                         layout="vertical"
@@ -404,10 +404,7 @@ const Dashboard = () => {
                           tick={{ fontSize: 12 }}
                         />
                         <Tooltip
-                          formatter={(value, name, props) => [
-                            `${props.payload.visits.toLocaleString()}회 (${value}%)`,
-                            "판매",
-                          ]}
+                          formatter={(value) => [`${value}%`, "판매"]} // 이 부분만 수정
                         />
                         <Bar
                           dataKey="percentage"
@@ -423,12 +420,10 @@ const Dashboard = () => {
                             />
                           ))}
                           <LabelList
-                            dataKey="percentage"
+                            dataKey="visits"
                             position="right"
                             formatter={(value, entry) =>
-                              `${value}% (${
-                                entry.visits?.toLocaleString() || 0
-                              }회)`
+                              `${(value || 0).toLocaleString()}회`
                             }
                             style={{ fill: "#666" }}
                           />
@@ -444,11 +439,7 @@ const Dashboard = () => {
               {appliedGraphs.includes(2) && (
                 <S.Card height="370px">
                   <S.CardTitle>프로세스 성공률</S.CardTitle>
-                  {processSpecificData?.successRate &&
-                  typeof processSpecificData?.successRate?.success ===
-                    "number" &&
-                  typeof processSpecificData?.successRate?.failure ===
-                    "number" ? (
+                  {processSpecificData?.successRate ? (
                     <>
                       <ResponsiveContainer width="100%" height={250}>
                         <PieChart>
@@ -456,11 +447,13 @@ const Dashboard = () => {
                             data={[
                               {
                                 name: "성공",
-                                value: processSpecificData.successRate.success,
+                                value:
+                                  processSpecificData.successRate.success || 0,
                               },
                               {
                                 name: "실패",
-                                value: processSpecificData.successRate.failure,
+                                value:
+                                  processSpecificData.successRate.failure || 0,
                               },
                             ]}
                             cx="50%"
@@ -476,9 +469,8 @@ const Dashboard = () => {
                             <Cell fill="#f87171" />
                           </Pie>
                           <Tooltip
-                            formatter={(value, name) => [
-                              `${value}%`,
-                              name === "성공" ? "성공률" : "실패율",
+                            formatter={(value) => [
+                              `${(value || 0).toLocaleString()}건`,
                             ]}
                           />
                           <Legend />
@@ -486,7 +478,9 @@ const Dashboard = () => {
                       </ResponsiveContainer>
                       <div className="text-center mt-4">
                         총{" "}
-                        {processSpecificData.successRate.totalCount.toLocaleString()}
+                        {(
+                          processSpecificData.successRate.totalCount || 0
+                        ).toLocaleString()}
                         건
                       </div>
                     </>
