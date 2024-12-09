@@ -39,7 +39,7 @@ const DashboardPrintGraph = React.forwardRef(
               <LineChart
                 width={700}
                 height={300}
-                data={dashboardData.timeSeriesData}
+                data={dashboardData?.timeSeriesData || []}
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -47,7 +47,7 @@ const DashboardPrintGraph = React.forwardRef(
                 <YAxis />
                 <Tooltip
                   formatter={(value) => [
-                    `${value.toLocaleString() ?? 0}회`,
+                    `${(value || 0).toLocaleString()}회`,
                     "방문",
                   ]}
                 />
@@ -69,7 +69,7 @@ const DashboardPrintGraph = React.forwardRef(
               <AreaChart
                 width={700}
                 height={300}
-                data={dashboardData.dailyVisits}
+                data={dashboardData?.dailyVisits || []}
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <defs>
@@ -97,7 +97,7 @@ const DashboardPrintGraph = React.forwardRef(
                 <YAxis />
                 <Tooltip
                   formatter={(value) => [
-                    `${value.toLocaleString() ?? 0}회`,
+                    `${(value || 0).toLocaleString()}회`,
                     "방문",
                   ]}
                 />
@@ -118,7 +118,7 @@ const DashboardPrintGraph = React.forwardRef(
               <BarChart
                 width={700}
                 height={300}
-                data={dashboardData.dayVisits}
+                data={dashboardData?.dayVisits || []}
                 margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
                 <CartesianGrid strokeDasharray="3 3" />
@@ -126,7 +126,7 @@ const DashboardPrintGraph = React.forwardRef(
                 <YAxis />
                 <Tooltip
                   formatter={(value) => [
-                    `${value.toLocaleString() ?? 0}명`,
+                    `${(value || 0).toLocaleString()}명`,
                     "방문자 수",
                   ]}
                 />
@@ -134,7 +134,7 @@ const DashboardPrintGraph = React.forwardRef(
                   <LabelList
                     dataKey="visits"
                     position="top"
-                    formatter={(value) => `${value.toLocaleString() ?? 0}명`}
+                    formatter={(value) => `${(value || 0).toLocaleString()}명`}
                   />
                 </Bar>
               </BarChart>
@@ -186,7 +186,7 @@ const DashboardPrintGraph = React.forwardRef(
                   <YAxis />
                   <Tooltip
                     formatter={(value) => [
-                      `${value.toLocaleString() ?? 0}회`,
+                      `${(value || 0).toLocaleString()}회`,
                       "방문",
                     ]}
                   />
@@ -202,53 +202,52 @@ const DashboardPrintGraph = React.forwardRef(
           )}
 
           {/* 인기 상품 Top5 */}
-          {processSpecificData.topItems &&
-            processSpecificData.topItems.length > 0 && (
-              <ChartSection>
-                <h2>인기 상품 Top5</h2>
-                <ChartWrapper>
-                  <BarChart
-                    width={700}
-                    height={300}
-                    layout="vertical"
-                    data={processSpecificData.topItems}
-                    margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis type="number" />
-                    <YAxis type="category" dataKey="item" width={150} />
-                    <Tooltip
-                      formatter={(value, name, props) => [
-                        `${
-                          props?.payload?.visits?.toLocaleString() || 0
-                        }회 (${value}%)`,
-                        "판매",
-                      ]}
-                    />
-                    <Bar dataKey="visits">
-                      {processSpecificData.topItems.map((entry, index) => (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
-                        />
-                      ))}
-                      <LabelList
-                        dataKey="visits"
-                        position="right"
-                        formatter={(value) =>
-                          `${value?.toLocaleString() || 0}회`
-                        }
+          {processSpecificData?.topItems?.length > 0 && (
+            <ChartSection>
+              <h2>인기 상품 Top5</h2>
+              <ChartWrapper>
+                <BarChart
+                  width={700}
+                  height={300}
+                  layout="vertical"
+                  data={processSpecificData.topItems}
+                  margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" />
+                  <YAxis type="category" dataKey="item" width={150} />
+                  <Tooltip
+                    formatter={(value, name, entry) => [
+                      `${
+                        entry?.payload?.visits?.toLocaleString() || 0
+                      }회 (${value}%)`,
+                      "판매",
+                    ]}
+                  />
+                  <Bar dataKey="percentage">
+                    {processSpecificData.topItems.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
                       />
-                    </Bar>
-                  </BarChart>
-                </ChartWrapper>
-              </ChartSection>
-            )}
+                    ))}
+                    <LabelList
+                      dataKey="visits"
+                      position="right"
+                      formatter={(value) =>
+                        `${(value || 0).toLocaleString()}회`
+                      }
+                    />
+                  </Bar>
+                </BarChart>
+              </ChartWrapper>
+            </ChartSection>
+          )}
 
           {/* 프로세스 성공률 */}
           {processSpecificData?.successRate &&
-            processSpecificData.successRate.success !== null &&
-            processSpecificData.successRate.failure !== null && (
+            typeof processSpecificData.successRate.success === "number" &&
+            typeof processSpecificData.successRate.failure === "number" && (
               <ChartSection>
                 <h2>프로세스 성공률</h2>
                 <ChartWrapper>
@@ -275,7 +274,7 @@ const DashboardPrintGraph = React.forwardRef(
                     </Pie>
                     <Tooltip
                       formatter={(value) => [
-                        `${value.toLocaleString() || 0}건`,
+                        `${(value || 0).toLocaleString()}건`,
                         "",
                       ]}
                     />
@@ -286,27 +285,33 @@ const DashboardPrintGraph = React.forwardRef(
             )}
 
           {/* 메뉴별 방문 비율 */}
-          {processSpecificData.menuUsage &&
-            processSpecificData.menuUsage.length > 0 && (
-              <ChartSection>
-                <h2>메뉴별 방문 비율</h2>
-                <ChartWrapper>
-                  <Treemap
-                    width={700}
-                    height={300}
-                    data={processSpecificData.menuUsage}
-                    dataKey="value"
-                    aspectRatio={4 / 3}
-                    stroke="#fff"
-                  >
-                    <Tooltip />
-                  </Treemap>
-                </ChartWrapper>
-              </ChartSection>
-            )}
+          {processSpecificData?.menuUsage?.length > 0 && (
+            <ChartSection>
+              <h2>메뉴별 방문 비율</h2>
+              <ChartWrapper>
+                <Treemap
+                  width={700}
+                  height={300}
+                  data={processSpecificData.menuUsage}
+                  dataKey="value"
+                  aspectRatio={4 / 3}
+                  stroke="#fff"
+                >
+                  <Tooltip
+                    formatter={(value, name, entry) => [
+                      `${entry?.payload?.percent || 0}% (${(
+                        value || 0
+                      ).toLocaleString()}회)`,
+                      entry?.payload?.name || "",
+                    ]}
+                  />
+                </Treemap>
+              </ChartWrapper>
+            </ChartSection>
+          )}
 
           {/* 가격 현황 */}
-          {processSpecificData.priceData &&
+          {processSpecificData?.priceData &&
             typeof processSpecificData.priceData.average === "number" && (
               <ChartSection>
                 <h2>가격 현황</h2>
@@ -317,15 +322,15 @@ const DashboardPrintGraph = React.forwardRef(
                     data={[
                       {
                         name: "평균 금액",
-                        value: processSpecificData.priceData.average,
+                        value: processSpecificData.priceData.average || 0,
                       },
                       {
                         name: "최저 금액",
-                        value: processSpecificData.priceData.min,
+                        value: processSpecificData.priceData.min || 0,
                       },
                       {
                         name: "최고 금액",
-                        value: processSpecificData.priceData.max,
+                        value: processSpecificData.priceData.max || 0,
                       },
                     ]}
                     margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
@@ -334,17 +339,21 @@ const DashboardPrintGraph = React.forwardRef(
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip
-                      formatter={(value) => `$${value.toLocaleString() ?? 0}`}
+                      formatter={(value) => [
+                        `$${(value || 0).toLocaleString()}`,
+                        "",
+                      ]}
                     />
                     <Bar dataKey="value">
-                      {/* 각 막대에 다른 색상 적용 */}
-                      <Cell fill="#4B5563" /> {/* 평균 - 회색 */}
-                      <Cell fill="#3B82F6" /> {/* 최저 - 파란색 */}
-                      <Cell fill="#EF4444" /> {/* 최고 - 빨간색 */}
+                      <Cell fill="#4B5563" />
+                      <Cell fill="#3B82F6" />
+                      <Cell fill="#EF4444" />
                       <LabelList
                         dataKey="value"
                         position="top"
-                        formatter={(value) => `$${value.toLocaleString() ?? 0}`}
+                        formatter={(value) =>
+                          `$${(value || 0).toLocaleString()}`
+                        }
                       />
                     </Bar>
                   </BarChart>
@@ -399,14 +408,6 @@ const ChartSection = styled.section`
   @media print {
     margin: 0;
     padding: 20px 0;
-  }
-`;
-
-const ChartRow = styled.div`
-  @media print {
-    display: flex;
-    gap: 20px;
-    page-break-inside: avoid;
   }
 `;
 
