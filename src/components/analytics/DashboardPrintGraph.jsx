@@ -240,48 +240,37 @@ const DashboardPrintGraph = React.forwardRef(
           )}
 
           {/* 프로세스 성공률 */}
-          {processSpecificData?.successRate &&
-            typeof processSpecificData.successRate.success === "number" &&
-            typeof processSpecificData.successRate.failure === "number" && (
-              <ChartSection>
-                <h2>프로세스 성공률</h2>
-                <ChartWrapper>
-                  <PieChart width={700} height={300}>
-                    <Pie
-                      data={[
-                        {
-                          name: "성공",
-                          value: processSpecificData.successRate.success || 0,
-                        },
-                        {
-                          name: "실패",
-                          value: processSpecificData.successRate.failure || 0,
-                        },
-                      ]}
-                      cx={350}
-                      cy={150}
-                      innerRadius={60}
-                      outerRadius={100}
-                      label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
-                    >
-                      <Cell fill="#4ade80" />
-                      <Cell fill="#f87171" />
-                    </Pie>
-                    <Tooltip
-                      formatter={(value) => {
-                        // value가 null 또는 undefined인 경우 기본값 0으로 처리
-                        const formattedValue = value
-                          ? Number(value).toLocaleString()
-                          : "0";
-                        return [`${formattedValue}건`, ""];
-                      }}
-                    />
-                    <Legend />
-                  </PieChart>
-                </ChartWrapper>
-              </ChartSection>
-            )}
-
+          {processSpecificData.successRate && (
+            <ChartSection>
+              <h2>프로세스 성공률</h2>
+              <ChartWrapper>
+                <PieChart width={700} height={300}>
+                  <Pie
+                    data={[
+                      {
+                        name: "성공",
+                        value: processSpecificData.successRate.success,
+                      },
+                      {
+                        name: "실패",
+                        value: processSpecificData.successRate.failure,
+                      },
+                    ]}
+                    cx={350}
+                    cy={150}
+                    innerRadius={60}
+                    outerRadius={100}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                  >
+                    <Cell fill="#4ade80" />
+                    <Cell fill="#f87171" />
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ChartWrapper>
+            </ChartSection>
+          )}
           {/* 메뉴별 방문 비율 */}
           {processSpecificData?.menuUsage?.length > 0 && (
             <ChartSection>
