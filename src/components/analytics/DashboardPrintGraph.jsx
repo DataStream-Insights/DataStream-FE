@@ -268,10 +268,13 @@ const DashboardPrintGraph = React.forwardRef(
                       <Cell fill="#f87171" />
                     </Pie>
                     <Tooltip
-                      formatter={(value) => [
-                        `${(value || 0).toLocaleString()}건`,
-                        "",
-                      ]}
+                      formatter={(value) => {
+                        // value가 null 또는 undefined인 경우 기본값 0으로 처리
+                        const formattedValue = value
+                          ? Number(value).toLocaleString()
+                          : "0";
+                        return [`${formattedValue}건`, ""];
+                      }}
                     />
                     <Legend />
                   </PieChart>

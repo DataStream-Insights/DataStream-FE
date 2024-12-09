@@ -439,7 +439,6 @@ const Dashboard = () => {
               {appliedGraphs.includes(2) && (
                 <S.Card height="370px">
                   <S.CardTitle>프로세스 성공률</S.CardTitle>
-                  // 프로세스 성공률 Pie Chart 수정
                   {processSpecificData?.successRate &&
                   typeof processSpecificData?.successRate?.success ===
                     "number" &&
@@ -477,7 +476,7 @@ const Dashboard = () => {
                             formatter={(value) => {
                               if (value === null || value === undefined)
                                 return ["0건"];
-                              return [`${value.toLocaleString()}건`];
+                              return [`${Number(value).toLocaleString()}건`];
                             }}
                           />
                           <Legend />
@@ -485,7 +484,7 @@ const Dashboard = () => {
                       </ResponsiveContainer>
                       <div className="text-center mt-4">
                         총{" "}
-                        {(
+                        {Number(
                           processSpecificData?.successRate?.totalCount || 0
                         ).toLocaleString()}
                         건
@@ -496,6 +495,7 @@ const Dashboard = () => {
                   )}
                 </S.Card>
               )}
+
               {/* Menu Usage Treemap */}
               {appliedGraphs.includes(3) && (
                 <S.Card height="400px">
