@@ -35,9 +35,10 @@ const DashboardPrintGraph = React.forwardRef(
           <h2>시간대별 방문 추이</h2>
           <ChartContainer>
             <LineChart
-              width={600}
-              height={300}
+              width={800} // 큰 너비 지정
+              height={350} // PDF에 맞는 높이
               data={dashboardData.timeSeriesData}
+              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="hour" />
@@ -157,13 +158,14 @@ const DashboardPrintGraph = React.forwardRef(
 );
 
 const PrintContainer = styled.div`
-  @media screen {
-    display: none;
-  }
   @media print {
     display: block;
-    padding: 20px;
-    background-color: white;
+    width: 100%;
+    max-width: 210mm; // A4 너비
+    margin: 0 auto;
+    padding: 20mm;
+    background: white;
+    page-break-after: always;
   }
 `;
 
@@ -180,11 +182,26 @@ const PrintHeader = styled.div`
 const Section = styled.section`
   margin-bottom: 40px;
   page-break-inside: avoid;
+  width: 100%;
 
-  h2 {
-    font-size: 18px;
-    margin-bottom: 15px;
-    color: #333;
+  @media print {
+    margin: 20px 0;
+    padding: 0;
+    height: auto;
+  }
+`;
+
+const ChartWrapper = styled.div`
+  width: 100%;
+  height: 400px; // 고정 높이 지정
+  margin: 20px 0;
+  page-break-inside: avoid;
+
+  @media print {
+    width: 100% !important;
+    height: 350px !important; // PDF용 높이 지정
+    margin: 0 auto;
+    display: block;
   }
 `;
 
