@@ -160,29 +160,17 @@ const DashboardPrintTable = React.forwardRef(
               <tbody>
                 <tr>
                   <td>성공</td>
-                  <td>
-                    {processSpecificData.successRate.success.toLocaleString() ??
-                      0}
-                    건
-                  </td>
+                  <td>{processSpecificData.successRate.success}건</td>
                   <td>{processSpecificData.successRate.success}%</td>
                 </tr>
                 <tr>
                   <td>실패</td>
-                  <td>
-                    {processSpecificData.successRate.failure.toLocaleString() ??
-                      0}
-                    건
-                  </td>
+                  <td>{processSpecificData.successRate.failure}건</td>
                   <td>{processSpecificData.successRate.failure}%</td>
                 </tr>
               </tbody>
             </Table>
-            <p>
-              총{" "}
-              {processSpecificData.successRate.totalCount.toLocaleString() ?? 0}
-              건
-            </p>
+            <p>총 {processSpecificData.successRate.totalCount}건</p>
           </Section>
         )}
 
