@@ -23,6 +23,24 @@ export const Header = styled.div`
   align-items: center;
 `;
 
+export const PrintHeader = styled.div`
+  margin-bottom: 20px;
+  text-align: center;
+
+  @media screen {
+    display: none;
+  }
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #666;
+  }
+`;
+
 export const MainContent = styled.div`
   display: flex;
   gap: 20px;
@@ -119,19 +137,54 @@ export const CardTitle = styled.h3`
   color: #333;
 `;
 
-export const RefreshButton = styled.button`
-  padding: 8px 16px;
-  //   background-color: #007bff;
-  color: #979797;
-  border: none;
+export const ExportButtons = styled.div`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
+
+export const ButtonBase = styled.button`
+  padding: 6px 12px;
   border-radius: 4px;
+  font-size: 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+`;
+
+export const RefreshButton = styled(ButtonBase)`
+  color: #666;
+  background-color: transparent;
+  // border-color: #e2e2e2;
 
   &:hover {
-    background-color: #e2e2e2;
+    background-color: #f5f5f5;
+    // border-color: #d1d1d1;
+  }
+`;
+
+export const TableExportButton = styled(ButtonBase)`
+  color: #3b82f6;
+  background-color: #eff6ff;
+  border-color: #dbeafe;
+
+  &:hover {
+    background-color: #dbeafe;
+    border-color: #bfdbfe;
+  }
+`;
+
+export const GraphExportButton = styled(ButtonBase)`
+  color: #059669;
+  background-color: #ecfdf5;
+  border-color: #d1fae5;
+
+  &:hover {
+    background-color: #d1fae5;
+    border-color: #a7f3d0;
   }
 `;
 
