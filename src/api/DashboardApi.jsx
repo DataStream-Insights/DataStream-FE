@@ -39,38 +39,6 @@ export const fetchTimeRangeData = async () => {
   }
 };
 
-//상품 top5
-// export const fetchTop5Items = async (processId) => {
-//   try {
-//     const response = await api.get(`/dashboard/Barchart/${processId}`);
-//     console.log("fetchTop5Items response:", response.data);
-//     return response.data;
-//   } catch (error) {
-//     if (error.response) {
-//       // 서버가 응답을 반환한 경우 (400, 401, 403, 404, 500 등)
-//       throw {
-//         status: error.response.status,
-//         message: error.response.data.message || "서버 오류가 발생했습니다.",
-//         details: error.response.data,
-//       };
-//     } else if (error.request) {
-//       // 요청은 보냈지만 응답을 받지 못한 경우
-//       throw {
-//         status: 0,
-//         message: "서버와 통신할 수 없습니다. 네트워크 연결을 확인해주세요.",
-//         details: error.request,
-//       };
-//     } else {
-//       // 요청 설정 중에 오류가 발생한 경우
-//       throw {
-//         status: 0,
-//         message: "요청 중 오류가 발생했습니다.",
-//         details: error.message,
-//       };
-//     }
-//   }
-// };
-
 //날짜별
 export const fetchDailyVisits = async () => {
   try {
