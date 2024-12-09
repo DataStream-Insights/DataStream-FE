@@ -26,7 +26,6 @@ import { useDashboard } from "../../hooks/analytics/useDashboard";
 import * as S from "../../styles/analytics/dashboardStyle";
 import Loading from "../Loading";
 import DashboardHeader from "./DashboardHeader";
-// import DashboardPrintView from "./DashboardPrintView";
 import DashboardPrintTable from "./DashboardPrintTable";
 import DashboardPrintGraph from "./DashboardPrintGraph";
 
@@ -148,30 +147,30 @@ const Dashboard = () => {
             <RefreshCw size={16} />
             Refresh
           </S.RefreshButton> */}
-          <ExportButtons>
+          <S.ExportButtons>
             <S.RefreshButton onClick={refreshDashboard}>
               <RefreshCw size={16} />
               Refresh
             </S.RefreshButton>
-            <ExportButton onClick={handlePrintTable}>
+            <S.TableExportButton onClick={handlePrintTable}>
               <Download size={16} />
               표로 내보내기
-            </ExportButton>
-            <ExportButton onClick={handlePrintGraph}>
+            </S.TableExportButton>
+            <S.GraphExportButton onClick={handlePrintGraph}>
               <Download size={16} />
               그래프로 내보내기
-            </ExportButton>
-          </ExportButtons>
+            </S.GraphExportButton>
+          </S.ExportButtons>
         </div>
       </S.Header>
 
       <div className="screen-only">
         {dashboardData ? (
           <>
-            <PrintHeader>
+            <S.PrintHeader>
               <h1>대시보드 리포트</h1>
               <p>생성일: {new Date().toLocaleDateString()}</p>
-            </PrintHeader>
+            </S.PrintHeader>
             <S.MainContent>
               <S.LeftSection>
                 <S.Card height="400px">
@@ -180,7 +179,8 @@ const Dashboard = () => {
                     <S.SummaryItem>
                       <span className="label">방문</span>
                       <span className="value">
-                        {dashboardData.summaryData?.시간대별방문추이?.방문 || 0}
+                        {dashboardData.summaryData?.시간대별방문추이?.방문.toLocaleString() ||
+                          0}
                       </span>
                     </S.SummaryItem>
                   </S.SummaryGrid>
@@ -189,7 +189,12 @@ const Dashboard = () => {
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="hour" />
                       <YAxis />
-                      <Tooltip />
+                      <Tooltip
+                        formatter={(value) => [
+                          `${value.toLocaleString()}회`,
+                          "방문",
+                        ]}
+                      />
                       <Legend />
                       <Line
                         type="monotone"
@@ -242,7 +247,10 @@ const Dashboard = () => {
                           <YAxis />
                           <CartesianGrid strokeDasharray="3 3" />
                           <Tooltip
-                            formatter={(value) => [`${value}회`, "방문"]}
+                            formatter={(value) => [
+                              `${value.toLocaleString()}회`,
+                              "방문",
+                            ]}
                             labelFormatter={(date) =>
                               new Date(date).toLocaleDateString("ko-KR", {
                                 year: "numeric",
@@ -277,7 +285,10 @@ const Dashboard = () => {
                         />
                         <YAxis />
                         <Tooltip
-                          formatter={(value) => [`${value}명`, "방문자 수"]}
+                          formatter={(value) => [
+                            `${value.toLocaleString()}명`,
+                            "방문자 수",
+                          ]}
                           contentStyle={{
                             backgroundColor: "white",
                             border: "1px solid #ccc",
@@ -291,7 +302,7 @@ const Dashboard = () => {
                           <LabelList
                             dataKey="visits"
                             position="top"
-                            formatter={(value) => `${value}명`}
+                            formatter={(value) => `${value.toLocaleString()}명`}
                             style={{ fill: "#666" }}
                           />
                         </Bar>
@@ -352,7 +363,10 @@ const Dashboard = () => {
                         <YAxis />
                         <CartesianGrid strokeDasharray="3 3" />
                         <Tooltip
-                          formatter={(value) => [`${value}회`, "방문"]}
+                          formatter={(value) => [
+                            `${value.toLocaleString()}회`,
+                            "방문",
+                          ]}
                           labelFormatter={(label) => `${label} 시`}
                         />
                         <Area
@@ -391,7 +405,7 @@ const Dashboard = () => {
                         />
                         <Tooltip
                           formatter={(value, name, props) => [
-                            `${props.payload.visits} (${value}%)`,
+                            `${props.payload.visits.toLocaleString()}회 (${value}%)`,
                             "판매",
                           ]}
                         />
@@ -411,7 +425,9 @@ const Dashboard = () => {
                           <LabelList
                             dataKey="percentage"
                             position="right"
-                            formatter={(value) => `${value}%`}
+                            formatter={(value) =>
+                              `${value}% (${props.payload.visits.toLocaleString()}회)`
+                            }
                             style={{ fill: "#666" }}
                           />
                         </Bar>
@@ -467,7 +483,9 @@ const Dashboard = () => {
                         </PieChart>
                       </ResponsiveContainer>
                       <div className="text-center mt-4">
-                        총 {processSpecificData.successRate.totalCount}건
+                        총{" "}
+                        {processSpecificData.successRate.totalCount.toLocaleString()}
+                        건
                       </div>
                     </>
                   ) : (
@@ -490,7 +508,9 @@ const Dashboard = () => {
                       >
                         <Tooltip
                           formatter={(value, name, props) => [
-                            `${props.payload.percent}% (${value}회)`,
+                            `${
+                              props.payload.percent
+                            }% (${value.toLocaleString()}회)`,
                             props.payload.name,
                           ]}
                         />
@@ -632,43 +652,5 @@ const Dashboard = () => {
     </S.DashboardContainer>
   );
 };
-
-const PrintContent = styled.div`
-  background-color: white;
-  padding: 20px;
-  width: 100%;
-`;
-
-const PrintHeader = styled.div`
-  margin-bottom: 20px;
-  text-align: center;
-
-  @media screen {
-    display: none;
-  }
-
-  h1 {
-    font-size: 24px;
-    margin-bottom: 8px;
-  }
-
-  p {
-    color: #666;
-  }
-`;
-
-const ExportButtons = styled.div`
-  display: flex;
-  gap: 8px;
-`;
-
-const ExportButton = styled(S.RefreshButton)`
-  background-color: #4caf50;
-  color: white;
-
-  &:hover {
-    background-color: #45a049;
-  }
-`;
 
 export default Dashboard;

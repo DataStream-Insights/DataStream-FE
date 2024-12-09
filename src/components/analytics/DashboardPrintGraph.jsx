@@ -45,7 +45,9 @@ const DashboardPrintGraph = React.forwardRef(
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="hour" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip
+                  formatter={(value) => [`${value.toLocaleString()}회`, "방문"]}
+                />
                 <Legend />
                 <Line
                   type="monotone"
@@ -90,7 +92,9 @@ const DashboardPrintGraph = React.forwardRef(
                   }
                 />
                 <YAxis />
-                <Tooltip />
+                <Tooltip
+                  formatter={(value) => [`${value.toLocaleString()}회`, "방문"]}
+                />
                 <Area
                   type="monotone"
                   dataKey="visits"
@@ -114,12 +118,17 @@ const DashboardPrintGraph = React.forwardRef(
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="day" />
                 <YAxis />
-                <Tooltip />
+                <Tooltip
+                  formatter={(value) => [
+                    `${value.toLocaleString()}명`,
+                    "방문자 수",
+                  ]}
+                />
                 <Bar dataKey="visits" fill="#818CF8">
                   <LabelList
                     dataKey="visits"
                     position="top"
-                    formatter={(value) => `${value}명`}
+                    formatter={(value) => `${value.toLocaleString()}명`}
                   />
                 </Bar>
               </BarChart>
@@ -169,7 +178,12 @@ const DashboardPrintGraph = React.forwardRef(
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="hour" />
                   <YAxis />
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value) => [
+                      `${value.toLocaleString()}회`,
+                      "방문",
+                    ]}
+                  />
                   <Area
                     type="monotone"
                     dataKey="count"
@@ -197,7 +211,14 @@ const DashboardPrintGraph = React.forwardRef(
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis type="number" />
                     <YAxis type="category" dataKey="item" width={150} />
-                    <Tooltip />
+                    <Tooltip
+                      formatter={(value, name, props) => [
+                        `${value.toLocaleString()}회 (${
+                          props.payload.percentage
+                        }%)`,
+                        "판매",
+                      ]}
+                    />
                     <Bar dataKey="visits">
                       {processSpecificData.topItems.map((entry, index) => (
                         <Cell
@@ -205,7 +226,11 @@ const DashboardPrintGraph = React.forwardRef(
                           fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
                         />
                       ))}
-                      <LabelList dataKey="visits" position="right" />
+                      <LabelList
+                        dataKey="visits"
+                        position="right"
+                        formatter={(value) => `${value.toLocaleString()}회`}
+                      />
                     </Bar>
                   </BarChart>
                 </ChartWrapper>
@@ -238,7 +263,9 @@ const DashboardPrintGraph = React.forwardRef(
                     <Cell fill="#4ade80" />
                     <Cell fill="#f87171" />
                   </Pie>
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value) => [`${value.toLocaleString()}건`, ""]}
+                  />
                   <Legend />
                 </PieChart>
               </ChartWrapper>
@@ -261,6 +288,53 @@ const DashboardPrintGraph = React.forwardRef(
                   >
                     <Tooltip />
                   </Treemap>
+                </ChartWrapper>
+              </ChartSection>
+            )}
+
+          {/* 가격 현황 */}
+          {processSpecificData.priceData &&
+            typeof processSpecificData.priceData.average === "number" && (
+              <ChartSection>
+                <h2>가격 현황</h2>
+                <ChartWrapper>
+                  <BarChart
+                    width={700}
+                    height={300}
+                    data={[
+                      {
+                        name: "평균 금액",
+                        value: processSpecificData.priceData.average,
+                      },
+                      {
+                        name: "최저 금액",
+                        value: processSpecificData.priceData.min,
+                      },
+                      {
+                        name: "최고 금액",
+                        value: processSpecificData.priceData.max,
+                      },
+                    ]}
+                    margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value) => `${value.toLocaleString()}원`}
+                    />
+                    <Bar dataKey="value">
+                      {/* 각 막대에 다른 색상 적용 */}
+                      <Cell fill="#4B5563" /> {/* 평균 - 회색 */}
+                      <Cell fill="#3B82F6" /> {/* 최저 - 파란색 */}
+                      <Cell fill="#EF4444" /> {/* 최고 - 빨간색 */}
+                      <LabelList
+                        dataKey="value"
+                        position="top"
+                        formatter={(value) => `${value.toLocaleString()}원`}
+                      />
+                    </Bar>
+                  </BarChart>
                 </ChartWrapper>
               </ChartSection>
             )}
