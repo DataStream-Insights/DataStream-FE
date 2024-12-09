@@ -16,7 +16,7 @@ import {
   PieChart,
   Pie,
   Treemap,
-  ResponsiveContainer,
+  LabelList,
 } from "recharts";
 
 const DashboardPrintGraph = React.forwardRef(
@@ -31,127 +31,240 @@ const DashboardPrintGraph = React.forwardRef(
           <p>생성일: {new Date().toLocaleDateString()}</p>
         </PrintHeader>
 
-        <Section>
-          <h2>시간대별 방문 추이</h2>
-          <ChartContainer>
-            <LineChart
-              width={800} // 큰 너비 지정
-              height={350} // PDF에 맞는 높이
-              data={dashboardData.timeSeriesData}
-              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-            >
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="hour" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Line
-                type="monotone"
-                dataKey="방문"
-                stroke="#3B82F6"
-                dot={false}
-              />
-            </LineChart>
-          </ChartContainer>
-        </Section>
-
-        <Section>
-          <h2>날짜별 방문 추이</h2>
-          <ChartContainer>
-            <AreaChart
-              width={600}
-              height={300}
-              data={dashboardData.dailyVisits}
-              margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-            >
-              <defs>
-                <linearGradient id="visitGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.8} />
-                  <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
-              <XAxis
-                dataKey="date"
-                tickFormatter={(date) =>
-                  new Date(date).toLocaleDateString("ko-KR", {
-                    month: "numeric",
-                    day: "numeric",
-                  })
-                }
-              />
-              <YAxis />
-              <CartesianGrid strokeDasharray="3 3" />
-              <Tooltip />
-              <Area
-                type="monotone"
-                dataKey="visits"
-                stroke="#38BDF8"
-                fillOpacity={1}
-                fill="url(#visitGradient)"
-              />
-            </AreaChart>
-          </ChartContainer>
-        </Section>
-
-        {processSpecificData.topItems.length > 0 && (
-          <Section>
-            <h2>인기 상품 Top5</h2>
-            <ChartContainer>
-              <BarChart
-                width={600}
+        <GridContainer>
+          {/* 시간대별 방문 추이 */}
+          <ChartSection>
+            <h2>시간대별 방문 추이</h2>
+            <ChartWrapper>
+              <LineChart
+                width={700}
                 height={300}
-                layout="vertical"
-                data={processSpecificData.topItems}
-                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                data={dashboardData.timeSeriesData}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
               >
-                <XAxis type="number" />
-                <YAxis type="category" dataKey="item" width={150} />
-                <Tooltip />
-                <Bar dataKey="visits">
-                  {processSpecificData.topItems.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ChartContainer>
-          </Section>
-        )}
-
-        {processSpecificData.successRate && (
-          <Section>
-            <h2>프로세스 성공률</h2>
-            <ChartContainer>
-              <PieChart width={400} height={300}>
-                <Pie
-                  data={[
-                    {
-                      name: "성공",
-                      value: processSpecificData.successRate.success,
-                    },
-                    {
-                      name: "실패",
-                      value: processSpecificData.successRate.failure,
-                    },
-                  ]}
-                  cx={200}
-                  cy={150}
-                  labelLine={false}
-                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
-                  outerRadius={80}
-                  dataKey="value"
-                >
-                  <Cell fill="#4ade80" />
-                  <Cell fill="#f87171" />
-                </Pie>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="hour" />
+                <YAxis />
                 <Tooltip />
                 <Legend />
-              </PieChart>
-            </ChartContainer>
-          </Section>
-        )}
+                <Line
+                  type="monotone"
+                  dataKey="방문"
+                  stroke="#3B82F6"
+                  dot={false}
+                />
+              </LineChart>
+            </ChartWrapper>
+          </ChartSection>
+
+          {/* 날짜별 방문 추이 */}
+          <ChartSection>
+            <h2>날짜별 방문 추이</h2>
+            <ChartWrapper>
+              <AreaChart
+                width={700}
+                height={300}
+                data={dashboardData.dailyVisits}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <defs>
+                  <linearGradient
+                    id="visitGradient"
+                    x1="0"
+                    y1="0"
+                    x2="0"
+                    y2="1"
+                  >
+                    <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="date"
+                  tickFormatter={(date) =>
+                    new Date(date).toLocaleDateString("ko-KR", {
+                      month: "numeric",
+                      day: "numeric",
+                    })
+                  }
+                />
+                <YAxis />
+                <Tooltip />
+                <Area
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="#38BDF8"
+                  fill="url(#visitGradient)"
+                />
+              </AreaChart>
+            </ChartWrapper>
+          </ChartSection>
+
+          {/* 요일별 방문 현황 */}
+          <ChartSection>
+            <h2>요일별 방문 현황</h2>
+            <ChartWrapper>
+              <BarChart
+                width={700}
+                height={300}
+                data={dashboardData.dayVisits}
+                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="visits" fill="#818CF8">
+                  <LabelList
+                    dataKey="visits"
+                    position="top"
+                    formatter={(value) => `${value}명`}
+                  />
+                </Bar>
+              </BarChart>
+            </ChartWrapper>
+          </ChartSection>
+
+          {/* 특정 날짜 시간대별 방문 현황 */}
+          {dateTimeRangeData && dateTimeRangeData.length > 0 && (
+            <ChartSection>
+              <h2>
+                특정 날짜 시간대별 방문 현황
+                {selectedDate && (
+                  <span
+                    style={{
+                      fontSize: "0.9em",
+                      color: "#666",
+                      marginLeft: "10px",
+                    }}
+                  >
+                    ({selectedDate.format("YYYY년 MM월 DD일")})
+                  </span>
+                )}
+              </h2>
+              <ChartWrapper>
+                <AreaChart
+                  width={700}
+                  height={300}
+                  data={dateTimeRangeData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                >
+                  <defs>
+                    <linearGradient
+                      id="timeRangeGradient"
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="5%" stopColor="#67E8F9" stopOpacity={0.8} />
+                      <stop
+                        offset="95%"
+                        stopColor="#67E8F9"
+                        stopOpacity={0.1}
+                      />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="hour" />
+                  <YAxis />
+                  <Tooltip />
+                  <Area
+                    type="monotone"
+                    dataKey="count"
+                    stroke="#67E8F9"
+                    fill="url(#timeRangeGradient)"
+                  />
+                </AreaChart>
+              </ChartWrapper>
+            </ChartSection>
+          )}
+
+          {/* 인기 상품 Top5 */}
+          {processSpecificData.topItems &&
+            processSpecificData.topItems.length > 0 && (
+              <ChartSection>
+                <h2>인기 상품 Top5</h2>
+                <ChartWrapper>
+                  <BarChart
+                    width={700}
+                    height={300}
+                    layout="vertical"
+                    data={processSpecificData.topItems}
+                    margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis type="number" />
+                    <YAxis type="category" dataKey="item" width={150} />
+                    <Tooltip />
+                    <Bar dataKey="visits">
+                      {processSpecificData.topItems.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={`rgba(45, 212, 191, ${1 - index * 0.15})`}
+                        />
+                      ))}
+                      <LabelList dataKey="visits" position="right" />
+                    </Bar>
+                  </BarChart>
+                </ChartWrapper>
+              </ChartSection>
+            )}
+
+          {/* 프로세스 성공률 */}
+          {processSpecificData.successRate && (
+            <ChartSection>
+              <h2>프로세스 성공률</h2>
+              <ChartWrapper>
+                <PieChart width={700} height={300}>
+                  <Pie
+                    data={[
+                      {
+                        name: "성공",
+                        value: processSpecificData.successRate.success,
+                      },
+                      {
+                        name: "실패",
+                        value: processSpecificData.successRate.failure,
+                      },
+                    ]}
+                    cx={350}
+                    cy={150}
+                    innerRadius={60}
+                    outerRadius={100}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                  >
+                    <Cell fill="#4ade80" />
+                    <Cell fill="#f87171" />
+                  </Pie>
+                  <Tooltip />
+                  <Legend />
+                </PieChart>
+              </ChartWrapper>
+            </ChartSection>
+          )}
+
+          {/* 메뉴별 방문 비율 */}
+          {processSpecificData.menuUsage &&
+            processSpecificData.menuUsage.length > 0 && (
+              <ChartSection>
+                <h2>메뉴별 방문 비율</h2>
+                <ChartWrapper>
+                  <Treemap
+                    width={700}
+                    height={300}
+                    data={processSpecificData.menuUsage}
+                    dataKey="value"
+                    aspectRatio={4 / 3}
+                    stroke="#fff"
+                  >
+                    <Tooltip />
+                  </Treemap>
+                </ChartWrapper>
+              </ChartSection>
+            )}
+        </GridContainer>
       </PrintContainer>
     );
   }
@@ -160,18 +273,17 @@ const DashboardPrintGraph = React.forwardRef(
 const PrintContainer = styled.div`
   @media print {
     display: block;
-    width: 100%;
-    max-width: 210mm; // A4 너비
-    margin: 0 auto;
+    width: 210mm;
     padding: 20mm;
     background: white;
-    page-break-after: always;
+    margin: 0 auto;
   }
 `;
 
 const PrintHeader = styled.div`
   text-align: center;
   margin-bottom: 30px;
+  page-break-after: avoid;
 
   h1 {
     font-size: 24px;
@@ -179,36 +291,48 @@ const PrintHeader = styled.div`
   }
 `;
 
-const Section = styled.section`
-  margin-bottom: 40px;
+const GridContainer = styled.div`
+  @media print {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+`;
+
+const ChartSection = styled.section`
   page-break-inside: avoid;
-  width: 100%;
+  margin-bottom: 40px;
+
+  h2 {
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: #333;
+  }
 
   @media print {
-    margin: 20px 0;
-    padding: 0;
-    height: auto;
+    margin: 0;
+    padding: 20px 0;
+  }
+`;
+
+const ChartRow = styled.div`
+  @media print {
+    display: flex;
+    gap: 20px;
+    page-break-inside: avoid;
   }
 `;
 
 const ChartWrapper = styled.div`
-  width: 100%;
-  height: 400px; // 고정 높이 지정
-  margin: 20px 0;
-  page-break-inside: avoid;
-
   @media print {
-    width: 100% !important;
-    height: 350px !important; // PDF용 높이 지정
-    margin: 0 auto;
-    display: block;
+    width: 100%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    background: white;
+    page-break-inside: avoid;
+    margin: 0;
   }
-`;
-
-const ChartContainer = styled.div`
-  width: 100%;
-  margin: 20px 0;
-  page-break-inside: avoid;
 `;
 
 export default DashboardPrintGraph;
