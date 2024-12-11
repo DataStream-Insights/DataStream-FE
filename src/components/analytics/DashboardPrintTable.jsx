@@ -146,33 +146,37 @@ const DashboardPrintTable = React.forwardRef(
         )}
 
         {/* 성공률 */}
-        {processSpecificData.successRate && (
-          <Section>
-            <h2>프로세스 성공률</h2>
-            <Table>
-              <thead>
-                <tr>
-                  <th>구분</th>
-                  <th>건수</th>
-                  <th>비율</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>성공</td>
-                  <td>{processSpecificData.successRate.success}건</td>
-                  <td>{processSpecificData.successRate.success}%</td>
-                </tr>
-                <tr>
-                  <td>실패</td>
-                  <td>{processSpecificData.successRate.failure}건</td>
-                  <td>{processSpecificData.successRate.failure}%</td>
-                </tr>
-              </tbody>
-            </Table>
-            <p>총 {processSpecificData.successRate.totalCount}건</p>
-          </Section>
-        )}
+        {processSpecificData.successRate &&
+          typeof processSpecificData.successRate.success === "number" &&
+          typeof processSpecificData.successRate.failure === "number" &&
+          (processSpecificData.successRate.success > 0 ||
+            processSpecificData.successRate.failure > 0) && (
+            <Section>
+              <h2>프로세스 성공률</h2>
+              <Table>
+                <thead>
+                  <tr>
+                    <th>구분</th>
+                    <th>건수</th>
+                    <th>비율</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>성공</td>
+                    <td>{processSpecificData.successRate.success}건</td>
+                    <td>{processSpecificData.successRate.success}%</td>
+                  </tr>
+                  <tr>
+                    <td>실패</td>
+                    <td>{processSpecificData.successRate.failure}건</td>
+                    <td>{processSpecificData.successRate.failure}%</td>
+                  </tr>
+                </tbody>
+              </Table>
+              <p>총 {processSpecificData.successRate.totalCount}건</p>
+            </Section>
+          )}
 
         {/* 메뉴별 방문 비율 */}
         {processSpecificData.menuUsage &&
