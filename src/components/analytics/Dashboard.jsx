@@ -226,7 +226,7 @@ const Dashboard = () => {
                           ]}
                           labelFormatter={(label) => `${label} 시`}
                         />
-                        <AreaChart
+                        <Area
                           type="monotone"
                           dataKey="count"
                           stroke="#67E8F9"
