@@ -113,37 +113,28 @@ const Dashboard = () => {
           onGraphSelect={updateGraphSelections}
           appliedGraphs={appliedGraphs}
         />
-        <div className="flex gap-2">
-          {/* <S.RefreshButton onClick={refreshDashboard}>
+        <S.ExportButtons>
+          <S.RefreshButton onClick={refreshDashboard}>
             <RefreshCw size={16} />
             Refresh
-          </S.RefreshButton> */}
-          <S.ExportButtons>
-            <S.RefreshButton onClick={refreshDashboard}>
-              <RefreshCw size={16} />
-              Refresh
-            </S.RefreshButton>
-            <S.TableExportButton onClick={handlePrintTable}>
-              <Download size={16} />
-              표로 내보내기
-            </S.TableExportButton>
-            <S.GraphExportButton onClick={handlePrintGraph}>
-              <Download size={16} />
-              그래프로 내보내기
-            </S.GraphExportButton>
-          </S.ExportButtons>
-        </div>
+          </S.RefreshButton>
+          <S.TableExportButton onClick={handlePrintTable}>
+            <Download size={16} />
+            표로 내보내기
+          </S.TableExportButton>
+          <S.GraphExportButton onClick={handlePrintGraph}>
+            <Download size={16} />
+            그래프로 내보내기
+          </S.GraphExportButton>
+        </S.ExportButtons>
       </S.Header>
 
       <div className="screen-only">
         {dashboardData ? (
-          <>
-            <S.PrintHeader>
-              <h1>대시보드 리포트</h1>
-              <p>생성일: {new Date().toLocaleDateString()}</p>
-            </S.PrintHeader>
-            <S.MainContent>
-              <S.LeftSection>
+          <div className="flex flex-col gap-6">
+            {/* 상단 섹션 - 시간대별 방문 추이와 특정 날짜 시간대별 방문 현황 */}
+            <div className="grid grid-cols-10 gap-6">
+              <div className="col-span-6">
                 <S.Card height="400px">
                   <S.CardTitle>시간대별 방문 추이</S.CardTitle>
                   <S.SummaryGrid>
@@ -176,113 +167,10 @@ const Dashboard = () => {
                     </LineChart>
                   </ResponsiveContainer>
                 </S.Card>
+              </div>
 
-                <S.BottomSection>
-                  <S.Card height="300px" flex="1">
-                    <S.CardTitle>날짜별 방문 추이</S.CardTitle>
-                    <ResponsiveContainer width="100%" height={220}>
-                      <AreaChart
-                        data={dashboardData.dailyVisits}
-                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                      >
-                        <defs>
-                          <linearGradient
-                            id="visitGradient"
-                            x1="0"
-                            y1="0"
-                            x2="0"
-                            y2="1"
-                          >
-                            <stop
-                              offset="5%"
-                              stopColor="#38BDF8"
-                              stopOpacity={0.8}
-                            />
-                            <stop
-                              offset="95%"
-                              stopColor="#38BDF8"
-                              stopOpacity={0.1}
-                            />
-                          </linearGradient>
-                        </defs>
-                        <XAxis
-                          dataKey="date"
-                          tickFormatter={(date) =>
-                            new Date(date).toLocaleDateString("ko-KR", {
-                              month: "numeric",
-                              day: "numeric",
-                            })
-                          }
-                        />
-                        <YAxis />
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <Tooltip
-                          formatter={(value) => [
-                            `${value.toLocaleString()}회`,
-                            "방문",
-                          ]}
-                          labelFormatter={(date) =>
-                            new Date(date).toLocaleDateString("ko-KR", {
-                              year: "numeric",
-                              month: "long",
-                              day: "numeric",
-                            })
-                          }
-                        />
-                        <Area
-                          type="monotone"
-                          dataKey="visits"
-                          stroke="#38BDF8"
-                          fillOpacity={1}
-                          fill="url(#visitGradient)"
-                        />
-                      </AreaChart>
-                    </ResponsiveContainer>
-                  </S.Card>
-                  <S.Card height="300px" flex="2">
-                    <S.CardTitle>요일별 방문 현황</S.CardTitle>
-                    <ResponsiveContainer width="100%" height={250}>
-                      <BarChart
-                        data={dashboardData.dayVisits}
-                        margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
-                      >
-                        <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis
-                          dataKey="day"
-                          tick={{ fill: "#666", fontSize: 12 }}
-                          height={50}
-                        />
-                        <YAxis />
-                        <Tooltip
-                          formatter={(value) => [
-                            `${value.toLocaleString()}명`,
-                            "방문자 수",
-                          ]}
-                          contentStyle={{
-                            backgroundColor: "white",
-                            border: "1px solid #ccc",
-                          }}
-                        />
-                        <Bar
-                          dataKey="visits"
-                          fill="#818CF8"
-                          radius={[4, 4, 0, 0]}
-                        >
-                          <LabelList
-                            dataKey="visits"
-                            position="top"
-                            formatter={(value) => `${value.toLocaleString()}명`}
-                            style={{ fill: "#666" }}
-                          />
-                        </Bar>
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </S.Card>
-                </S.BottomSection>
-              </S.LeftSection>
-
-              <S.RightSection>
-                <S.Card height="250px">
+              <div className="col-span-4">
+                <S.Card height="400px">
                   <S.CardTitle>
                     <div className="flex justify-between items-center">
                       <span>특정 날짜 시간대별 방문 현황</span>
@@ -349,8 +237,112 @@ const Dashboard = () => {
                     </ResponsiveContainer>
                   )}
                 </S.Card>
-              </S.RightSection>
-            </S.MainContent>
+              </div>
+            </div>
+
+            {/* 하단 섹션 - 날짜별 방문 추이와 요일별 방문 현황 */}
+            <div className="flex gap-6">
+              <S.Card height="300px" className="flex-1">
+                <S.CardTitle>날짜별 방문 추이</S.CardTitle>
+                <ResponsiveContainer width="100%" height={220}>
+                  <AreaChart
+                    data={dashboardData.dailyVisits}
+                    margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                  >
+                    <defs>
+                      <linearGradient
+                        id="visitGradient"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="5%"
+                          stopColor="#38BDF8"
+                          stopOpacity={0.8}
+                        />
+                        <stop
+                          offset="95%"
+                          stopColor="#38BDF8"
+                          stopOpacity={0.1}
+                        />
+                      </linearGradient>
+                    </defs>
+                    <XAxis
+                      dataKey="date"
+                      tickFormatter={(date) =>
+                        new Date(date).toLocaleDateString("ko-KR", {
+                          month: "numeric",
+                          day: "numeric",
+                        })
+                      }
+                    />
+                    <YAxis />
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <Tooltip
+                      formatter={(value) => [
+                        `${value.toLocaleString()}회`,
+                        "방문",
+                      ]}
+                      labelFormatter={(date) =>
+                        new Date(date).toLocaleDateString("ko-KR", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })
+                      }
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="visits"
+                      stroke="#38BDF8"
+                      fillOpacity={1}
+                      fill="url(#visitGradient)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </S.Card>
+
+              <S.Card height="300px" className="flex-1">
+                <S.CardTitle>요일별 방문 현황</S.CardTitle>
+                <ResponsiveContainer width="100%" height={250}>
+                  <BarChart
+                    data={dashboardData.dayVisits}
+                    margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
+                    barSize={50}
+                  >
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis
+                      dataKey="day"
+                      tick={{ fill: "#666", fontSize: 12 }}
+                      height={50}
+                    />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value) => [
+                        `${value.toLocaleString()}명`,
+                        "방문자 수",
+                      ]}
+                      contentStyle={{
+                        backgroundColor: "white",
+                        border: "1px solid #ccc",
+                      }}
+                    />
+                    <Bar dataKey="visits" fill="#818CF8" radius={[4, 4, 0, 0]}>
+                      <LabelList
+                        dataKey="visits"
+                        position="top"
+                        formatter={(value) => `${value.toLocaleString()}명`}
+                        style={{ fill: "#666" }}
+                        offset={15}
+                      />
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              </S.Card>
+            </div>
+
             <S.DynamicSection>
               {/* 프로세스별 데이터 섹션 */}
               {appliedGraphs.includes(1) && (
@@ -590,14 +582,15 @@ const Dashboard = () => {
                 </S.Card>
               )}
             </S.DynamicSection>
-          </>
+          </div>
         ) : (
           <div className="flex items-center justify-center h-[calc(100vh-200px)] text-gray-500">
             데이터를 불러오는 중 오류가 발생했습니다.
           </div>
         )}
       </div>
-      {/* 프린트용 컴포넌트 추가 */}
+
+      {/* 프린트용 컴포넌트 */}
       <div style={{ display: "none" }}>
         <DashboardPrintTable
           ref={printTableRef}
