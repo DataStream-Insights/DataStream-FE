@@ -178,75 +178,73 @@ const Dashboard = () => {
                 </S.Card>
 
                 <S.BottomSection>
-                  <S.Card height="300px">
+                  <S.Card height="300px" flex="1">
                     <S.CardTitle>날짜별 방문 추이</S.CardTitle>
-                    <div style={{ flex: 1 }}>
-                      <ResponsiveContainer width="100%" height={220}>
-                        <AreaChart
-                          data={dashboardData.dailyVisits}
-                          margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
-                        >
-                          <defs>
-                            <linearGradient
-                              id="visitGradient"
-                              x1="0"
-                              y1="0"
-                              x2="0"
-                              y2="1"
-                            >
-                              <stop
-                                offset="5%"
-                                stopColor="#38BDF8"
-                                stopOpacity={0.8}
-                              />
-                              <stop
-                                offset="95%"
-                                stopColor="#38BDF8"
-                                stopOpacity={0.1}
-                              />
-                            </linearGradient>
-                          </defs>
-                          <XAxis
-                            dataKey="date"
-                            tickFormatter={(date) =>
-                              new Date(date).toLocaleDateString("ko-KR", {
-                                month: "numeric",
-                                day: "numeric",
-                              })
-                            }
-                          />
-                          <YAxis />
-                          <CartesianGrid strokeDasharray="3 3" />
-                          <Tooltip
-                            formatter={(value) => [
-                              `${value.toLocaleString()}회`,
-                              "방문",
-                            ]}
-                            labelFormatter={(date) =>
-                              new Date(date).toLocaleDateString("ko-KR", {
-                                year: "numeric",
-                                month: "long",
-                                day: "numeric",
-                              })
-                            }
-                          />
-                          <Area
-                            type="monotone"
-                            dataKey="visits"
-                            stroke="#38BDF8"
-                            fillOpacity={1}
-                            fill="url(#visitGradient)"
-                          />
-                        </AreaChart>
-                      </ResponsiveContainer>
-                    </div>
+                    <ResponsiveContainer width="100%" height={220}>
+                      <AreaChart
+                        data={dashboardData.dailyVisits}
+                        margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                      >
+                        <defs>
+                          <linearGradient
+                            id="visitGradient"
+                            x1="0"
+                            y1="0"
+                            x2="0"
+                            y2="1"
+                          >
+                            <stop
+                              offset="5%"
+                              stopColor="#38BDF8"
+                              stopOpacity={0.8}
+                            />
+                            <stop
+                              offset="95%"
+                              stopColor="#38BDF8"
+                              stopOpacity={0.1}
+                            />
+                          </linearGradient>
+                        </defs>
+                        <XAxis
+                          dataKey="date"
+                          tickFormatter={(date) =>
+                            new Date(date).toLocaleDateString("ko-KR", {
+                              month: "numeric",
+                              day: "numeric",
+                            })
+                          }
+                        />
+                        <YAxis />
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <Tooltip
+                          formatter={(value) => [
+                            `${value.toLocaleString()}회`,
+                            "방문",
+                          ]}
+                          labelFormatter={(date) =>
+                            new Date(date).toLocaleDateString("ko-KR", {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          }
+                        />
+                        <Area
+                          type="monotone"
+                          dataKey="visits"
+                          stroke="#38BDF8"
+                          fillOpacity={1}
+                          fill="url(#visitGradient)"
+                        />
+                      </AreaChart>
+                    </ResponsiveContainer>
                   </S.Card>
-                  <S.Card height="400px">
+                  <S.Card height="300px" flex="2">
                     <S.CardTitle>요일별 방문 현황</S.CardTitle>
-                    <ResponsiveContainer width="100%" height={350}>
+                    <ResponsiveContainer width="100%" height={250}>
                       <BarChart
                         data={dashboardData.dayVisits}
-                        margin={{ top: 30, right: 40, left: 20, bottom: 20 }}
+                        margin={{ top: 20, right: 40, left: 20, bottom: 20 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis

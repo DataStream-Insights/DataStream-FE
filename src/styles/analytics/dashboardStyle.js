@@ -73,7 +73,7 @@ export const Card = styled.div`
   height: ${(props) => props.height || "auto"};
   min-height: ${(props) => props.height || "auto"};
   max-height: ${(props) => props.height || "auto"};
-  flex: ${(props) => props.flex || "1"};
+  flex: ${(props) => props.flex || "1"}; // flex 속성 추가
 `;
 
 export const CardGrid = styled.div`
