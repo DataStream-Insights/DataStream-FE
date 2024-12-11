@@ -92,35 +92,6 @@ const Dashboard = () => {
     `,
   });
 
-  // const handlePrint = useReactToPrint({
-  //   contentRef: printRef,
-  //   documentTitle: `Dashboard_${new Date().toLocaleDateString()}`,
-  //   pageStyle: `
-  //     @page {
-  //       size: A4 portrait;
-  //       margin: 15mm;
-  //     }
-  //     @media print {
-  //       body {
-  //         -webkit-print-color-adjust: exact !important;
-  //         print-color-adjust: exact !important;
-  //       }
-  //       .no-print {
-  //         display: none !important;
-  //       }
-  //     }
-  //   `,
-  // });
-
-  // const handleApply = async (pipelineId, selectedGraphs) => {
-  //   try {
-  //     await loadProcessSpecificData(pipelineId, selectedGraphs);
-  //     refreshDashboard();
-  //   } catch (error) {
-  //     console.error("Failed to apply dashboard settings:", error);
-  //   }
-  // };
-
   const renderErrorMessage = () => (
     <div className="flex items-center justify-center h-[180px] text-gray-500">
       이 프로세스에서는 해당 그래프를 확인할 수 없습니다
@@ -270,12 +241,12 @@ const Dashboard = () => {
                       </ResponsiveContainer>
                     </div>
                   </S.Card>
-                  <S.Card height="300px">
+                  <S.Card height="400px">
                     <S.CardTitle>요일별 방문 현황</S.CardTitle>
-                    <ResponsiveContainer width="100%" height={250}>
+                    <ResponsiveContainer width="100%" height={350}>
                       <BarChart
                         data={dashboardData.dayVisits}
-                        margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                        margin={{ top: 30, right: 40, left: 20, bottom: 20 }}
                       >
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis
