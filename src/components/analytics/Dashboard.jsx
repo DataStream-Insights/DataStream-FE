@@ -170,7 +170,7 @@ const Dashboard = () => {
               </div>
 
               <div className="col-span-4">
-                <S.Card height="400px">
+                <S.Card height="300px">
                   <S.CardTitle>
                     <div className="flex justify-between items-center">
                       <span>특정 날짜 시간대별 방문 현황</span>
@@ -226,7 +226,7 @@ const Dashboard = () => {
                           ]}
                           labelFormatter={(label) => `${label} 시`}
                         />
-                        <Area
+                        <AreaChart
                           type="monotone"
                           dataKey="count"
                           stroke="#67E8F9"
